@@ -1,0 +1,35 @@
+<!Doctype html>
+<html ng-app="myApp">
+<head>
+<meta charset="utf-8">
+<title>教师主页</title>
+<link href="./css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<script src="./js/angular.js"></script>
+<script>
+    angular.module('myApp', [])
+        .controller('InfoController', function ($scope) {
+            $scope.info = {
+                name: '董奕辉',
+                sex: '男',
+                age: '21',
+                phone: '13240309256'
+            };
+        })
+</script>
+</head>
+<body>
+<div class="container" ng-controller="InfoController">
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-10">
+            <ul>
+                <li ng-repeat="aInfo in info">
+                    {{ aInfo }}
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-1"></div>
+    </div>
+</div>
+</body>
+</html>
