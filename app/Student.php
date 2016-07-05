@@ -7,14 +7,24 @@ use Illuminate\Database\Eloquent\Model;
 class Student extends Model
 {
     //
-    protected $table = 'resource';
+    protected $table = 'student';
     protected $primaryKey = 'username';
     public $timestamps = false;
 
     protected $fillable = [
-        'username','name','gender','birth','address','telephone',
-        'email','enrollment_year','graduation_year','class_number',
-        'school_number','now_team_str','old_team_str'
+        'username',
+        'name',
+        'gender',
+        'birth',
+        'address',
+        'telephone',
+        'email',
+        'enrollment_year',
+        'graduation_year',
+        'class_number',
+        'school_number',
+        'now_team_str',
+        'old_team_str'
         ];
 
     public function courseStudents(){
