@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests;
+use App\User;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -23,6 +24,11 @@ class HomeController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
+    {
+        return view('home');
+    }
+
+    public function test()
     {
         return view('home');
     }
