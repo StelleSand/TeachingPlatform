@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>课程主页</title>
+    <link href="./css/bootstrap.min.css" type="text/css" rel="stylesheet">
+    <script src="./js/angular.min.js"></script>
+    <script src="./js/angular-route.min.js"></script>
+    <script>
+        var myApp = angular.module('myApp', ['ngRoute']);
+        myApp.controller('MainController', function ($scope) {
+            $scope.isAlert = false;
+            $scope.closeAlert = function () {
+                $scope.isAlert = false;
+            };
+            $scope.openAlert = function () {
+                $scope.isAlert = true;
+            }
+        });
+    </script>
+</head>
+<body>
+<div class="container" ng-controller="MainController">
+    <div class="alert alert-danger" role="alert" ng-show="isAlert" style="margin-bottom: 0;">
+        <span class="glyphicon glyphicon-remove-circle" style="float: right; cursor: pointer;" ng-click="closeAlert()"></span>
+        <span class="sr-only"></span>
+        <p>你确定？</p>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="panel panel-default">
+                <div class="panel-heading"><h3>工科高等数学</h3></div>
+                <div class="list-group">
+                    <a href="#classInfo" class="list-group-item">课程信息</a>
+                    <a href="#classHomework" class="list-group-item">作业</a>
+                    <a href="#classResource" class="list-group-item">资源</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9" ng-view></div>
+        <div><button class="btn btn-primary" ng-click="openAlert()">确定？</button></div>
+    </div>
+    <script type="text/ng-template" id="classInfo.html">
+        <div class="panel panel-default">
+            <div class="panel-heading"><h3>课程信息</h3></div>
+            <div class="panel-body">
+                <table class="table table-striped">
+                    <tbody>
+                    <tr><td>名称</td><td>{{ lesson.name }}</td></tr>
+                    <tr><td>教师</td><td>{{ lesson.teacher }}</td></tr>
+                    <tr><td>描述</td><td>{{ lesson.description }}</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </script>
+    <script type="text/ng-template" id="classHomework.html">
+        <div class="panel panel-default">
+            <div class="panel-heading"><h3>作业</h3></div>
+            <div class="panel-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr><td>作业标题</td><td>状态</td><td>开始时间</td><td>截止时间</td></tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="homework in homeworkList">
+                            <td><a href="/teacher/homework+{{ homework.id }}">{{ homework.title }}</a></td>
+                            <td>{{ homework.status }}</td>
+                            <td>{{ homework.start }}</td>
+                            <td>{{ homework.end }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </script>
+    <script type="text/ng-template" id="classResource.html">
+        <div class="panel panel-default">
+            <div class="panel-heading"><h3>文件资源</h3></div>
+            <div class="panel-body">
+                <table class="table">
+                    <thead>
+                        <tr><td>标题</td><td>创建者</td><td>修改时间</td><td>文件大小</td></tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="file in resource" ng-class="{ info: file.type=='directory' }">
+                            <td><a href="/resource/file+{{ file.id }}">{{ file.name }}</a></td>
+                            <td>{{ file.creator }}</td>
+                            <td>{{ file.time }}</td>
+                            <td>{{ file.size }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </script>
+</div>
+<script>
+    myApp.config(['$routeProvider', function ($routeProvider) {
+        $routeProvider
+                .when('/classHomework', {
+                    templateUrl: 'classHomework.html',
+                    controller: 'HomeworkController'
+                })
+                .when('/classResource', {
+                    templateUrl: 'classResource.html',
+                    controller: 'ResourceController'
+                })
+                .otherwise({
+                    templateUrl: 'classInfo.html',
+                    controller: 'InfoController'
+                });
+    }]);
+    myApp.controller('InfoController', function ($scope) {
+        $scope.lesson = { name: '工科高等数学', teacher: '王乐', description: '这是一门非常重要的课程' };
+    });
+    myApp.controller('HomeworkController', function ($scope) {
+        $scope.homeworkList = [
+            { id: 225, title: '第五章作业', status: '未完成', start: '2016-7-4 12:00', end: '2016-7-12 18:00' },
+            { id: 122, title: '第四章作业', status: '已提交', start: '2016-6-20 12:00', end: '2016-6-28 18:00' }
+        ];
+    });
+    myApp.controller('ResourceController', function ($scope) {
+        $scope.resource = [
+            { id: 101, type: 'directory', name: '我的电脑' },
+            { id: 110, type: 'file', name: '第一次实践', creator: '王乐', time: '2016-7-2', size: '18K' }
+        ];
+    });
+</script>
+</body>
+</html>

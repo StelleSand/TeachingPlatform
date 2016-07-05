@@ -4,32 +4,102 @@
 <meta charset="utf-8">
 <title>教师主页</title>
 <link href="./css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<style>
+    .lessonInfo {
+        height: 60px;
+    }
+</style>
 <script src="./js/angular.js"></script>
-<script>
-    angular.module('myApp', [])
-        .controller('InfoController', function ($scope) {
-            $scope.info = {
-                name: '董奕辉',
-                sex: '男',
-                age: '21',
-                phone: '13240309256'
-            };
-        })
-</script>
+<script src="./js/angular-route.min.js"></script>
 </head>
 <body>
-<div class="container" ng-controller="InfoController">
+<div class="container">
     <div class="row">
-        <div class="col-md-1"></div>
-        <div class="col-md-10">
-            <ul>
-                <li ng-repeat="aInfo in info">
-                    {{ aInfo }}
-                </li>
-            </ul>
+        <div class="col-md-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3>教师主页</h3>
+                </div>
+                <div class="list-group">
+                    <a href="#myInfo" class="list-group-item">基本信息</a>
+                    <a href="#myClass" class="list-group-item">我的课程</a>
+                </div>
+            </div>
         </div>
-        <div class="col-md-1"></div>
+        <!-- angularJs路由控制内容 -->
+        <div class="col-md-9" ng-view>
+        </div>
     </div>
+    <!-- 个人信息页面 -->
+    <script type="text/ng-template" id="myInfo.html">
+        <div class="panel panel-default">
+            <div class="panel-heading"><h3>{{ name }}</h3></div>
+            <div class="panel-body">
+                <table class="table table-striped">
+                    <tbody>
+                    <tr ng-repeat="personInfo in info"><td>{{ personInfo.key }}</td><td>{{ personInfo.value }}</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </script>
+    <!-- 课程信息页面 -->
+    <script type="text/ng-template" id="myClass.html">
+        <div class="panel panel-default">
+            <div class="panel-heading"><h3>课程</h3></div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-4" ng-repeat="lesson in lessons">
+                        <div class="thumbnail">
+                            <img src="..." alt="{{ lesson.title }}">
+                            <div class="caption">
+                                <h3>{{ lesson.title }}</h3>
+                                <div class="lessonInfo"><p>{{ lesson.info }}</p></div>
+                                <p><a href="{{ lesson.url }}" class="btn btn-primary">进入课程</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
 </div>
+<script>
+    var myApp = angular.module('myApp', ['ngRoute']);
+    myApp.config(['$routeProvider', function ($routeProvider) {
+        $routeProvider
+                .when('/myClass', {
+                    templateUrl: 'myClass.html',
+                    controller: 'ClassController'
+                })
+                .otherwise({
+                    templateUrl: 'myInfo.html',
+                    controller: 'InfoController'
+                });
+    }]);
+    myApp.controller('InfoController', function ($scope) {
+        $scope.name = '王乐';
+        $scope.info = {
+            sex: {key: '性别', value: '男'},
+            age: {key: '年龄', value: '21'},
+            phone: {key: '手机号', value: '13240309256'}
+        };
+    });
+    myApp.controller('ClassController', function ($scope) {
+        $scope.lessons = [
+            {
+                title: '工科高等数学',
+                info: '这是一门重要的课程的方法为发哦我放假哦',
+                url: '#'
+            },
+            {
+                title: 'C++',
+                info: '这是宋友老师的课啊！',
+                url: '#'
+            }
+        ];
+    });
+
+</script>
 </body>
 </html>

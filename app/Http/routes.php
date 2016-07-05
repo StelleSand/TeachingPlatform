@@ -17,3 +17,9 @@ Route::get('/', function () {
 Route::auth();
 
 Route::get('/home', 'HomeController@index');
+
+Route::get('/teacher', 'HtmlController@getHtmlFile');
+Route::get('/teacherClass', 'HtmlController@getTeachClass');
+Route::get('/myLogin', function () {
+    return view('login');
+});
