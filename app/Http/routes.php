@@ -16,3 +16,8 @@ Route::auth();
 Route::get('/', 'HomeController@index');
 
 Route::get('/test','HomeController@test');
+Route::get('/file',function(){
+    return view('file');
+});
+Route::post('/fileUpLoader','FileController@fileUpLoader');
+    
