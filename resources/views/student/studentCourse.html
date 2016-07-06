@@ -13,7 +13,7 @@
         var myApp = angular.module('myApp', ['ngRoute']);
     </script>
 </head>
-<body>
+<body ng-controller="MainController">
 <div class="container">
     <div class="row">
         <div class="col-xs-2">
@@ -34,10 +34,10 @@
             <div class="panel-body">
                 <table class="table table-striped">
                     <tbody>
-                        <tr><td>课程名称</td><td>{{ course.name }}</td></tr>
+                        <tr><td>课程名称</td><td>{{ course.course_name }}</td></tr>
                         <tr><td>课程教师</td><td>{{ course.teacher_name }}</td></tr>
                         <tr><td>课程所在学期</td><td>{{ course.semester_name }}</td></tr>
-                        <tr><td>课程描述</td><td>{{ course.description }}</td></tr>
+                        <tr><td>课程描述</td><td>{{ course.course_description }}</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -55,7 +55,10 @@
                     </thead>
                     <tbody>
                         <tr ng-repeat="homework in homeworkList">
-                            <td>{{ homework.name }}</td>
+                            <td>{{ homework.homework_name }}</td>
+                            <td>{{ homework.submit_homework_state }}</td>
+                            <td>{{ homework.homework_start_date }}</td>
+                            <td>{{ homework.homework_end_date }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -84,9 +87,35 @@
                     controller: 'IndexController'
                 });
     }]);
-    myApp.controller('IndexController', function ($scope) {
-        $scope.course = { name: '工科高等数学', teacher_name: '王乐', semester_name: '2016-2017第一学期', description: '高数屌屌哒啊！' };
-    })
+    myApp.config(['$locationProvider', function ($locationProvider) {
+        $locationProvider.html5Mode({
+            enabled: true,
+            requireBase: false
+        });
+    }]);
+    myApp.controller('MainController',function ($scope, $location) {
+        $scope.course_id = $location.search().course_id;
+        console.log('获取的课程id=' + $scope.course_id);
+    });
+    myApp.controller('IndexController', function ($scope, $http) {
+        $http.get('/jStudentCourseInfo?course_offered_id=' + $scope.course_id)
+                .success(function (data) {
+                    $scope.course = data;
+                })
+                .error(function (data, status) {
+                    console.log('发生错误！ 状态：' + status);
+                });
+        //$scope.course = { name: '工科高等数学', teacher_name: '王乐', semester_name: '2016-2017第一学期', description: '高数屌屌哒啊！' };
+    });
+    myApp.controller('HomeworkController', function ($scope, $http) {
+        $http.get('/jStudentCourseHomeworks?course_offered_id=' + $scope.course_id)
+                .success(function (data) {
+                    $scope.homeworkList = data;
+                })
+                .error(function (data, status) {
+                    console.log('发生错误！ 状态：' + status);
+                });
+    });
 </script>
 </body>
 </html>
