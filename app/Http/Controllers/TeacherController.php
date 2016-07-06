@@ -10,6 +10,8 @@ namespace App\Http\Controllers;
 
 
 use App\CourseOffered;
+use App\Homework;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -115,6 +117,19 @@ class TeacherController extends Controller
     }
 
     public function postJsonPublishHomework(Request $request){
-
+        $presentTime = Carbon::now()->toDateTimeString();
+        $courseOffered = CourseOffered::where('course_offered.teacher_username',$this->user->username)
+            ->where('course_offered.id',$request->course_offered_id)
+            ->first();
+        $homework = Homework::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+            'type' => $request->type,
+            'publish_date' => $presentTime,
+            'course_offered_id' => $courseOffered->id
+        ]);
+        return json_encode($homework->toArray());
     }
 }
