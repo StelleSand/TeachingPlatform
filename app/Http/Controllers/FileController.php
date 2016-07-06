@@ -7,38 +7,61 @@
  */
 namespace App\Http\Controllers;
 
+use App\Resource;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Storage;
 
 class FileController extends Controller{
     public function fileUpLoader(Request $request){
-        //echo "funtion fileLoader";
         //判断请求中是否包含name=file的上传文件
-        echo $request->input('user');
 
         if(!$request->hasFile('myfile')){
             exit('上传文件为空！');
         }
         $file = $request->file('myfile');
         //判断文件上传过程中是否出错
-
         if(!$file->isValid()){
             exit('文件上传出错！');
         }
-        //echo dirname($file);
-        //echo basename($file);
-        echo $filename =  $file -> getClientOriginalName();
-        $file->move('D:\xampp\htdocs\TeachingPlatform\storage\app', iconv('utf-8', 'gbk', $filename));
-        $json = array("asda"=>"121");
+        $pulish_time = date("Y-m-d H:i",filectime($file));
 
-//        echo "$destPath\n";
-//        if(!file_exists($destPath))
-//            mkdir($destPath,0755,true);
-//        $filename = $file->getClientOriginalName();
-//        if(!$file->move($destPath,$filename)){
-//            exit('保存文件失败！');
-//        }
-//        exit('文件上传成功！');
+        //echo $pulish_time;
+
+        echo $filename =  $file -> getClientOriginalName();
+        $storage_path = $_SERVER['DOCUMENT_ROOT'].'/../'.'storage/app';
+        $file->move($storage_path, iconv('utf-8', 'gbk', $filename));
+        echo  'sd';
+        $term = '123';
+        $courseName = "adsds";
+        $directories = Storage::directories('/');
+        // judge if dir exist
+        if (!array_key_exists($term,$directories)){
+            Storage::makeDirectory($term);
+        }
+        $term_dir = Storage::directories("/$term");
+        if (!array_key_exists($courseName,$directories)){
+            Storage::makeDirectory("/$term/$courseName");
+        }
+        if (Storage::exists("/$term/$courseName/$filename")){
+            echo "file already exist, you can change the filename to solve it\n";
+        }
+        else{
+            Storage::move("/$filename",iconv('utf-8', 'gbk', "/$term/$courseName/$filename"));
+        }
+
+
+        //save resourse into database
+//        $description = $request->input('description');
+//        echo $description;
+//        $re = new Resource();
+//        $re->fillable['name'] = $filename;
+//        $re->fillable['description'] = $description;
+//        $re->fillable['publish_time'] = $pulish_time;
+//        $re->fillable['place'] = "/$term/$courseName/$filename";
+//        $re->fillable['owner_username'] = "";
+//        $re->fillable
+
     }
 
 }

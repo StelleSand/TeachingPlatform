@@ -9,7 +9,7 @@
 <form action="/fileUpLoader" method="POST" enctype="multipart/form-data">
     {{ csrf_field() }}
     <input type="file" name="myfile"><br/><br/>
-    <input type ="text" name =user><br>
+    <input type ="text" name = "description">descrtpation<br/>
     <input type="submit" value="提交"/>
 </form>
 
