@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: 2016-07-05 11:06:58
+-- Generation Time: 2016-07-06 03:18:54
 -- 服务器版本： 10.1.10-MariaDB
 -- PHP Version: 7.0.3
 
@@ -46,56 +46,57 @@ INSERT INTO `course` (`id`, `name`, `description`) VALUES
 -- --------------------------------------------------------
 
 --
--- 表的结构 `courses_offered`
+-- 表的结构 `course_offered`
 --
 
-CREATE TABLE `courses_offered` (
+CREATE TABLE `course_offered` (
   `id` int(11) UNSIGNED NOT NULL COMMENT '开设课程的自增主键id',
   `teacher_username` char(4) DEFAULT NULL COMMENT '开课教师账号',
   `school_number` tinyint(2) DEFAULT NULL COMMENT '开课学院编号',
   `semester_id` int(11) UNSIGNED DEFAULT NULL COMMENT '开课学期编号',
   `course_id` int(11) UNSIGNED DEFAULT NULL COMMENT '课程所在编号',
   `addition_des` varchar(255) DEFAULT NULL COMMENT '课程附加描述',
-  `resource_str` text COMMENT '课程资源序列串'
+  `resource_str` text COMMENT '课程资源序列串',
+  `status` enum('0','1','','') NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- 转存表中的数据 `courses_offered`
+-- 转存表中的数据 `course_offered`
 --
 
-INSERT INTO `courses_offered` (`id`, `teacher_username`, `school_number`, `semester_id`, `course_id`, `addition_des`, `resource_str`) VALUES
-(42, '0101', 1, 1, 1, NULL, NULL),
-(43, '0101', 1, 1, 2, NULL, NULL),
-(44, '0101', 1, 1, 3, NULL, NULL),
-(45, '0101', 1, 1, 4, NULL, NULL),
-(46, '0101', 1, 2, 1, NULL, NULL),
-(47, '0101', 1, 2, 2, NULL, NULL),
-(48, '0101', 1, 2, 3, NULL, NULL),
-(49, '0101', 1, 2, 4, NULL, NULL),
-(50, '0102', 1, 1, 1, NULL, NULL),
-(51, '0102', 1, 1, 2, NULL, NULL),
-(52, '0102', 1, 1, 3, NULL, NULL),
-(53, '0102', 1, 1, 4, NULL, NULL),
-(54, '0102', 1, 2, 1, NULL, NULL),
-(55, '0102', 1, 2, 2, NULL, NULL),
-(56, '0102', 1, 2, 3, NULL, NULL),
-(57, '0102', 1, 2, 4, NULL, NULL),
-(58, '2101', 21, 1, 1, NULL, NULL),
-(59, '2101', 21, 1, 2, NULL, NULL),
-(60, '2101', 21, 1, 3, NULL, NULL),
-(61, '2101', 21, 1, 4, NULL, NULL),
-(62, '2101', 21, 2, 1, NULL, NULL),
-(63, '2101', 21, 2, 2, NULL, NULL),
-(64, '2101', 21, 2, 3, NULL, NULL),
-(65, '2101', 21, 2, 4, NULL, NULL),
-(66, '2102', 21, 1, 1, NULL, NULL),
-(67, '2102', 21, 1, 2, NULL, NULL),
-(68, '2102', 21, 1, 3, NULL, NULL),
-(69, '2102', 21, 1, 4, NULL, NULL),
-(70, '2102', 21, 2, 1, NULL, NULL),
-(71, '2102', 21, 2, 2, NULL, NULL),
-(72, '2102', 21, 2, 3, NULL, NULL),
-(73, '2102', 21, 2, 4, NULL, NULL);
+INSERT INTO `course_offered` (`id`, `teacher_username`, `school_number`, `semester_id`, `course_id`, `addition_des`, `resource_str`, `status`) VALUES
+(42, '0101', 1, 1, 1, NULL, NULL, '1'),
+(43, '0101', 1, 1, 2, NULL, NULL, '1'),
+(44, '0101', 1, 1, 3, NULL, NULL, '1'),
+(45, '0101', 1, 1, 4, NULL, NULL, '1'),
+(46, '0101', 1, 2, 1, NULL, NULL, '1'),
+(47, '0101', 1, 2, 2, NULL, NULL, '1'),
+(48, '0101', 1, 2, 3, NULL, NULL, '1'),
+(49, '0101', 1, 2, 4, NULL, NULL, '1'),
+(50, '0102', 1, 1, 1, NULL, NULL, '1'),
+(51, '0102', 1, 1, 2, NULL, NULL, '1'),
+(52, '0102', 1, 1, 3, NULL, NULL, '1'),
+(53, '0102', 1, 1, 4, NULL, NULL, '1'),
+(54, '0102', 1, 2, 1, NULL, NULL, '1'),
+(55, '0102', 1, 2, 2, NULL, NULL, '1'),
+(56, '0102', 1, 2, 3, NULL, NULL, '1'),
+(57, '0102', 1, 2, 4, NULL, NULL, '1'),
+(58, '2101', 21, 1, 1, NULL, NULL, '1'),
+(59, '2101', 21, 1, 2, NULL, NULL, '1'),
+(60, '2101', 21, 1, 3, NULL, NULL, '1'),
+(61, '2101', 21, 1, 4, NULL, NULL, '1'),
+(62, '2101', 21, 2, 1, NULL, NULL, '1'),
+(63, '2101', 21, 2, 2, NULL, NULL, '1'),
+(64, '2101', 21, 2, 3, NULL, NULL, '1'),
+(65, '2101', 21, 2, 4, NULL, NULL, '1'),
+(66, '2102', 21, 1, 1, NULL, NULL, '1'),
+(67, '2102', 21, 1, 2, NULL, NULL, '1'),
+(68, '2102', 21, 1, 3, NULL, NULL, '1'),
+(69, '2102', 21, 1, 4, NULL, NULL, '1'),
+(70, '2102', 21, 2, 1, NULL, NULL, '1'),
+(71, '2102', 21, 2, 2, NULL, NULL, '1'),
+(72, '2102', 21, 2, 3, NULL, NULL, '1'),
+(73, '2102', 21, 2, 4, NULL, NULL, '1');
 
 -- --------------------------------------------------------
 
@@ -521,17 +522,17 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`id`, `username`, `password`, `type`, `last_login`, `login_record`, `is_online`, `remember_token`) VALUES
-(1, 'admin', '$2y$10$Zuxg2al05FH1kMjgusi1wObbAMsNs6GBS/rgJ/Ei7jc7SU4AymDCW', 'SA', NULL, NULL, NULL, '43V9bZZR6QPDTEqeUbepPncA2r6MebUTHv6M7HTZpfC5kF4MtjV9MGvA8a4B'),
-(2, '001', '670b14728ad9902aecba32e22fa4f6bd', 'EA', NULL, NULL, NULL, ''),
-(3, '002', '670b14728ad9902aecba32e22fa4f6bd', 'EA', NULL, NULL, NULL, ''),
-(4, '2101', '670b14728ad9902aecba32e22fa4f6bd', 'T', NULL, NULL, NULL, ''),
-(5, '2102', '670b14728ad9902aecba32e22fa4f6bd', 'T', NULL, NULL, NULL, ''),
-(6, '0101', '670b14728ad9902aecba32e22fa4f6bd', 'T', NULL, NULL, NULL, ''),
-(7, '0102', '670b14728ad9902aecba32e22fa4f6bd', 'T', NULL, NULL, NULL, ''),
-(8, '13010001', '670b14728ad9902aecba32e22fa4f6bd', 'S', NULL, NULL, NULL, ''),
-(9, '13010002', '670b14728ad9902aecba32e22fa4f6bd', 'S', NULL, NULL, NULL, ''),
-(10, '12210001', '670b14728ad9902aecba32e22fa4f6bd', 'S', NULL, NULL, NULL, ''),
-(11, '13210001', '670b14728ad9902aecba32e22fa4f6bd', 'S', NULL, NULL, NULL, '');
+(1, 'admin', '$2y$10$Zuxg2al05FH1kMjgusi1wObbAMsNs6GBS/rgJ/Ei7jc7SU4AymDCW', 'SA', NULL, NULL, NULL, 'wGjetCW3DfCXbVofP091HOUCPA1zlPJLGeVheGymaODIthJaUEsp8w20vQZZ'),
+(2, '001', '$2y$10$Zuxg2al05FH1kMjgusi1wObbAMsNs6GBS/rgJ/Ei7jc7SU4AymDCW', 'EA', NULL, NULL, NULL, ''),
+(3, '002', '$2y$10$Zuxg2al05FH1kMjgusi1wObbAMsNs6GBS/rgJ/Ei7jc7SU4AymDCW', 'EA', NULL, NULL, NULL, ''),
+(4, '2101', '$2y$10$Zuxg2al05FH1kMjgusi1wObbAMsNs6GBS/rgJ/Ei7jc7SU4AymDCW', 'T', NULL, NULL, NULL, ''),
+(5, '2102', '$2y$10$Zuxg2al05FH1kMjgusi1wObbAMsNs6GBS/rgJ/Ei7jc7SU4AymDCW', 'T', NULL, NULL, NULL, ''),
+(6, '0101', '$2y$10$Zuxg2al05FH1kMjgusi1wObbAMsNs6GBS/rgJ/Ei7jc7SU4AymDCW', 'T', NULL, NULL, NULL, ''),
+(7, '0102', '$2y$10$Zuxg2al05FH1kMjgusi1wObbAMsNs6GBS/rgJ/Ei7jc7SU4AymDCW', 'T', NULL, NULL, NULL, ''),
+(8, '13010001', '$2y$10$Zuxg2al05FH1kMjgusi1wObbAMsNs6GBS/rgJ/Ei7jc7SU4AymDCW', 'S', NULL, NULL, NULL, ''),
+(9, '13010002', '$2y$10$Zuxg2al05FH1kMjgusi1wObbAMsNs6GBS/rgJ/Ei7jc7SU4AymDCW', 'S', NULL, NULL, NULL, ''),
+(10, '12210001', '$2y$10$Zuxg2al05FH1kMjgusi1wObbAMsNs6GBS/rgJ/Ei7jc7SU4AymDCW', 'S', NULL, NULL, NULL, ''),
+(11, '13210001', '$2y$10$Zuxg2al05FH1kMjgusi1wObbAMsNs6GBS/rgJ/Ei7jc7SU4AymDCW', 'S', NULL, NULL, NULL, '');
 
 --
 -- Indexes for dumped tables
@@ -544,9 +545,9 @@ ALTER TABLE `course`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `courses_offered`
+-- Indexes for table `course_offered`
 --
-ALTER TABLE `courses_offered`
+ALTER TABLE `course_offered`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_courses_offered_teacher_username` (`teacher_username`),
   ADD KEY `fk_courses_offered_school_number` (`school_number`),
@@ -664,9 +665,9 @@ ALTER TABLE `user`
 ALTER TABLE `course`
   MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '课程主键自增id', AUTO_INCREMENT=6;
 --
--- 使用表AUTO_INCREMENT `courses_offered`
+-- 使用表AUTO_INCREMENT `course_offered`
 --
-ALTER TABLE `courses_offered`
+ALTER TABLE `course_offered`
   MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '开设课程的自增主键id', AUTO_INCREMENT=74;
 --
 -- 使用表AUTO_INCREMENT `course_student`
@@ -718,9 +719,9 @@ ALTER TABLE `user`
 --
 
 --
--- 限制表 `courses_offered`
+-- 限制表 `course_offered`
 --
-ALTER TABLE `courses_offered`
+ALTER TABLE `course_offered`
   ADD CONSTRAINT `fk_courses_offered_course_id` FOREIGN KEY (`course_id`) REFERENCES `course` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_courses_offered_school_number` FOREIGN KEY (`school_number`) REFERENCES `school` (`number`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_courses_offered_semester_id` FOREIGN KEY (`semester_id`) REFERENCES `semester` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -730,7 +731,7 @@ ALTER TABLE `courses_offered`
 -- 限制表 `course_student`
 --
 ALTER TABLE `course_student`
-  ADD CONSTRAINT `fk_course_student_course_offered_id` FOREIGN KEY (`course_offered_id`) REFERENCES `courses_offered` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_course_student_course_offered_id` FOREIGN KEY (`course_offered_id`) REFERENCES `course_offered` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_course_student_course_team_id` FOREIGN KEY (`course_team_id`) REFERENCES `course_team` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_course_student_student_username` FOREIGN KEY (`student_username`) REFERENCES `student` (`username`) ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -738,7 +739,7 @@ ALTER TABLE `course_student`
 -- 限制表 `course_team`
 --
 ALTER TABLE `course_team`
-  ADD CONSTRAINT `fk_course_team_course_offered_id` FOREIGN KEY (`course_offered_id`) REFERENCES `courses_offered` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_course_team_course_offered_id` FOREIGN KEY (`course_offered_id`) REFERENCES `course_offered` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_course_team_owner_username` FOREIGN KEY (`owner_username`) REFERENCES `student` (`username`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_course_team_team_id` FOREIGN KEY (`team_id`) REFERENCES `team` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -746,7 +747,7 @@ ALTER TABLE `course_team`
 -- 限制表 `homework`
 --
 ALTER TABLE `homework`
-  ADD CONSTRAINT `fk_homework_course_offered_id` FOREIGN KEY (`course_offered_id`) REFERENCES `courses_offered` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_homework_course_offered_id` FOREIGN KEY (`course_offered_id`) REFERENCES `course_offered` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- 限制表 `resource`

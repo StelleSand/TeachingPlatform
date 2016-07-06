@@ -64,9 +64,9 @@ class StudentController extends Controller
         return json_encode($courses);
     }
 
-    public function getJsonCourseInfo(){
-        $courseOfferedID = Request::input('course_offered_id');
-        $courseInfo = CourseOffered::where('id',$courseOfferedID)
+    public function getJsonCourseInfo(Request $request){
+        $courseOfferedID = $request->input('course_offered_id');
+        $courseInfo = CourseOffered::where('course_offered.id',$courseOfferedID)
             ->join('course','course_offered.course_id','=','course.id')
             ->join('semester','course_offered.semester_id','=','semester.id')
             ->join('teacher','course_offered.teacher_username','=','teacher.username')
@@ -81,9 +81,9 @@ class StudentController extends Controller
         return json_encode($courseInfo);
     }
 
-    public function getJsonCourseHomeworks(){
-        $courseOfferedID = Request::input('course_offered_id');
-        $homeworks = CourseOffered::where('id',$courseOfferedID)
+    public function getJsonCourseHomeworks(Request $request){
+        $courseOfferedID = $request->input('course_offered_id');
+        $homeworks = CourseOffered::where('course_offered.id',$courseOfferedID)
             ->join('homework','course_offered.id','=','homework.course_offered_id')
             ->join('submit_homework','submit_homework.homework_id','=','homeworkd.id')
             ->where('submit_homework.type','1')
