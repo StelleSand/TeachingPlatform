@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <title>课程主页</title>
     <link href="./css/bootstrap.min.css" type="text/css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/mystyles.css" type="text/css">
+    <link rel="stylesheet" href="./css/font-awesome.min.css" type="text/css">
+    <link rel="stylesheet" href="./css/bootstrap-social.css" type="text/css">
     <script src="./js/angular.min.js"></script>
     <script src="./js/angular-route.min.js"></script>
     <script>
@@ -19,7 +22,7 @@
         });
     </script>
 </head>
-<body>
+<body ng-controller="MainController">
 <div class="container" ng-controller="MainController">
     <div class="alert alert-danger" role="alert" ng-show="isAlert" style="margin-bottom: 0;">
         <span class="glyphicon glyphicon-remove-circle" style="float: right; cursor: pointer;" ng-click="closeAlert()"></span>
@@ -27,98 +30,219 @@
         <p>你确定？</p>
     </div>
     <div class="row">
-        <div class="col-md-3">
-            <div class="panel panel-default">
-                <div class="panel-heading"><h3>工科高等数学</h3></div>
-                <div class="list-group">
-                    <a href="#classInfo" class="list-group-item">课程信息</a>
-                    <a href="#classHomework" class="list-group-item">作业</a>
-                    <a href="#classResource" class="list-group-item">资源</a>
-                </div>
-            </div>
+        <div class="col-xs-2">
+            <ul class="nav nav-tabs nav-stacked" id="sideNav">
+                <li><a href="#courseIndex"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> 课程主页</a></li>
+                <li><a href="#courseHomework"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> 课程作业</a></li>
+                <li><a href="#courseResource"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span> 课程资源</a></li>
+            </ul>
         </div>
-        <div class="col-md-9" ng-view></div>
-        <div><button class="btn btn-primary" ng-click="openAlert()">确定？</button></div>
+        <div class="col-xs-10" ng-view></div>
+        <!--<div><button class="btn btn-primary" ng-click="openAlert()">确定？</button></div>-->
     </div>
-    <script type="text/ng-template" id="classInfo.html">
-        <div class="panel panel-default">
-            <div class="panel-heading"><h3>课程信息</h3></div>
+    <script type="text/ng-template" id="courseInfo.html">
+        <div class="container-header page-header">
+            <h2>课程概况</h2>
+        </div>
+        <!--<div class="panel">
+            <div class="panel-body">
+            </div>
+        </div>-->
+        <p><h3>课程信息</h3></p>
+        <table class="table table-striped">
+            <tbody>
+            <tr><td>课程名称</td><td>{{ course.course_name }}</td></tr>
+            <tr><td>课程教师</td><td>{{ course.teacher_name }}</td></tr>
+            <tr><td>课程所在学期</td><td>{{ course.semester_name }}</td></tr>
+            <tr><td>课程描述</td><td>{{ course.course_description }}</td></tr>
+            </tbody>
+        </table>
+        <br>
+        <p><h3>选课学生信息</h3></p>
+        <table class="table table-striped">
+            <thead><tr><td>姓名</td><td>学号</td><td>班级</td><td>性别</td><td>邮箱</td></tr></thead>
+            <tbody>
+                <tr ng-repeat="student in students">
+                    <td>{{ student.student_name }}</td>
+                    <td>{{ student.student_username }}</td>
+                    <td>{{ student.student_class_number }}</td>
+                    <td>{{ student.student_gender }}</td>
+                    <td>{{ student.student_email }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </script>
+    <script type="text/ng-template" id="courseHomework.html">
+        <div class="container-header page-header">
+            <h2>课程作业</h2>
+        </div>
+        <div class="panel">
             <div class="panel-body">
                 <table class="table table-striped">
+                    <thead>
+                    <tr><td>作业标题</td><td>状态</td><td>开始时间</td><td>截止时间</td></tr>
+                    </thead>
                     <tbody>
-                    <tr><td>名称</td><td>{{ lesson.name }}</td></tr>
-                    <tr><td>教师</td><td>{{ lesson.teacher }}</td></tr>
-                    <tr><td>描述</td><td>{{ lesson.description }}</td></tr>
+                    <tr ng-repeat="homework in homeworkList">
+                        <td>{{ homework.homework_name }}</td>
+                        <td>{{ homework.submit_homework_state }}</td>
+                        <td>{{ homework.homework_start_date }}</td>
+                        <td>{{ homework.homework_end_date }}</td>
+                    </tr>
                     </tbody>
                 </table>
             </div>
         </div>
     </script>
-    <script type="text/ng-template" id="classHomework.html">
-        <div class="panel panel-default">
-            <div class="panel-heading"><h3>作业</h3></div>
-            <div class="panel-body">
-                <table class="table table-striped">
-                    <thead>
-                        <tr><td>作业标题</td><td>状态</td><td>开始时间</td><td>截止时间</td></tr>
-                    </thead>
-                    <tbody>
-                        <tr ng-repeat="homework in homeworkList">
-                            <td><a href="/teacher/homework+{{ homework.id }}">{{ homework.title }}</a></td>
-                            <td>{{ homework.status }}</td>
-                            <td>{{ homework.start }}</td>
-                            <td>{{ homework.end }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+    <script type="text/ng-template" id="courseResource.html">
+        <div class="container-header page-header">
+            <h2>课程资源</h2>
         </div>
-    </script>
-    <script type="text/ng-template" id="classResource.html">
-        <div class="panel panel-default">
-            <div class="panel-heading"><h3>文件资源</h3></div>
+        <div class="panel">
             <div class="panel-body">
-                <table class="table">
+                <table class="table table-striped" style = "text-align : left;">
                     <thead>
-                        <tr><td>标题</td><td>创建者</td><td>修改时间</td><td>文件大小</td></tr>
+                    <tr>
+                        <th>标题</th>
+                        <th>访问范围</th>
+                        <th>创建者</th>
+                        <th>修改时间</th>
+                        <th>大小</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="file in resource" ng-class="{ info: file.type=='directory' }">
-                            <td><a href="/resource/file+{{ file.id }}">{{ file.name }}</a></td>
-                            <td>{{ file.creator }}</td>
-                            <td>{{ file.time }}</td>
-                            <td>{{ file.size }}</td>
-                        </tr>
+                    <tr>
+                        <td><span class ="glyphicon glyphicon-folder-open" aria-hidden = "true"></span><a href = "/css" title = "folder"> 大学语文资源</a></td>
+                        <td>公开</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><span class ="glyphicon glyphicon-file" aria-hidden = "true"></span><a href = "/css/bootstrap-social.css" target = "_blank" title = "css"> 大学语文的css规范</a></td>
+                        <td>公开</td>
+                        <td>张三</td>
+                        <td>2016/6/4</td>
+                        <td>1.1MB</td>
+                    </tr>
+                    <tr>
+                        <td><span class ="glyphicon glyphicon-picture" aria-hidden = "true"></span><a href = "/css/bootstrap-social.css" target = "_blank" title = "pic"> 大学语文的图片规范</a></td>
+                        <td>公开</td>
+                        <td>张三</td>
+                        <td>2016/6/4</td>
+                        <td>1.1MB</td>
+                    </tr>
+                    <tr>
+                        <td><span class ="glyphicon glyphicon-list-alt" aria-hidden = "true"></span><a href = "/css/bootstrap-social.css" target = "_blank" title = "PDF"> 大学语文的PDF规范</a></td>
+                        <td>公开</td>
+                        <td>张三</td>
+                        <td>2016/6/4</td>
+                        <td>1.1MB</td>
+                    </tr>
+                    <tr>
+                        <td><span class ="glyphicon glyphicon-blackboard" aria-hidden = "true"></span><a href = "/css/bootstrap-social.css" target = "_blank" title = "PPT"> 大学语文的PPT规范</a></td>
+                        <td>公开</td>
+                        <td>张三</td>
+                        <td>2016/6/4</td>
+                        <td>1.1MB</td>
+                    </tr>
                     </tbody>
                 </table>
             </div>
         </div>
     </script>
 </div>
+<footer class="row-footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-5 col-xs-offset-1 col-sm-2 col-sm-offset-1">
+                <h5>友情链接</h5>
+                <ul class="list-unstyled">
+                    <li><a href="#">主页</a></li>
+                    <li><a href="http://balance.beihangsoft.cn/BuaaPublic/html/index.html">北航软件学院</a></li>
+                </ul>
+            </div>
+            <div class="col-xs-6 col-sm-5">
+                <h5>地址</h5>
+                <address>
+                    北京海淀区<br>
+                    学院路，北京航空航天大学<br>
+                    软件学院<br>
+                    <i class="fa fa-phone"></i>: +12345678<br>
+                    <i class="fa fa-fax"></i>: +12345678<br>
+                    <i class="fa fa-envelope"></i>:
+                    <a href="mailto:zhangsan@163.com">zhangsan@163.com</a>
+                </address>
+            </div>
+            <div class="col-xs-12 col-sm-4">
+                <div class="nav navbar-nav" style="padding: 40px 10px;">
+                    <a class="btn btn-social-icon btn-google-plus" href="http://google.com/+"><i class="fa fa-google-plus"></i></a>
+                    <a class="btn btn-social-icon btn-facebook" href="http://www.facebook.com/profile.php?id="><i class="fa fa-facebook"></i></a>
+                    <a class="btn btn-social-icon btn-linkedin" href="http://www.linkedin.com/in/"><i class="fa fa-linkedin"></i></a>
+                    <a class="btn btn-social-icon btn-twitter" href="http://twitter.com/"><i class="fa fa-twitter"></i></a>
+                    <a class="btn btn-social-icon btn-youtube" href="http://youtube.com/"><i class="fa fa-youtube"></i></a>
+                    <a class="btn btn-social-icon" href="mailto:"><i class="fa fa-envelope-o"></i></a>
+                </div>
+            </div>
+            <div class="col-xs-12">
+                <p style="padding:10px;"></p>
+                <p align=center>© Copyright 2015 四叶草组</p>
+            </div>
+        </div>
+    </div>
+</footer>
 <script>
     myApp.config(['$routeProvider', function ($routeProvider) {
         $routeProvider
-                .when('/classHomework', {
-                    templateUrl: 'classHomework.html',
+                .when('/courseHomework', {
+                    templateUrl: 'couresHomework.html',
                     controller: 'HomeworkController'
                 })
-                .when('/classResource', {
-                    templateUrl: 'classResource.html',
+                .when('/courseResource', {
+                    templateUrl: 'courseResource.html',
                     controller: 'ResourceController'
                 })
                 .otherwise({
-                    templateUrl: 'classInfo.html',
+                    templateUrl: 'courseInfo.html',
                     controller: 'InfoController'
                 });
     }]);
-    myApp.controller('InfoController', function ($scope) {
-        $scope.lesson = { name: '工科高等数学', teacher: '王乐', description: '这是一门非常重要的课程' };
+    myApp.controller('MainController',function ($scope) {
+        var url = location.search;
+        var str = url.substr(1);
+        $scope.course_id = str.split('=')[1];
+        console.log('获取的课程id=' + $scope.course_id);
+    });
+    myApp.controller('InfoController', function ($scope, $http) {
+        $http.get('jTeacherCourseInfo?course_offered_id=' + $scope.course_id)
+                .success(function (data) {
+                    $scope.course = data[0];
+                })
+                .error(function (data, status) {
+                    console.log('发生错误！ 状态：' + status);
+                });
+        $http.get('jTeacherCourseStudents?course_offered_id=' + $scope.course_id)
+                .success(function (data) {
+                    console.log(data);
+                    $scope.students = data;
+                })
+                .error(function (data, status) {
+                    console.log('发生错误！ 状态：' + status);
+                });
+        //$scope.lesson = { name: '工科高等数学', teacher: '王乐', description: '这是一门非常重要的课程' };
     });
     myApp.controller('HomeworkController', function ($scope) {
-        $scope.homeworkList = [
+        $http.get('jTeacherCourseHomeworks?course_offered_id=' + $scope.course_id)
+                .success(function (data) {
+                    $scope.homeworkList = data;
+                })
+                .error(function (data, status) {
+                    console.log('发生错误！ 状态：' + status);
+                });
+        /*$scope.homeworkList = [
             { id: 225, title: '第五章作业', status: '未完成', start: '2016-7-4 12:00', end: '2016-7-12 18:00' },
             { id: 122, title: '第四章作业', status: '已提交', start: '2016-6-20 12:00', end: '2016-6-28 18:00' }
-        ];
+        ];*/
     });
     myApp.controller('ResourceController', function ($scope) {
         $scope.resource = [

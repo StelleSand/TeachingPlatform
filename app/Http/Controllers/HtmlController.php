@@ -7,7 +7,7 @@ class HtmlController extends Controller {
         View::addExtension('html', 'php');
         return view('/teacher/teacherIndex');
     }
-    public function getTeachClass () {
+    public function getTeachCourse () {
         return view('/teacher/teacherCourse');
     }
     public function getStudent () {

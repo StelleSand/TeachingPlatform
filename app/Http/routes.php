@@ -15,7 +15,7 @@ Route::auth();
 Route::get('/home', 'HomeController@index');
 
 Route::get('/teacher', 'HtmlController@getHtmlFile');
-Route::get('/teacherClass', 'HtmlController@getTeachCourse');
+Route::get('/teacherCourse', 'HtmlController@getTeachCourse');
 Route::get('/student', 'HtmlController@getStudent');
 Route::get('/studentCourse', 'HtmlController@getStudentCourse');
 Route::get('/myLogin', function () {
@@ -40,8 +40,6 @@ Route::get('/jStudentCourseInfo','StudentController@getJsonCourseInfo');
 Route::get('/jStudentCourseHomeworks','StudentController@getJsonCourseHomeworks');
 Route::get('/jStudentTeams','StudentController@getJsonTeams');
 //Student相关模块-->
-<<<<<<< HEAD
-=======
 
 
 //<!-- Teacher相关模块
@@ -56,4 +54,3 @@ Route::get('/jTeacherCourseHomeworks','TeacherController@getJsonCourseHomeworks'
 Route::post('/jTeacherPublishHomework','TeacherController@postJsonPublishHomework');
 
 //Teacher相关模块-->
->>>>>>> origin/master
