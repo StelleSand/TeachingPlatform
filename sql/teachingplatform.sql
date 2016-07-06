@@ -410,7 +410,7 @@ CREATE TABLE `student` (
   `gender` enum('0','1') DEFAULT NULL COMMENT '学生性别 1-男生 0 - 女生',
   `birth` date DEFAULT NULL COMMENT '学生出生日期',
   `address` varchar(20) DEFAULT NULL COMMENT '学生住址',
-  `telphone` varchar(11) DEFAULT NULL COMMENT '学生联系电话',
+  `telephone` varchar(11) DEFAULT NULL COMMENT '学生联系电话',
   `email` varchar(20) DEFAULT NULL COMMENT '学生电子邮箱',
   `enrollment_year` int(4) DEFAULT NULL COMMENT '学生入学年份',
   `graduation_year` int(4) DEFAULT NULL COMMENT '学生毕业年份 （默认由入学年份加4，其他情况由教务制定）',
@@ -424,7 +424,7 @@ CREATE TABLE `student` (
 -- 转存表中的数据 `student`
 --
 
-INSERT INTO `student` (`username`, `name`, `gender`, `birth`, `address`, `telphone`, `email`, `enrollment_year`, `graduation_year`, `class_number`, `school_number`, `now_team_str`, `old_team_str`) VALUES
+INSERT INTO `student` (`username`, `name`, `gender`, `birth`, `address`, `telephone`, `email`, `enrollment_year`, `graduation_year`, `class_number`, `school_number`, `now_team_str`, `old_team_str`) VALUES
 ('12210001', '21系A同学', '1', '1993-04-23', '北京市海淀区学院路37号　', '13240327922', 'xxx@sina.com.cn', 2012, 2016, '122101', 21, NULL, NULL),
 ('13010001', '1系A同学', '1', '1994-06-05', '北京市海淀区学院路37号　', '13240327922', '13240327922@buaa.edu', 2013, 2017, '130101', 1, NULL, NULL),
 ('13010002', '1系B同学', '0', '1994-11-14', '北京市海淀区学院路37号　', '85823700', 'buaa@buaa.edu.cn', 2013, 2017, '130101', 1, NULL, NULL),

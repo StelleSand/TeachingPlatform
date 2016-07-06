@@ -5,6 +5,7 @@ use App\CourseOffered;
 use App\CourseStudent;
 use App\Http\Requests;
 use App\Student;
+use App\SubmitHomework;
 use App\Team;
 use App\User;
 use Carbon\Carbon;
@@ -90,22 +91,41 @@ class StudentController extends Controller
         $courseOfferedID = $request->input('course_offered_id');
         $homeworks = CourseOffered::where('course_offered.id',$courseOfferedID)
             ->join('homework','course_offered.id','=','homework.course_offered_id')
-            ->join('submit_homework','submit_homework.homework_id','=','homework.id')
+            //->join('submit_homework','submit_homework.homework_id','=','homework.id')
             ->where('homework.start_date','<',$present)
-            ->where('submit_homework.type','1')
-            ->where('submit_homework.submit_username',$this->user->username)
+            //->where('submit_homework.type','1')
+            //->where('submit_homework.submit_username',$this->user->username)
             ->select(
                 'homework.name as homework_name',
                 'homework.description as homework_description',
                 'homework.publish_date as homework_publish_date',
                 'homework.start_date as homework_start_date',
-                'homework.end_date as homework_end_date',
-                'submit_homework.id as submit_homework_id',
-                'submit_homework.state as submit_homework_state',
-                'submit_homework.name as submit_homework_name',
-                'submit_homework.grade as submit_homework_grade'
+                'homework.end_date as homework_end_date'
+                //'submit_homework.id as submit_homework_id',
+                //'submit_homework.state as submit_homework_state',
+                //'submit_homework.name as submit_homework_name',
+                //'submit_homework.grade as submit_homework_grade'
             )
             ->get();
+        foreach($homeworks as &$homework){
+            $submit = SubmitHomework::where('homework_id',$homework->id)
+                ->where('submit_username',$this->user->username)
+                ->where('type','1')
+                ->first();
+            if(count($submit) == 0)
+            {
+                $homework->submit_homework_id = 0;
+                $homework->submit_homework_state = 0;
+                $homework->submit_homework_name = 0;
+                $homework->submit_homework_grade = 0;
+            }
+            else{
+                $homework->submit_homework_id = $submit->id;
+                $homework->submit_homework_state = $submit->state;
+                $homework->submit_homework_name = $submit->name;
+                $homework->submit_homework_grade = $submit->grade;
+            }
+        }
         return json_encode($homeworks);
     }
 

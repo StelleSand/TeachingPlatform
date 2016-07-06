@@ -5,14 +5,11 @@
     <list default="true" id="8b16c249-8f13-4c90-b659-4a5366996f41" name="Default" comment="" />
 =======
     <list default="true" id="1d63d3ca-11de-4f13-9440-fcd3314443f4" name="Default" comment="Login System Finished">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/Http/Controllers/TeacherController.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Homework.php" afterPath="$PROJECT_DIR$/app/Homework.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Http/Controllers/HomeController.php" afterPath="$PROJECT_DIR$/app/Http/Controllers/HomeController.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Http/Controllers/StudentController.php" afterPath="$PROJECT_DIR$/app/Http/Controllers/StudentController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Http/routes.php" afterPath="$PROJECT_DIR$/app/Http/routes.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Semester.php" afterPath="$PROJECT_DIR$/app/Semester.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Teacher.php" afterPath="$PROJECT_DIR$/app/Teacher.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/app.php" afterPath="$PROJECT_DIR$/config/app.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Http/Controllers/TeacherController.php" afterPath="$PROJECT_DIR$/app/Http/Controllers/TeacherController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sql/teachingplatform.sql" afterPath="$PROJECT_DIR$/sql/teachingplatform.sql" />
     </list>
 >>>>>>> origin/master
     <ignored path="TeachingPlatform.iws" />
@@ -38,6 +35,7 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
       <file leaf-file-name="routes.php" pinned="false" current-in-tab="false">
@@ -77,10 +75,21 @@
             <state vertical-scroll-proportion="-35.964287" vertical-offset="1653" max-vertical-offset="3040">
               <caret line="140" column="32" selection-start-line="140" selection-start-column="32" selection-end-line="140" selection-end-column="32" />
               <folding />
+=======
+      <file leaf-file-name="StudentController.php" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/Http/Controllers/StudentController.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.5521886">
+              <caret line="109" column="40" selection-start-line="109" selection-start-column="31" selection-end-line="109" selection-end-column="40" />
+              <folding>
+                <element signature="e#39#61#0#PHP" expanded="true" />
+              </folding>
+>>>>>>> origin/master
             </state>
           </provider>
         </entry>
       </file>
+<<<<<<< HEAD
       <file leaf-file-name="studentCourse.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/resources/views/student/studentCourse.html">
           <provider selected="true" editor-type-id="text-editor">
@@ -93,11 +102,19 @@
             <state vertical-scroll-proportion="0.57575756">
               <caret line="18" column="0" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
 >>>>>>> origin/master
+=======
+      <file leaf-file-name="routes.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/Http/routes.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-7.464286">
+              <caret line="32" column="62" selection-start-line="32" selection-start-column="62" selection-end-line="32" selection-end-column="62" />
+>>>>>>> origin/master
               <folding />
             </state>
           </provider>
         </entry>
       </file>
+<<<<<<< HEAD
 <<<<<<< HEAD
       <file leaf-file-name="teacherIndex.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/resources/views/teacher/teacherIndex.html">
@@ -140,6 +157,14 @@
                 <element signature="e#39#61#0#PHP" expanded="true" />
 >>>>>>> origin/master
               </folding>
+=======
+      <file leaf-file-name="SubmitHomework.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/SubmitHomework.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-8.821428">
+              <caret line="19" column="36" selection-start-line="19" selection-start-column="36" selection-end-line="19" selection-end-column="36" />
+              <folding />
+>>>>>>> origin/master
             </state>
           </provider>
         </entry>
@@ -147,8 +172,8 @@
       <file leaf-file-name="Homework.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/Homework.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-11.535714">
-              <caret line="17" column="78" selection-start-line="17" selection-start-column="78" selection-end-line="17" selection-end-column="78" />
+            <state vertical-scroll-proportion="-13.571428">
+              <caret line="20" column="35" selection-start-line="20" selection-start-column="20" selection-end-line="20" selection-end-column="35" />
               <folding />
             </state>
           </provider>
@@ -201,7 +226,6 @@
         <option value="$PROJECT_DIR$/vendor/laravel/framework/src/Illuminate/Foundation/Auth/AuthenticatesUsers.php" />
         <option value="$PROJECT_DIR$/database/migrations/2014_10_12_000000_create_users_table.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/Auth/AuthController.php" />
-        <option value="$PROJECT_DIR$/app/Http/Controllers/HomeController.php" />
         <option value="$PROJECT_DIR$/resources/views/layouts/app.blade.php" />
         <option value="$PROJECT_DIR$/resources/views/auth/login.blade.php" />
         <option value="$PROJECT_DIR$/app/User.php" />
@@ -212,12 +236,20 @@
         <option value="$PROJECT_DIR$/config/app.php" />
         <option value="$PROJECT_DIR$/app/Semester.php" />
         <option value="$PROJECT_DIR$/app/Homework.php" />
+<<<<<<< HEAD
         <option value="$PROJECT_DIR$/app/Http/Controllers/StudentController.php" />
 <<<<<<< HEAD
 >>>>>>> origin/master
 =======
         <option value="$PROJECT_DIR$/app/Http/routes.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/TeacherController.php" />
+>>>>>>> origin/master
+=======
+        <option value="$PROJECT_DIR$/app/Http/routes.php" />
+        <option value="$PROJECT_DIR$/app/Http/Controllers/TeacherController.php" />
+        <option value="$PROJECT_DIR$/app/Http/Controllers/StudentController.php" />
+        <option value="$PROJECT_DIR$/sql/teachingplatform.sql" />
+        <option value="$PROJECT_DIR$/app/Http/Controllers/HomeController.php" />
 >>>>>>> origin/master
       </list>
     </option>
@@ -368,6 +400,7 @@
               <option name="myItemId" value="views" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
+<<<<<<< HEAD
             <PATH_ELEMENT>
               <option name="myItemId" value="layouts" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
@@ -400,6 +433,22 @@
 >>>>>>> origin/master
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
+=======
+>>>>>>> origin/master
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="TeachingPlatform" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="TeachingPlatform" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="resources" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -430,28 +479,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="Http" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="TeachingPlatform" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="TeachingPlatform" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Http" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Controllers" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -942,6 +969,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.7681941">
           <caret line="15" column="10" selection-start-line="15" selection-start-column="10" selection-end-line="15" selection-end-column="10" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -949,14 +977,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-9.5">
           <caret line="14" column="10" selection-start-line="14" selection-start-column="10" selection-end-line="14" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.20485175">
-          <caret line="735" column="20" selection-start-line="735" selection-start-column="20" selection-end-line="735" selection-end-column="20" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1147,6 +1167,7 @@
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/app/Http/Controllers/HomeController.php">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.49621212">
@@ -1192,6 +1213,8 @@
         <state vertical-scroll-proportion="0.20833333">
           <caret line="13" column="63" selection-start-line="13" selection-start-column="63" selection-end-line="13" selection-end-column="63" />
 =======
+=======
+>>>>>>> origin/master
     <entry file="file://$PROJECT_DIR$/app/User.php">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.7291667">
@@ -1209,15 +1232,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/SubmitHomework.php">
+    <entry file="file://$PROJECT_DIR$/app/CourseStudent.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-8.428572">
-          <caret line="19" column="36" selection-start-line="19" selection-start-column="36" selection-end-line="19" selection-end-column="36" />
+        <state vertical-scroll-proportion="0.41582492">
+          <caret line="13" column="45" selection-start-line="13" selection-start-column="29" selection-end-line="13" selection-end-column="45" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/sql/teachingplatform.sql">
+    <entry file="file://$PROJECT_DIR$/config/app.php">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
 <<<<<<< HEAD
         <state vertical-scroll-proportion="0.46780303">
           <caret line="13" column="38" selection-start-line="13" selection-start-column="38" selection-end-line="13" selection-end-column="38" />
@@ -1237,14 +1262,18 @@
 =======
         <state vertical-scroll-proportion="-14.82183">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+=======
+        <state vertical-scroll-proportion="0.3838384">
+          <caret line="54" column="32" selection-start-line="54" selection-start-column="32" selection-end-line="54" selection-end-column="32" />
+>>>>>>> origin/master
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/CourseStudent.php">
+    <entry file="file://$PROJECT_DIR$/vendor/nesbot/carbon/src/Carbon/Carbon.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.41582492">
-          <caret line="13" column="45" selection-start-line="13" selection-start-column="29" selection-end-line="13" selection-end-column="45" />
+        <state vertical-scroll-proportion="-7.071429">
+          <caret line="1020" column="20" selection-start-line="1020" selection-start-column="20" selection-end-line="1020" selection-end-column="20" />
           <folding />
 >>>>>>> origin/master
         </state>
@@ -1257,6 +1286,7 @@
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/vendor/laravel/framework/src/Illuminate/Routing/Controller.php">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-0.20689656" vertical-offset="228" max-vertical-offset="2166">
@@ -1270,31 +1300,37 @@
           <caret line="23" column="61" selection-start-line="23" selection-start-column="45" selection-end-line="23" selection-end-column="61" />
 =======
     <entry file="file://$PROJECT_DIR$/app/Teacher.php">
+=======
+    <entry file="file://$PROJECT_DIR$/app/Semester.php">
+>>>>>>> origin/master
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.13636364">
-          <caret line="13" column="27" selection-start-line="13" selection-start-column="27" selection-end-line="13" selection-end-column="27" />
+        <state vertical-scroll-proportion="0.67171717">
+          <caret line="21" column="22" selection-start-line="21" selection-start-column="22" selection-end-line="21" selection-end-column="22" />
+          <folding>
+            <element signature="e#23#41#0#PHP" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Course.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.5117845">
+          <caret line="16" column="36" selection-start-line="16" selection-start-column="36" selection-end-line="16" selection-end-column="36" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Student.php">
+    <entry file="file://$PROJECT_DIR$/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.104377106">
-          <caret line="13" column="27" selection-start-line="13" selection-start-column="27" selection-end-line="24" selection-end-column="24" />
+        <state vertical-scroll-proportion="0.34848484">
+          <caret line="569" column="27" selection-start-line="569" selection-start-column="27" selection-end-line="569" selection-end-column="27" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/config/app.php">
+    <entry file="file://$PROJECT_DIR$/app/Teacher.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.3838384">
-          <caret line="54" column="32" selection-start-line="54" selection-start-column="32" selection-end-line="54" selection-end-column="32" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/nesbot/carbon/src/Carbon/Carbon.php">
-      <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
 <<<<<<< HEAD
         <state vertical-scroll-proportion="-8.821428">
           <caret line="13" column="54" selection-start-line="13" selection-start-column="38" selection-end-line="13" selection-end-column="54" />
@@ -1320,10 +1356,15 @@
         <state vertical-scroll-proportion="-2.0348837">
           <caret line="444" column="55" selection-start-line="444" selection-start-column="55" selection-end-line="444" selection-end-column="55" />
 >>>>>>> origin/master
+=======
+        <state vertical-scroll-proportion="0.13636364">
+          <caret line="13" column="27" selection-start-line="13" selection-start-column="27" selection-end-line="13" selection-end-column="27" />
+>>>>>>> origin/master
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
 <<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/app/Http/Controllers/HtmlController.php">
       <provider selected="true" editor-type-id="text-editor">
@@ -1333,16 +1374,24 @@
             <element signature="e#38#74#0#PHP" expanded="true" />
 =======
     <entry file="file://$PROJECT_DIR$/app/Semester.php">
+=======
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/TeacherController.php">
+>>>>>>> origin/master
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.67171717">
-          <caret line="21" column="22" selection-start-line="21" selection-start-column="22" selection-end-line="21" selection-end-column="22" />
+        <state vertical-scroll-proportion="0.45622894">
+          <caret line="123" column="38" selection-start-line="123" selection-start-column="38" selection-end-line="123" selection-end-column="38" />
           <folding>
+<<<<<<< HEAD
             <element signature="e#23#41#0#PHP" expanded="true" />
+>>>>>>> origin/master
+=======
+            <element signature="e#122#144#0#PHP" expanded="true" />
 >>>>>>> origin/master
           </folding>
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
 <<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/resources/views/teacher/teacherIndex.html">
       <provider selected="true" editor-type-id="text-editor">
@@ -1354,15 +1403,27 @@
 =======
 >>>>>>> origin/master
     <entry file="file://$PROJECT_DIR$/app/Homework.php">
+=======
+    <entry file="file://$PROJECT_DIR$/sql/teachingplatform.sql">
+>>>>>>> origin/master
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-11.535714">
-          <caret line="17" column="78" selection-start-line="17" selection-start-column="78" selection-end-line="17" selection-end-column="78" />
+        <state vertical-scroll-proportion="0.5017668">
+          <caret line="419" column="42" selection-start-line="419" selection-start-column="42" selection-end-line="419" selection-end-column="42" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/StudentController.php">
+    <entry file="file://$PROJECT_DIR$/app/Student.php">
       <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.26936027">
+          <caret line="18" column="18" selection-start-line="18" selection-start-column="18" selection-end-line="18" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/HomeController.php">
+      <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
 <<<<<<< HEAD
         <state vertical-scroll-proportion="-8.428572">
           <caret line="19" column="36" selection-start-line="19" selection-start-column="36" selection-end-line="19" selection-end-column="36" />
@@ -1374,13 +1435,18 @@
 =======
         <state vertical-scroll-proportion="-17.821428">
           <caret line="107" column="20" selection-start-line="107" selection-start-column="20" selection-end-line="107" selection-end-column="20" />
+=======
+        <state vertical-scroll-proportion="0.5521886">
+          <caret line="32" column="48" selection-start-line="32" selection-start-column="48" selection-end-line="32" selection-end-column="48" />
+>>>>>>> origin/master
           <folding>
-            <element signature="e#39#61#0#PHP" expanded="true" />
+            <element signature="e#40#62#0#PHP" expanded="true" />
           </folding>
 >>>>>>> origin/master
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
 <<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/resources/views/teacher/teacherClass.html">
       <provider selected="true" editor-type-id="text-editor">
@@ -1400,37 +1466,56 @@
           <folding />
 =======
     <entry file="file://$PROJECT_DIR$/app/Http/routes.php">
+=======
+    <entry file="file://$PROJECT_DIR$/app/CourseOffered.php">
+>>>>>>> origin/master
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-16.464285">
-          <caret line="45" column="81" selection-start-line="45" selection-start-column="58" selection-end-line="45" selection-end-column="81" />
+        <state vertical-scroll-proportion="0.63973063">
+          <caret line="20" column="71" selection-start-line="20" selection-start-column="71" selection-end-line="20" selection-end-column="71" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Course.php">
+    <entry file="file://$PROJECT_DIR$/app/SubmitHomework.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5117845">
-          <caret line="16" column="36" selection-start-line="16" selection-start-column="36" selection-end-line="16" selection-end-column="36" />
+        <state vertical-scroll-proportion="-8.821428">
+          <caret line="19" column="36" selection-start-line="19" selection-start-column="36" selection-end-line="19" selection-end-column="36" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/TeacherController.php">
+    <entry file="file://$PROJECT_DIR$/app/Homework.php">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state vertical-scroll-proportion="-15.785714">
           <caret line="117" column="0" selection-start-line="117" selection-start-column="0" selection-end-line="117" selection-end-column="0" />
           <folding>
             <element signature="e#122#144#0#PHP" expanded="true" />
           </folding>
 >>>>>>> origin/master
+=======
+        <state vertical-scroll-proportion="-13.571428">
+          <caret line="20" column="35" selection-start-line="20" selection-start-column="20" selection-end-line="20" selection-end-column="35" />
+          <folding />
+>>>>>>> origin/master
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/CourseOffered.php">
+    <entry file="file://$PROJECT_DIR$/app/Http/routes.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.57575756">
-          <caret line="18" column="0" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
+        <state vertical-scroll-proportion="-7.464286">
+          <caret line="32" column="62" selection-start-line="32" selection-start-column="62" selection-end-line="32" selection-end-column="62" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/StudentController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.5521886">
+          <caret line="109" column="40" selection-start-line="109" selection-start-column="31" selection-end-line="109" selection-end-column="40" />
+          <folding>
+            <element signature="e#39#61#0#PHP" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
