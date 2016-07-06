@@ -1,58 +1,45 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: AILance
+ * Date: 2016/7/6
+ * Time: 9:39
+ */
+
 namespace App\Http\Controllers;
 
+
 use App\CourseOffered;
-use App\CourseStudent;
-use App\Http\Requests;
-use App\Student;
-use App\Team;
-use App\User;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 
-class StudentController extends Controller
+class TeacherController extends Controller
 {
     protected $user;
-    protected $student;
+    protected $teacher;
 
     public function __construct()
     {
         $this->middleware('auth');
         if(Auth::check()) {
             $this->user = Auth::user();
-            if (!$this->user->isStudent())
+            if (!$this->user->isTeacher())
                 abort(403, 'Unauthorized action.');
-            $this->student = $this->user->student();
+            $this->teacher = $this->user->teacher();
         }
     }
 
     public function getViewHome(){
-        return view('student.home');
+        return view('teacher.home');
     }
-
-    public function getViewInformation(){
-        return view('student.infomation');
-    }
-
-    public function getViewCourses(){
-        return view('student.courses');
-    }
-
-    public function getViewTeams(){
-        return view('student.teams');
-    }
-
-
 
     public function getJsonInfo(){
-        return json_encode($this->student->toArray());
+        return json_encode($this->teacher->toArray());
     }
 
     public function getJsonCourses(){
-        $courses = CourseStudent::where('student_username',$this->user->username)
-            ->join('course_offered','course_student.course_offered_id','=','course_offered.id')
+        $courses = CourseOffered::where('teacher_username',$this->user->username)
             ->join('course','course_offered.course_id','=','course.id')
             ->join('semester','course_offered.semester_id','=','semester.id')
             ->join('teacher','course_offered.teacher_username','=','teacher.username')
@@ -70,7 +57,8 @@ class StudentController extends Controller
 
     public function getJsonCourseInfo(Request $request){
         $courseOfferedID = $request->input('course_offered_id');
-        $courseInfo = CourseOffered::where('course_offered.id',$courseOfferedID)
+        $courseInfo = CourseOffered::where('course_offered.teacher_username',$this->user->username)
+            ->where('course_offered.id',$courseOfferedID)
             ->join('course','course_offered.course_id','=','course.id')
             ->join('semester','course_offered.semester_id','=','semester.id')
             ->join('teacher','course_offered.teacher_username','=','teacher.username')
@@ -85,35 +73,48 @@ class StudentController extends Controller
         return json_encode($courseInfo);
     }
 
-    public function getJsonCourseHomeworks(Request $request){
-        $present = Carbon::now()->toDateTimeString();
+    public function getJsonCourseStudents(Request $request){
         $courseOfferedID = $request->input('course_offered_id');
-        $homeworks = CourseOffered::where('course_offered.id',$courseOfferedID)
-            ->join('homework','course_offered.id','=','homework.course_offered_id')
-            ->join('submit_homework','submit_homework.homework_id','=','homework.id')
-<<<<<<< HEAD
-=======
-            ->where('homework.start_date','<',$present)
->>>>>>> origin/master
-            ->where('submit_homework.type','1')
-            ->where('submit_homework.submit_username',$this->user->username)
+        $student = CourseOffered::where('course_offered.teacher_username',$this->user->username)
+            ->where('course_offered.id',$courseOfferedID)
+            ->join('course','course_offered.course_id','=','course.id')
+            ->join('course_student','course_student.course_offered_id','=','course_offered.id')
+            ->join('student','course_student.student_username','=','student.username')
             ->select(
+                'course_offered.id as course_offered_id',
+                'student.username as student_username',
+                'student.name as student_name',
+                'student.gender as student_gender',
+                'student.birth as student_birth',
+                'student.telephone as student_telephone',
+                'student.email as student_email',
+                'student.class_number as student_class_number',
+                'student.school_number as student_chool_number'
+            )
+            ->get();
+        return json_encode($student->toarray());
+    }
+
+    public function getJsonCourseHomeworks(Request $request){
+        $courseOfferedID = $request->input('course_offered_id');
+        $homeworks = CourseOffered::where('course_offered.teacher_username',$this->user->username)
+            ->where('course_offered.id',$courseOfferedID)
+            ->join('homework','homework.course_offered_id','=','course_offered.id')
+            ->select(
+                'homework.id as homework_id',
                 'homework.name as homework_name',
                 'homework.description as homework_description',
                 'homework.publish_date as homework_publish_date',
                 'homework.start_date as homework_start_date',
                 'homework.end_date as homework_end_date',
-                'submit_homework.id as submit_homework_id',
-                'submit_homework.state as submit_homework_state',
-                'submit_homework.name as submit_homework_name',
-                'submit_homework.grade as submit_homework_grade'
+                'homework.type as homework_type',
+                'course_offered_id'
             )
             ->get();
-        return json_encode($homeworks);
+        return json_encode($homeworks->toArray());
     }
 
-    public function getJsonTeams(){
-        $teams = Team::where('now_teammate_str','like','%'.$this->user->username.'%')->get();
-        return json_encode($teams);
+    public function postJsonPublishHomework(Request $request){
+
     }
 }
