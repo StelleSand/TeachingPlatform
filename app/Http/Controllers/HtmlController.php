@@ -8,7 +8,7 @@ class HtmlController extends Controller {
         return view('/teacher/teacherIndex');
     }
     public function getTeachClass () {
-        return view('/teacher/teacherClass');
+        return view('/teacher/teacherCourse');
     }
     public function getStudent () {
         return view('/student/studentIndex');

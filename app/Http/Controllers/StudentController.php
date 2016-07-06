@@ -85,7 +85,7 @@ class StudentController extends Controller
         $courseOfferedID = $request->input('course_offered_id');
         $homeworks = CourseOffered::where('course_offered.id',$courseOfferedID)
             ->join('homework','course_offered.id','=','homework.course_offered_id')
-            ->join('submit_homework','submit_homework.homework_id','=','homeworkd.id')
+            ->join('submit_homework','submit_homework.homework_id','=','homework.id')
             ->where('submit_homework.type','1')
             ->where('submit_homework.submit_username',$this->user->username)
             ->select(

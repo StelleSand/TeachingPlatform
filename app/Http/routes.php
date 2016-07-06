@@ -15,7 +15,7 @@ Route::auth();
 Route::get('/home', 'HomeController@index');
 
 Route::get('/teacher', 'HtmlController@getHtmlFile');
-Route::get('/teacherClass', 'HtmlController@getTeachClass');
+Route::get('/teacherClass', 'HtmlController@getTeachCourse');
 Route::get('/student', 'HtmlController@getStudent');
 Route::get('/studentCourse', 'HtmlController@getStudentCourse');
 Route::get('/myLogin', function () {
