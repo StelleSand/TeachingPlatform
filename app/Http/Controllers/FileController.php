@@ -27,9 +27,12 @@ class FileController extends Controller{
         $pulish_time = date("Y-m-d H:i",filectime($file));
 
         //echo $pulish_time;
+        $fileExtension = $file->getClientOriginalExtension();
+        $filename =  basename($file -> getClientOriginalName(), ".{$file->getClientOriginalExtension()}").filectime($file).'.'.$fileExtension;
+        echo $filename;
 
-        echo $filename =  $file -> getClientOriginalName();
-        $storage_path = $_SERVER['DOCUMENT_ROOT'].'/../'.'storage/app';
+        $storage_path =dirname($_SERVER['DOCUMENT_ROOT']).'/storage/app';
+        echo "$storage_path <br/>";
         $file->move($storage_path, iconv('utf-8', 'gbk', $filename));
         echo  'sd';
         $term = '123';
