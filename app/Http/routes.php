@@ -32,3 +32,17 @@ Route::get('/jStudentCourseInfo','StudentController@getJsonCourseInfo');
 Route::get('/jStudentCourseHomeworks','StudentController@getJsonCourseHomeworks');
 Route::get('/jStudentTeams','StudentController@getJsonTeams');
 //Student相关模块-->
+
+
+//<!-- Teacher相关模块
+Route::get('/teacherHome','TeacherController@getViewHome');
+
+
+Route::get('/jTeacherInfo','TeacherController@getJsonInfo');
+Route::get('/jTeacherCourses','TeacherController@getJsonCourses');
+Route::get('/jTeacherCourseInfo','TeacherController@getJsonCourseInfo');
+Route::get('/jTeacherCourseStudents','TeacherController@getJsonCourseStudents');
+Route::get('/jTeacherCourseHomeworks','TeacherController@getJsonCourseHomeworks');
+Route::post('/jTeacherPublishHomework','TeacherController@postJsonPublishHomework');
+
+//Teacher相关模块-->

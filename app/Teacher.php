@@ -12,8 +12,16 @@ class Teacher extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'username','name','gender','birth','address','telephone','email',
-        'state','school_number','rank'
+        'username',
+        'name',
+        'gender',
+        'birth',
+        'address',
+        'telephone',
+        'email',
+        'state',
+        'school_number',
+        'rank'
         ];
 
     public function coursesOffered(){
