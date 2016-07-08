@@ -93,10 +93,11 @@
         <div class="panel-body">
             <table class="table table-striped">
                 <thead>
-                <tr><td>作业标题</td><td>状态</td><td>开始时间</td><td>截止时间</td></tr>
+                <tr><td>序号</td><td>作业标题</td><td>状态</td><td>开始时间</td><td>截止时间</td></tr>
                 </thead>
                 <tbody>
                 <tr ng-repeat="homework in homeworkList">
+                    <td>{{ $index + 1 }}</td>
                     <td>{{ homework.homework_name }}</td>
                     <td>{{ homework.submit_homework_state }}</td>
                     <td>{{ homework.homework_start_date }}</td>
@@ -207,6 +208,8 @@
     myApp.controller('HomeworkController', function ($scope, $http) {
         $http.get('/jStudentCourseHomeworks?course_offered_id=' + $scope.course_id)
                 .success(function (data) {
+                    console.log('返回的作业数据');
+                    console.log(data);
                     $scope.homeworkList = data;
                 })
                 .error(function (data, status) {
