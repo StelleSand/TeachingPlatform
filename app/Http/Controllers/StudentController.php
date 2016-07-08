@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\CourseOffered;
 use App\CourseStudent;
+use App\Homework;
 use App\Http\Requests;
 use App\Student;
 use App\SubmitHomework;
@@ -127,6 +128,20 @@ class StudentController extends Controller
             }
         }
         return json_encode($homeworks);
+    }
+
+    public function postJsonCourseSubmitHomework(Request $request){
+        $present = Carbon::now()->toDateTimeString();
+        $submit = SubmitHomework::create([
+            'homework_id' => $request->homework_id,
+            'submit_time' => $present,
+            'type' => Homework::find($request->homework_id)->type,
+            'submit_username' => $this->user->username,
+            'name' => $request->name,
+            'words' => $request->words,
+            'state' => $request->state,
+        ]);
+        return json_encode($submit->toArray());
     }
 
     public function getJsonTeams(){
