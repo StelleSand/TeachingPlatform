@@ -52,6 +52,13 @@ class StudentController extends Controller
         return json_encode($this->student->toArray());
     }
 
+    public function getJsonSubmitInfo(Request $request){
+        $this->student->telephone = $request->telephone;
+        $this->student->email = $request->email;
+        $this->student->save();
+        return json_encode($this->student->toArray());
+    }
+
     public function getJsonCourses(){
         $courses = CourseStudent::where('student_username',$this->user->username)
             ->join('course_offered','course_student.course_offered_id','=','course_offered.id')
@@ -128,6 +135,11 @@ class StudentController extends Controller
             }
         }
         return json_encode($homeworks);
+    }
+
+    public function getJsonCourseHomeworkDetail(Request $request){
+        $submitHomework = SubmitHomework::find($request->submit_homework_id);
+        return json_encode($submitHomework->toArray());
     }
 
     public function postJsonCourseSubmitHomework(Request $request){

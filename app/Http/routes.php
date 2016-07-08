@@ -27,9 +27,11 @@ Route::get('/studentTeams','StudentController@getViewTeams');
 
 
 Route::get('/jStudentInfo','StudentController@getJsonInfo');
+Route::get('/jStudentSubmitInfo','StudentController@getJsonSubmitInfo');
 Route::get('/jStudentCourses','StudentController@getJsonCourses');
 Route::get('/jStudentCourseInfo','StudentController@getJsonCourseInfo');
 Route::get('/jStudentCourseHomeworks','StudentController@getJsonCourseHomeworks');
+Route::get('/jStudentCourseHomeworkDetail','StudentController@getJsonCourseHomeworkDetail');
 Route::get('/jStudentCourseSubmitHomework','StudentController@postJsonCourseSubmitHomework');
 Route::get('/jStudentTeams','StudentController@getJsonTeams');
 //Student相关模块-->
