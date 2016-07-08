@@ -12,7 +12,6 @@
 */
 
 Route::auth();
-
 Route::get('/', 'HomeController@index');
 
 Route::get('/test','HomeController@test');
@@ -20,4 +19,37 @@ Route::get('/file',function(){
     return view('file');
 });
 Route::post('/fileUpLoader','FileController@fileUpLoader');
-    
+
+
+//<！--Student相关模块
+Route::get('/studentHome','StudentController@getViewHome');
+Route::get('/studentInformation','StudentController@getViewInformation');
+Route::get('/studentCourses','StudentController@getViewCourses');
+Route::get('/studentTeams','StudentController@getViewTeams');
+
+
+
+
+Route::get('/jStudentInfo','StudentController@getJsonInfo');
+Route::get('/jStudentSubmitInfo','StudentController@getJsonSubmitInfo');
+Route::get('/jStudentCourses','StudentController@getJsonCourses');
+Route::get('/jStudentCourseInfo','StudentController@getJsonCourseInfo');
+Route::get('/jStudentCourseHomeworks','StudentController@getJsonCourseHomeworks');
+Route::get('/jStudentCourseHomeworkDetail','StudentController@getJsonCourseHomeworkDetail');
+Route::get('/jStudentCourseSubmitHomework','StudentController@postJsonCourseSubmitHomework');
+Route::get('/jStudentTeams','StudentController@getJsonTeams');
+//Student相关模块-->
+
+
+//<!-- Teacher相关模块
+Route::get('/teacherHome','TeacherController@getViewHome');
+
+
+Route::get('/jTeacherInfo','TeacherController@getJsonInfo');
+Route::get('/jTeacherCourses','TeacherController@getJsonCourses');
+Route::get('/jTeacherCourseInfo','TeacherController@getJsonCourseInfo');
+Route::get('/jTeacherCourseStudents','TeacherController@getJsonCourseStudents');
+Route::get('/jTeacherCourseHomeworks','TeacherController@getJsonCourseHomeworks');
+Route::post('/jTeacherPublishHomework','TeacherController@postJsonPublishHomework');
+
+//Teacher相关模块-->

@@ -25,4 +25,32 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
     ];
+
+    public function isStudent(){
+        return $this->type == 'S';
+    }
+
+    public function student(){
+        return Student::find($this->username);
+    }
+
+    public function isTeacher(){
+        return $this->type == 'T';
+    }
+
+    public function teacher(){
+        return Teacher::find($this->username);
+    }
+
+    public function isEducationalAdmin(){
+        return $this->type == 'EA';
+    }
+
+    public function educationalAdmin(){
+        return EducationalAdmin::find($this->username);
+    }
+
+    public function isSystemAdmin(){
+        return $this->type == 'SA';
+    }
 }

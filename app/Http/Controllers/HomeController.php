@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\View;
 
 class HomeController extends Controller
 {
@@ -15,6 +17,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
+        View::addExtension('html', 'php');
         $this->middleware('auth');
     }
 
@@ -25,7 +28,13 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $user = Auth::user();
+        if($user->isStudent()) {
+            //View::addExtension('html', 'php');
+            return view('student.studentIndex');
+        }
+        if($user->isTeacher()) {
+            return view('teacher.teacherIndex');}
     }
 
     public function test()

@@ -11,7 +11,7 @@ class Homework extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'name','description','publish_date','start_date','end_date','type','resource_str','course_offered_id'
+        'name', 'description','publish_date','start_date','end_date','type','resource_str','course_offered_id'
         ];
 
     public function courseOffered(){
