@@ -12,14 +12,22 @@
 */
 
 Route::auth();
+Route::get('/home', 'HomeController@index');
 
+Route::get('/teacher', 'HtmlController@getHtmlFile');
+Route::get('/teacherCourse', 'HtmlController@getTeachCourse');
+Route::get('/student', 'HtmlController@getStudent');
+Route::get('/studentCourse', 'HtmlController@getStudentCourse');
+Route::get('/myLogin', function () {
+    return view('login');
+});
 Route::get('/', 'HomeController@index');
 
 Route::get('/test','HomeController@test');
 
 //<！--Student相关模块
 Route::get('/studentHome','StudentController@getViewHome');
-Route::get('/studentInfomation','StudentController@getViewInformation');
+Route::get('/studentInformation','StudentController@getViewInformation');
 Route::get('/studentCourses','StudentController@getViewCourses');
 Route::get('/studentTeams','StudentController@getViewTeams');
 

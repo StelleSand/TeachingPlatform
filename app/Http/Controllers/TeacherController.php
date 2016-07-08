@@ -130,6 +130,16 @@ class TeacherController extends Controller
             'publish_date' => $presentTime,
             'course_offered_id' => $courseOffered->id
         ]);
-        return json_encode($homework->toArray());
+        $result = [
+            'homework_id' => $request->id,
+            'homework_name' => $request->name,
+            'homework_description' => $request->description,
+            'homework_start_date' => $request->start_date,
+            'homework_end_date' => $request->end_date,
+            'homework_type' => $request->type,
+            'homework_publish_date' => $presentTime,
+            'homework_course_offered_id' => $courseOffered->id
+        ];
+        return json_encode($result);
     }
 }
