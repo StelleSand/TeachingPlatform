@@ -120,6 +120,7 @@ class StudentController extends Controller
             //->where('submit_homework.type','1')
             //->where('submit_homework.submit_username',$this->user->username)
             ->select(
+                'homework.id as homework_id',
                 'homework.name as homework_name',
                 'homework.description as homework_description',
                 'homework.publish_date as homework_publish_date',
