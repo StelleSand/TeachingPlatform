@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\View;
 
 class HtmlController extends Controller {
     public function getHtmlFile () {
-        View::addExtension('html', 'php');
         return view('/teacher/teacherIndex');
     }
     public function getTeachCourse () {
