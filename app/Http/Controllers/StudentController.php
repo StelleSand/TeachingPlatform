@@ -115,10 +115,8 @@ class StudentController extends Controller
         $courseOfferedID = $request->input('course_offered_id');
         $homeworks = CourseOffered::where('course_offered.id',$courseOfferedID)
             ->join('homework','course_offered.id','=','homework.course_offered_id')
-            //->join('submit_homework','submit_homework.homework_id','=','homework.id')
             ->where('homework.start_date','<',$present)
-            //->where('submit_homework.type','1')
-            //->where('submit_homework.submit_username',$this->user->username)
+            ->whereIn('homework.type',['1','3'])
             ->select(
                 'homework.id as homework_id',
                 'homework.name as homework_name',
@@ -126,14 +124,10 @@ class StudentController extends Controller
                 'homework.publish_date as homework_publish_date',
                 'homework.start_date as homework_start_date',
                 'homework.end_date as homework_end_date'
-                //'submit_homework.id as submit_homework_id',
-                //'submit_homework.state as submit_homework_state',
-                //'submit_homework.name as submit_homework_name',
-                //'submit_homework.grade as submit_homework_grade'
             )
             ->get();
         foreach($homeworks as &$homework){
-            $submit = SubmitHomework::where('homework_id', $homework->id)
+            $submit = SubmitHomework::where('homework_id', $homework->homework_id)
                 ->where('submit_username',$this->user->username)
                 ->first();
             if(count($submit) == 0)
