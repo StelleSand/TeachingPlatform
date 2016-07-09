@@ -135,7 +135,6 @@ class StudentController extends Controller
         foreach($homeworks as &$homework){
             $submit = SubmitHomework::where('homework_id', $homework->id)
                 ->where('submit_username',$this->user->username)
-                ->where('type','1')
                 ->first();
             if(count($submit) == 0)
             {

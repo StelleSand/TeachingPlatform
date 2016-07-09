@@ -10,9 +10,10 @@
     <link rel="stylesheet" href="./css/bootstrap-social.css" type="text/css">
     <script src="./js/angular.js"></script>
     <script src="./js/angular-route.min.js"></script>
-    <script src="./js/angular-sanitize.min.js"></script>
+    <script src="./js/ng-file-upload-shim.min.js"></script>
+    <script src="./js/ng-file-upload.min.js"></script>
     <script>
-        var myApp = angular.module('myApp', ['ngRoute']);
+        var myApp = angular.module('myApp', ['ngRoute', 'ngFileUpload']);
     </script>
 </head>
 <body>
@@ -69,7 +70,7 @@
                 <tbody>
                 <tr ng-repeat="homework in homeworkList">
                     <td>{{ $index + 1 }}</td>
-                    <td>{{ homework.homework_name }}</td>
+                    <td><a style="cursor: pointer" ng-click="goToStuHomeworkDetail(homework.homework_id)">{{ homework.homework_name }}</a></td>
                     <td>{{ homework.submit_homework_state }}</td>
                     <td>{{ homework.homework_start_date }}</td>
                     <td>{{ homework.homework_end_date }}</td>
@@ -136,6 +137,43 @@
         </div>
     </div>
 </script>
+<script type="text/ng-template" id="stuHomeworkDetail.html">
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h3>{{ homework.homework_name }}</h3>
+            <p style="text-align: right"><small>发布时间 {{ homework.homework_publish_date }}</small></p>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-6"><small>开始时间：{{ homework.homework_start_date }}</small></div>
+                <div class="col-md-6"><small>截止时间：{{ homework.homework_end_date }}</small></div>
+            </div>
+            <h3>作业要求</h3>
+            <p>{{ homework.homework_description }}</p>
+            <br><br>
+            <div class="form-group">
+                <label>填写作业</label>
+                <textarea class="form-control" rows="8" cols="20" ng-model="homework_content"></textarea>
+            </div>
+            <div class="row">
+                <div class="col-md-10">
+                    <div class="form-group">
+                        <label>添加作业附件</label>
+                        <!--<input type="file" ng-model="attachFile">
+                        <p class="help-block">这里是附件信息</p>-->
+                        <button ngf-select="uploadFiles($files)" multiple ngf-max-height="1000" ngf-max-size="1MB">选择文件</button>
+                        <ul>
+                            <li ng-repeat="file in files">{{ file.name }}</li>
+                        </ul>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-primary" ng-click="submitHomework()">提交</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
 <script>
     myApp.config(['$routeProvider', function ($routeProvider) {
         $routeProvider
@@ -146,6 +184,10 @@
                 .when('/courseHomework', {
                     templateUrl: 'courseHomework.html',
                     controller: 'HomeworkController'
+                })
+                .when('/stuHomeworkDetail', {
+                    templateUrl: 'stuHomeworkDetail.html',
+                    controller: 'DetailController'
                 })
                 .otherwise({
                     templateUrl: 'courseIndex.html',
@@ -163,7 +205,16 @@
         var url = location.search;
         var str = url.substr(1);
         $scope.course_id = str.split('=')[1];
+        $scope.childHomeworkList = [];
+        $scope.homework_id = undefined;
         console.log('获取的课程id=' + $scope.course_id);
+        $scope.$on('$transHomeworkList', function (event, data) {
+            $scope.childHomeworkList = data;
+        });
+        $scope.goToStuHomeworkDetail = function (id) {
+            $scope.homework_id = id;
+            window.location.href = 'studentCourse?id=' + $scope.course_id + '#stuHomeworkDetail';
+        }
     });
     myApp.controller('IndexController', function ($scope, $http) {
         $http.get('/jStudentCourseInfo?course_offered_id=' + $scope.course_id)
@@ -179,14 +230,65 @@
     myApp.controller('HomeworkController', function ($scope, $http) {
         $http.get('/jStudentCourseHomeworks?course_offered_id=' + $scope.course_id)
                 .success(function (data) {
-                    console.log('返回的作业数据');
-                    console.log(data);
                     $scope.homeworkList = data;
+                    console.log('原始的作业列表数据为：');
+                    console.log($scope.homeworkList);
+                    $scope.$emit('$transHomeworkList', data);
                 })
                 .error(function (data, status) {
                     console.log('发生错误！ 状态：' + status);
                 });
     });
+    myApp.controller('DetailController', ['$scope', '$http', 'Upload', '$timeout', function ($scope, $http, Upload, $timeout) {
+        $scope.files = [];
+        $scope.homework = undefined;
+        console.log($scope.childHomeworkList);
+        for (var i = 0 ; i < $scope.childHomeworkList.length; i++) {
+            if ($scope.childHomeworkList[i].homework_id == $scope.homework_id) {
+                $scope.homework = $scope.childHomeworkList[i];
+                console.log('作业详细信息为：');
+                console.log($scope.homework);
+                console.log($scope.childHomeworkList[i].homework_id);
+                console.log($scope.homework.homework_id);
+                break;
+            }
+        }
+        $scope.uploadFiles = function (files) {
+            console.log('取得文件！');
+            console.log(files);
+            angular.forEach(files, function (file) {
+                $scope.files.push(file);
+            });
+            // 上传文件列表代码，在提交事件中执行
+            /*angular.forEach(files, function (file) {
+                file.upload = Upload.upload({
+                    url: '',
+                    data: { file: file }
+                });
+                file.upload.then(function (response) {
+                    $timeout(function () {
+                        file.result = response.data;
+                    });
+                }, function (response) {
+                    if (response.status > 0)
+                        $scope.errorMsg = response.status + ': ' + response.data;
+                }, function (evt) {
+                    file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
+                });
+            });*/
+        };
+        $scope.submitHomework = function () {
+            $http.post('jStudentCourseSubmitHomework', {
+                homework_id: $scope.homework.homework_id,
+                name: $scope.homework.homework_name,
+                words: $scope.homework_content,
+                state: 2
+            }).success(function (data) {
+                console.log('作业提交成功，返回如下数据：');
+                console.log(data);
+            })
+        }
+    }])
 </script>
 </body>
 </html>
