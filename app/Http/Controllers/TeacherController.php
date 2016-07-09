@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\View;
 
 class TeacherController extends Controller
 {
@@ -30,10 +31,15 @@ class TeacherController extends Controller
                 abort(403, 'Unauthorized action.');
             $this->teacher = $this->user->teacher();
         }
+        View::addExtension('html', 'php');
     }
 
     public function getViewHome(){
-        return view('teacher.home');
+        return view('teacher.teacherIndex');
+    }
+
+    public function getViewCourse(){
+        return view('teacher.teacherCourse');
     }
 
     public function getJsonInfo(){
