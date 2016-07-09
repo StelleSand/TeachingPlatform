@@ -97,6 +97,7 @@ class StudentController extends Controller
             //->where('submit_homework.type','1')
             //->where('submit_homework.submit_username',$this->user->username)
             ->select(
+                'homework.id as homework_id',
                 'homework.name as homework_name',
                 'homework.description as homework_description',
                 'homework.publish_date as homework_publish_date',
@@ -111,7 +112,6 @@ class StudentController extends Controller
         foreach($homeworks as &$homework){
             $submit = SubmitHomework::where('homework_id',$homework->id)
                 ->where('submit_username',$this->user->username)
-                ->where('type','1')
                 ->first();
             if(count($submit) == 0)
             {
