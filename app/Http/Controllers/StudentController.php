@@ -50,8 +50,12 @@ class StudentController extends Controller
         return view('student.courses');
     }
 
-    public function getViewCourse(){
+    public function getViewCourse () {
         return view('student.studentCourse');
+    }
+
+    public function getViewHomeworkDetail () {
+        return view('student.homeworkDetail');
     }
 
     public function getViewTeams(){
@@ -227,6 +231,18 @@ class StudentController extends Controller
 
     public function getJsonTeams(){
         $teams = Team::where('now_teammate_str','like','%'.$this->user->username.'%')->get();
-        return json_encode($teams);
+        return json_encode($teams->toArray());
+    }
+
+    public function postJsonCreateTeam(Request $request){
+        $team = Team::create([
+            'name' => $request->name,
+            'desription' => $request->desription,
+            'owner' => $this->user->username,
+            'now_teammate_str' => json_encode([$this->user->username]),
+            'create_time' => Carbon::now()->toDateTimeString(),
+            'state' => '1'
+        ]);
+        return json_encode($team->toArray());
     }
 }

@@ -492,8 +492,8 @@ INSERT INTO `teacher` (`username`, `name`, `gender`, `birth`, `address`, `teleph
 CREATE TABLE `team` (
   `id` int(11) UNSIGNED NOT NULL COMMENT '团队自增主键id',
   `name` varchar(20) DEFAULT NULL COMMENT '团队名称',
-  `description` varchar(30) DEFAULT NULL COMMENT '团队描述',
-  `owner` char(8) DEFAULT NULL COMMENT '团队负责人账号 即外键到某一学生账号',
+  `description` varchar(200) DEFAULT NULL COMMENT '团队描述',
+  `owner` varchar(20) DEFAULT NULL COMMENT '团队负责人账号 即外键到某一学生账号',
   `now_teammate_str` text COMMENT '团队组员序列',
   `create_time` datetime DEFAULT NULL COMMENT '团队创建时间',
   `old_teammate_str` text COMMENT '离开团队组员账号',

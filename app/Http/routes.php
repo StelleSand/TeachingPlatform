@@ -26,6 +26,7 @@ Route::get('/studentHome','StudentController@getViewHome');
 Route::get('/studentInformation','StudentController@getViewInformation');
 Route::get('/studentCourses','StudentController@getViewCourses');
 Route::get('/studentCourse','StudentController@getViewCourse');
+Route::get('/studentHomeworkDetail','StudentController@getViewHomeworkDetail');
 Route::get('/studentTeams','StudentController@getViewTeams');
 
 
@@ -40,6 +41,7 @@ Route::get('/jStudentCourseHomeworkDetail','StudentController@getJsonCourseHomew
 Route::get('/jStudentCourseSubmitHomework','StudentController@postJsonCourseSubmitHomework');
 Route::post('/jStudentCourseSubmitHomeworkFile','StudentController@postJsonCourseSubmitHomeworkFile');
 Route::get('/jStudentTeams','StudentController@getJsonTeams');
+Route::post('/jStudentCreateTeam','StudentController@postJsonCreateTeam');
 //Student相关模块-->
 
 
@@ -56,3 +58,10 @@ Route::get('/jTeacherCourseHomeworks','TeacherController@getJsonCourseHomeworks'
 Route::post('/jTeacherPublishHomework','TeacherController@postJsonPublishHomework');
 
 //Teacher相关模块-->
+
+/*
+ * EA相关模块
+ * */
+Route::get('/EAHome','EAController@getViewHome');
+
+
