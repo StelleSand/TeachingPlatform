@@ -16,7 +16,7 @@ class FileController extends Controller{
     public function fileUpLoader(Request $request){
         //判断请求中是否包含name=file的上传文件
 
-        if(!$request->hasFile('myfile')){
+        if(!$request->hasFile('file')){
             exit('上传文件为空！');
         }
         $file = $request->file('myfile');
