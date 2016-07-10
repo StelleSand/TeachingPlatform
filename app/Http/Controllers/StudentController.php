@@ -133,15 +133,38 @@ class StudentController extends Controller
             if(count($submit) == 0)
             {
                 $homework->submit_homework_id = 0;
-                $homework->submit_homework_state = 0;
                 $homework->submit_homework_name = 0;
-                $homework->submit_homework_grade = 0;
+                $homework->submit_homework_submit_time = 0;
+                $homework->submit_homework_comment = 0;
+                $homework->submit_homework_result_time = 0;
+                $homework->submit_homework_type = 0;
+                $homework->submit_homework_submit_username = 0;
+                $homework->submit_homework_submit_course_team_id = 0;
+                $homework->submit_homework_submit_course_team_owner_username = 0;
+                $homework->submit_homework_submit_course_team_str = 0;
+                $homework->submit_homework_name = 0;
+                $homework->submit_homework_words = 0;
+                $homework->submit_homework_resource_str = 0;
+                $homework->submit_homework_state = 0;
+                $homework->submit_homework_resources = [];
             }
             else{
                 $homework->submit_homework_id = $submit->id;
-                $homework->submit_homework_state = $submit->state;
-                $homework->submit_homework_name = $submit->name;
                 $homework->submit_homework_grade = $submit->grade;
+                $homework->submit_homework_submit_time = $submit->submit_time;
+                $homework->submit_homework_comment = $submit->comment;
+                $homework->submit_homework_result_time = $submit->result_time;
+                $homework->submit_homework_type = $submit->type;
+                $homework->submit_homework_submit_username = $submit->submit_username;
+                $homework->submit_homework_submit_course_team_id = $submit->submit_course_team_id;
+                $homework->submit_homework_submit_course_team_owner_username = $submit->submit_course_team_owner_username;
+                $homework->submit_homework_submit_course_team_str = $submit->submit_course_team_str;
+                $homework->submit_homework_name = $submit->name;
+                $homework->submit_homework_words = $submit->words;
+                $homework->submit_homework_resource_str = $submit->resource_str;
+                $homework->submit_homework_state = $submit->state;
+                $homework->submit_homework_resources =
+                    Resource::whereIn('id',json_decode($submit->resource_str))->get();
             }
         }
         return json_encode($homeworks);
@@ -157,7 +180,12 @@ class StudentController extends Controller
 
     public function postJsonCourseSubmitHomework(Request $request){
         $present = Carbon::now()->toDateTimeString();
-        if(!$request->exists("submit_homework_id") or $request->submit_homework_id == 0) {
+        $submit = SubmitHomework::where('homework_id', $request->homework_id)
+            ->where('submit_username', $this->user->username)
+            ->first();
+        if($request->state != '1' and $request->state != '2')
+            return "Error: illegal state input.";
+        if(empty($submit)) {
             $submit = SubmitHomework::create([
                 'homework_id' => $request->homework_id,
                 'submit_time' => $present,
@@ -167,13 +195,12 @@ class StudentController extends Controller
                 'words' => $request->words,
                 'state' => $request->state,
             ]);
+            return json_encode($submit->toArray());
         }
-        else{
-            $submit = SubmitHomework::find($request->submit_homework_id);
-            if($submit->state == '2' or $submit->state == '3')
-                return "Submit Failed, submit is solid.";
+        else {
+            if ($submit->state != '1')
+                return "Error: submit state unchangable now.";
             $submit->submit_time = $present;
-            $submit->type = Homework::find($request->homework_id)->type;
             $submit->name = $request->name;
             $submit->words = $request->words;
             $submit->state = $request->state;
