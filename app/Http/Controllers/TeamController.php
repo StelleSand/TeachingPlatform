@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Student;
 use App\Team;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -67,12 +68,83 @@ Class TeamController extends Controller {
         return json_encode($teams->toArray());
     }
     /*
-     * 获取我的团队
+     * 获取我创建的团队，并附加上团队中除团队负责人之外每个成员信息
      * 方式：get
      */
     public function getMyTeams() {
         $teams = Team::where('owner', $this->user->username)->orderBy('create_time', 'desc')->get();
+        foreach($teams as $team) {
+            $teammates = json_decode($team->now_teammate_str);
+            $team_users = array();
+            foreach($teammates as $teammate) {
+                $team_user = Student::find($teammate);
+                if ($team->owner == $team_user->username)
+                    continue;
+                array_push($team_users, $team_user);
+            }
+            $team['teammates'] = $team_users;
+        }
         return json_encode($teams->toArray());
+    }
+    /*
+     * 获取我所在的团队（不包含我创建的团队），并附加上团队中每个成员的信息
+     * 方式：get
+     */
+    public function getTeamsContainMe() {
+        $teams = Team::where('now_teammate_str', 'like', '%'.$this->user->username.'%')->get();
+        $teams = iterator_to_array($teams);
+        //$teams_count = count($teams);
+        for ($i = 0; $i < count($teams); $i++) {
+            if ($teams[$i]->owner == $this->user->username) {
+                array_splice($teams, $i, 1);
+                $i--;
+            } else {
+                $teammates = json_decode($teams[$i]->now_teammate_str);
+                $team_users = array();
+                foreach ($teammates as $teammate) {
+                    $team_user = Student::find($teammate);
+                    array_push($team_users, $team_user);
+                }
+                $teams[$i]['teammates'] = $team_users;
+            }
+        }
+        return json_encode($teams);
+    }
+    /*
+     * 删除团队中某成员
+     * 方式：post
+     * Params：username(学号), team_id(团队id)
+     */
+    public function deleteTeammate(Request $request) {
+        $team = Team::find($request->team_id);
+        $teammates = json_decode($team->now_teammate_str);
+        $teammate_count = count($teammates);
+        for ($i = 0; $i < $teammate_count; $i++) {
+            if ($teammates[$i] == $request->username) {
+                array_splice($teammates, $i, 1);
+                break;
+            }
+        }
+        $old_teammates = json_decode($team->old_teammate_str);
+        if ($old_teammates == null) {
+            $old_teammates = array();
+        }
+        array_push($old_teammates, $request->username);
+        $team->old_teammate_str = json_encode($old_teammates);
+        $team->now_teammate_str = json_encode($teammates);
+        $team->save();
+        return json_encode($team);
+    }
+    /*
+     * 变更团队负责人
+     * 方式：post
+     * Params：username(学号), team_id(团队id)
+     */
+    public function changeToOwner(Request $request) {
+        $team = Team::find($request->team_id);
+        $team->owner = $request->username;
+        $team->save();
+        return view('student.studentIndex');
     }
 }
 ?>

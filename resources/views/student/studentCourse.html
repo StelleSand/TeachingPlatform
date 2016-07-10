@@ -335,14 +335,15 @@
         // 提交作业
         $scope.submitHomework = function () {
             $scope.submit_state = 2;
-            //saveOrSubmitHomework();
+            saveOrSubmitHomework();
             $scope.homework.submit_homework_state = '2';
         };
         // 保存作业
         $scope.saveHomework = function () {
             $scope.submit_state = 1;
-            //saveOrSubmitHomework();
+            saveOrSubmitHomework();
             $scope.homework.submit_homework_state = '1';
+
         };
         function saveOrSubmitHomework () {
             $http.post('jStudentCourseSubmitHomework', {
@@ -353,6 +354,9 @@
             }).success(function (data) {
                 console.log('作业提交成功，返回如下数据：');
                 console.log(data);
+                // 作业提交成功后，更改显示所需要的数据
+                $scope.homework.submit_homework_words = data.words;
+                $scope.homework.submit_homework_submit_time = data.submit_time;
                 angular.forEach($scope.files, function (file) {
                     file.upload = Upload.upload({
                         url: 'jStudentCourseSubmitHomeworkFile',
@@ -360,7 +364,10 @@
                     });
                     file.upload.then(function (response) {
                         $timeout(function () {
-                            file.result = response.data;
+                            //file.result = response.data;
+                            $scope.files = [];
+                            $scope.homework.submit_homework_resources = [];
+                            $scope.homework.submit_homework_resources.push(response.data);
                             console.log('文件提交成功！');
                             console.log(response.data);
                         });
