@@ -151,7 +151,8 @@
             <h3>作业要求</h3>
             <p>{{ homework.homework_description }}</p>
             <br><br>
-            <div id="homework_not_finish" ng-show="homework.submit_homework_state==0">
+            <!-- 状态为未提交的作业详情 -->
+            <div id="homework_not_submit" ng-show="homework.submit_homework_state==0">
                 <div class="form-group">
                     <label>填写作业</label>
                     <textarea class="form-control" rows="8" cols="20" ng-model="homework_content"></textarea>
@@ -179,19 +180,49 @@
                     </div>
                 </div>
             </div>
+            <!-- 状态为已保存的作业详情 -->
             <div id="homework_save" ng-show="homework.submit_homework_state == '1'">
-
+                <div class="form-group">
+                    <label>填写作业</label>
+                    <textarea class="form-control" rows="8" cols="20" ng-model="homework_content"></textarea>
+                </div>
+                <div class="row">
+                    <div class="col-md-10">
+                        <div class="form-group">
+                            <label>添加作业附件</label>
+                            <!--<input type="file" ng-model="attachFile">
+                            <p class="help-block">这里是附件信息</p>-->
+                            <button ngf-select="uploadFiles($files)" multiple ngf-max-height="1000" ngf-max-size="10MB">选择文件</button>
+                            <ol>
+                                <!-- 已保存的文件列表 -->
+                                <li ng-repeat="resource in homework.submit_homework_resources">{{ resource.name }}&nbsp;&nbsp;<button class="btn btn-sm btn-link" ng-click="removeSavedHomework()">删除</button></li>
+                                <!-- 新提交的文件列表 -->
+                                <li ng-repeat="file in files">{{ file.name }}&nbsp;&nbsp;<button class="btn btn-sm btn-link" ng-click="removeFile($index)">删除</button></li>
+                            </ol>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-controller"><button class="btn btn-primary" ng-click="submitHomework()">提交</button></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-controller"><button class="btn btn-primary" ng-click="saveHomework()">保存</button></div>
+                            </div>
+                        </div>
+                        <p ng-repeat="file in files">文件{{ $index+1 }}提交结果：{{ file.result }}</p>
+                    </div>
+                </div>
             </div>
+            <!-- 状态为已提交的作业详情 -->
             <div id="homework_submit" ng-show="homework.submit_homework_state == '2'">
                 <h3>作业内容</h3>
                 <div class="row">
                     <div class="col-md-9"></div>
-                    <div class="col-md-3"><p><small>提交时间：{{ homework.submit_homework_publish_time }}</small></p></div>
+                    <div class="col-md-3"><p><small>提交时间：{{ homework.submit_homework_submit_time }}</small></p></div>
                 </div>
                 <p>{{ homework.submit_homework_words }}</p>
                 <h3>附件资源</h3>
                 <ol>
-                    <li><a href="#">我的作业</a></li>
+                    <li ng-repeat="resource in homework.submit_homework_resources"><a href="#">{{ resource.name }}</a></li>
                 </ol>
             </div>
         </div>
@@ -224,6 +255,7 @@
              requireBase: false
          });
      }]);*/
+    // 主控制器
     myApp.controller('MainController',function ($scope) {
         var url = location.search;
         var str = url.substr(1);
@@ -239,6 +271,7 @@
             window.location.href = 'studentCourse?id=' + $scope.course_id + '#stuHomeworkDetail';
         }
     });
+    // 课程主页控制器
     myApp.controller('IndexController', function ($scope, $http) {
         $http.get('/jStudentCourseInfo?course_offered_id=' + $scope.course_id)
                 .success(function (data) {
@@ -250,6 +283,7 @@
                 });
         //$scope.course = { name: '工科高等数学', teacher_name: '王乐', semester_name: '2016-2017第一学期', description: '高数屌屌哒啊！' };
     });
+    // 课程作业控制器
     myApp.controller('HomeworkController', function ($scope, $http) {
         $http.get('/jStudentCourseHomeworks?course_offered_id=' + $scope.course_id)
                 .success(function (data) {
@@ -262,16 +296,23 @@
                     console.log('发生错误！ 状态：' + status);
                 });
     });
+    // 作业详情控制器
     myApp.controller('DetailController', ['$scope', '$http', 'Upload', '$timeout', function ($scope, $http, Upload, $timeout) {
-        $scope.files = [];
-        $scope.homework = undefined;
+        $scope.files = [];  // 提交文件资源数组
+        $scope.homework = undefined;  // 当前作业的详细信息
         console.log($scope.childHomeworkList);
+        // 获取当前作业详细信息
         for (var i = 0 ; i < $scope.childHomeworkList.length; i++) {
             if ($scope.childHomeworkList[i].homework_id == $scope.homework_id) {
                 $scope.homework = $scope.childHomeworkList[i];
                 break;
             }
         }
+        // 若当前作业为已保存作业，绑定作业内容数据
+        if ($scope.homework.submit_homework_type == '1') {
+            $scope.homework_content = $scope.homework.submit_homework_words;
+        }
+        // 前端获取要上传的文件
         $scope.uploadFiles = function (files) {
             console.log('取得文件！');
             console.log(files);
@@ -279,13 +320,20 @@
                 $scope.files.push(file);
             });
         };
+        // 在前端移除要上传的文件
         $scope.removeFile = function (index) {
             $scope.files.splice(index, 1);
         };
+        // 删除已保存的某个文件
+        $scope.removeSavedFile = function (index) {
+
+        };
+        // 提交作业
         $scope.submitHomework = function () {
             $scope.submit_state = 2;
             saveOrSubmitHomework();
         };
+        // 保存作业
         $scope.saveHomework = function () {
             $scope.submit_state = 1;
             saveOrSubmitHomework();
