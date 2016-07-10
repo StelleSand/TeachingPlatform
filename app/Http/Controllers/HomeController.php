@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests;
+use App\Semester;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -39,6 +40,7 @@ class HomeController extends Controller
 
     public function test()
     {
-        return view('home');
+        $semester = Semester::getPresentSemester();
+        return json_encode($semester->toArray());
     }
 }
