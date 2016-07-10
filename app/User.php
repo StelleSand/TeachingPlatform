@@ -53,4 +53,8 @@ class User extends Authenticatable
     public function isSystemAdmin(){
         return $this->type == 'SA';
     }
+    
+    public function systemAdmin(){
+    	return User::find($this->username);
+    }
 }

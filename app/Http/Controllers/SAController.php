@@ -27,22 +27,24 @@ use Illuminate\Support\Facades\Storage;
 use App\Services\UploadsManager;
 use Illuminate\Support\Facades\View;
 
-class EAController extends Controller
+class SAController extends Controller
 {
-    protected $user;
-    protected $EA;
+	protected $user;
+	protected $SA;
 
-    public function __construct()
-    {
-        $this->middleware('auth');
-        if(Auth::check()) {
-            $this->user = Auth::user();
-            if (!$this->user->isEducationalAdmin())
-                abort(403, 'Unauthorized action.');
-            $this->EA = $this->user->educationalAdmin();
-        }
-        View::addExtension('html', 'php');
-    }
-
-    
+	public function __construct()
+	{
+		$this->middleware('auth');
+		if(Auth::check()) {
+			$this->user = Auth::user();
+			if (!$this->user->isSystemAdmin())
+				abort(403, 'Unauthorized action.');
+			$this->SA = $this->user->SystemAdmin();
+		}
+		View::addExtension('html', 'php');
+	}
+	public function getEAInfo(){
+		return 'eeeeeee';
+	}
+	 
 }

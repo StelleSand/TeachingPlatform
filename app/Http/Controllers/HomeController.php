@@ -36,6 +36,12 @@ class HomeController extends Controller
         }
         if($user->isTeacher()) {
             return view('teacher.teacherIndex');}
+        if($user->isSystemAdmin()){
+        	return view('SA.saIndex');
+        }
+        if ($user->isEducationalAdmin()){
+        	return view('EA.eaIndex');
+        }
     }
 
     public function test()
