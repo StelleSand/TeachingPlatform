@@ -11,6 +11,8 @@ namespace App\Http\Controllers;
 
 use App\CourseOffered;
 use App\Homework;
+use App\Resource;
+use App\SubmitHomework;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -147,5 +149,13 @@ class TeacherController extends Controller
             'homework_course_offered_id' => $courseOffered->id
         ];
         return json_encode($result);
+    }
+
+    public function getJsonHomeworkSubmits(Request $request){
+        $submits = SubmitHomework::where('homeword_id',$request->homeword_id);
+        foreach($submits as &$submit){
+            $submit->resources = Resource::whereIn('id', json_decode($submit->resource_str)->get());
+        }
+        return json_encode($submits->toArray());
     }
 }

@@ -7,19 +7,20 @@
     <link rel="stylesheet" href="./css/mystyles.css" type="text/css">
     <link rel="stylesheet" href="./css/font-awesome.min.css" type="text/css">
     <link rel="stylesheet" href="./css/bootstrap-social.css" type="text/css">
-    <script src="./js/angular.js"></script>
+    <script src="./js/angular.min.js"></script>
     <script src="./js/angular-route.min.js"></script>
     <script>
         var myApp = angular.module('myApp', ['ngRoute']);
     </script>
 </head>
-<body>
+<body ng-controller="MainController">
 <div class="container">
     <div class="row">
         <div class="col-xs-2" id="myScrollspy">
             <ul class="nav nav-tabs nav-stacked" id="sideNav">
-                <li><a href="#studentInfo"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> 学生基本信息</a></li>
-                <li><a href="#studentCourse"><span class="glyphicon glyphicon-education" aria-hidden="true"></span> 课程信息</a></li>
+                <li><a href="#studentInfo"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp;学生基本信息</a></li>
+                <li><a href="#studentCourse"><span class="glyphicon glyphicon-education" aria-hidden="true"></span>&nbsp;课程信息</a></li>
+                <li><a href="#studentTeam"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span>&nbsp;我的团队</a></li>
             </ul>
         </div>
         <!-- angularJs路由控制视图 -->
@@ -68,7 +69,7 @@
     </script>
     <!-- 学生所选课程页面 -->
     <script type="text/ng-template" id="studentCourse.html">
-        <div class="container courses" style = "width : 100%">
+        <div class="container courses" style="width : 100%">
             <div class="Courses-header page-header">
                 <h2>课程信息</h2>
                 <p>以下为个人相关课程信息</p>
@@ -83,6 +84,29 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </script>
+    <script type="text/ng-template" id="studentTeam.html">
+        <div class="container" style="width: 100%">
+            <div class="page-header">
+                <h2>我的团队</h2>
+                <p>以下为我的团队信息</p>
+            </div>
+            <div class="row">
+                <table class="table table-striped">
+                    <thead>
+                        <tr><td>团队名称</td><td>团队描述</td><td>团队组员序列</td><td>团队状态</td></tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="myTeam in myTeams">
+                            <td><a href="#">{{ myTeam.name }}</a></td>
+                            <td>{{ myTeam.description }}</td>
+                            <td>{{ myTeam.now_teammate_str }}</td>
+                            <td>{{ myTeam.state }}</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </script>
@@ -104,11 +128,22 @@
                     templateUrl: 'studentCourse.html',
                     controller: 'CourseController'
                 })
+                .when('/studentTeam', {
+                    templateUrl: 'studentTeam.html',
+                    controller: 'MyTeamController'
+                })
                 .otherwise({
                     templateUrl: 'studentInfo.html',
                     controller: 'InfoController'
                 });
     }]);
+    myApp.controller('MainController', function ($scope, $http) {
+        $http.get('/jGetOwnerTeams')
+                .success(function (data) {
+                    console.log(data);
+                    $scope.myTeams = data;
+                })
+    });
     myApp.controller('InfoController', function ($scope, $http) {
         $http.get('/jStudentInfo')
                 .success(function (data) {
@@ -118,43 +153,18 @@
                 .error(function (data ,status) {
                     console.log('发生错误！ 状态：' + status);
                 });
-        //$scope.person = { name: '张三', username: '13211111', class_number: '132114', password: '123456', email: '12345@qq.com', telephone: '13240309256', description: '我就是学神啊！' };
     });
     myApp.controller('CourseController', function ($scope, $http) {
         $http.get('/jStudentCourses')
                 .success(function (data) {
-                    console.log(data);
                     $scope.courses = data;
                 })
                 .error(function (data ,status) {
                     console.log('发生错误！ 状态：' + status);
                 });
-        /*$scope.lessons = [
-            {
-                id: 120,
-                title: '工科高等数学',
-                teacher: '王乐',
-                description: '这是一门重要的课程的方法为发哦我放假哦'
-            },
-            {
-                id: 110,
-                title: 'C++',
-                teacher: '杨帆',
-                description: '这是宋友老师的课啊！'
-            },
-            {
-                id: 120,
-                title: '工科高等数学',
-                teacher: '王乐',
-                description: '这是一门重要的课程的方法为发哦我放假哦'
-            },
-            {
-                id: 120,
-                title: '工科高等数学',
-                teacher: '王乐',
-                description: '这是一门重要的课程的方法为发哦我放假哦'
-            }
-        ];*/
+    });
+    myApp.controller('MyTeamController', function ($scope) {
+
     })
 </script>
 </body>
