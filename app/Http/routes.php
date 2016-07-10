@@ -55,3 +55,11 @@ Route::get('/jTeacherCourseHomeworks','TeacherController@getJsonCourseHomeworks'
 Route::post('/jTeacherPublishHomework','TeacherController@postJsonPublishHomework');
 
 //Teacher相关模块-->
+
+//<!-- Team相关模块
+Route::get('/teamIndex', 'TeamController@teamIndex');
+Route::get('/jGetAllTeams', 'TeamController@getAllTeams');
+Route::get('/jGetOwnerTeams', 'TeamController@getMyTeams');
+Route::post('/jStudentCreateTeam', 'TeamController@postJsonCreateTeam');
+Route::post('/jStudentApplyTeam', 'TeamController@getApplyJoinTeam');
+//Team相关模块 -->

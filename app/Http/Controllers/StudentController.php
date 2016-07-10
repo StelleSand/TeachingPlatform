@@ -237,7 +237,7 @@ class StudentController extends Controller
     public function postJsonCreateTeam(Request $request){
         $team = Team::create([
             'name' => $request->name,
-            'desription' => $request->desription,
+            'description' => $request->description,
             'owner' => $this->user->username,
             'now_teammate_str' => json_encode([$this->user->username]),
             'create_time' => Carbon::now()->toDateTimeString(),
