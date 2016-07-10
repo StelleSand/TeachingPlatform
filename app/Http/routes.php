@@ -41,7 +41,7 @@ Route::get('/jStudentCourseHomeworks','StudentController@getJsonCourseHomeworks'
 Route::get('/jStudentCourseHomeworkDetail','StudentController@getJsonCourseHomeworkDetail');
 Route::post('/jStudentCourseSubmitHomework','StudentController@postJsonCourseSubmitHomework');
 Route::post('/jStudentCourseSubmitHomeworkFile','StudentController@postJsonCourseSubmitHomeworkFile');
-Route::post('/jStudentCourseDeleteHomeworkFile','StudentController@postJsonCourseDeleteHomeworkFile');
+Route::get('/jStudentCourseDeleteHomeworkFile','StudentController@postJsonCourseDeleteHomeworkFile');
 Route::get('/jStudentSubmitHomeworkResource','StudentController@getJsonCourseSubmitHomeworkResource');
 Route::get('/jStudentSubmitHomeworkResources','StudentController@getJsonCourseSubmitHomeworkResources');
 Route::get('/jStudentTeams','StudentController@getJsonTeams');
@@ -61,3 +61,11 @@ Route::post('/jTeacherPublishHomework','TeacherController@postJsonPublishHomewor
 Route::get('/jTeacherHomeworkSubmits','TeacherController@getJsonHomeworkSubmits');
 
 //Teacher相关模块-->
+
+//<!-- Team相关模块
+Route::get('/teamIndex', 'TeamController@teamIndex');
+Route::get('/jGetAllTeams', 'TeamController@getAllTeams');
+Route::get('/jGetOwnerTeams', 'TeamController@getMyTeams');
+Route::post('/jStudentCreateTeam', 'TeamController@postJsonCreateTeam');
+Route::post('/jStudentApplyTeam', 'TeamController@getApplyJoinTeam');
+//Team相关模块 -->

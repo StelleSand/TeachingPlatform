@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>学生团队</title>
+    <link href="./css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <script src="./js/angular.min.js"></script>
+    <script>
+        var myApp = angular.module('myApp', []);
+    </script>
+</head>
+<body ng-controller="MainController">
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>团队名称</label>
+                <input class="form-control" ng-model="createTeam.name" type="text">
+            </div>
+            <div class="form-group">
+                <label>团队描述</label>
+                <textarea rows="8" class="form-control" ng-model="createTeam.description"></textarea>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-primary" ng-click="applyCreateTeam()">创建团队</button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <ul class="list-group">
+                <li class="list-group-item" ng-repeat="team in teams">
+                    <a ng-click="getTeamInfo(team.id)" style="cursor: pointer">{{ team.name }}</a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-6">
+            <ul class="list-group">
+                <li class="list-group-item">团队名称：{{ teamDetail.name }}</li>
+                <li class="list-group-item">团队描述：{{ teamDetail.description }}</li>
+                <li class="list-group-item">团队负责人：{{ teamDetail.owner }}</li>
+                <li class="list-group-item"><button class="btn btn-primary" ng-click="joinTeam(teamDetail.id)">加入团队</button></li>
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    myApp.controller('MainController', function ($scope, $http) {
+        $http.get('/jGetAllTeams')
+                .success(function (data) {
+                    $scope.teams = data;
+                });
+        $scope.applyCreateTeam = function () {
+            $http.post('/jStudentCreateTeam', $scope.createTeam)
+                    .success(function (data) {
+                        console.log('团队创建成功，团队信息如下：');
+                        console.log(data);
+                    })
+        };
+        $scope.getTeamInfo = function (team_id) {
+            for(var i = 0; i < $scope.teams.length; i++) {
+                if ($scope.teams[i].id == team_id) {
+                    $scope.teamDetail = $scope.teams[i];
+                    console.log($scope.teamDetail);
+                    break;
+                }
+            }
+        };
+        $scope.joinTeam = function (team_id) {
+            $http.post('/jStudentApplyTeam', { team_id: team_id })
+                    .success(function (data) {
+                        console.log('申请加入团队成功，团队新信息如下：');
+                        console.log(data);
+                    })
+        }
+    })
+</script>
+</html>
