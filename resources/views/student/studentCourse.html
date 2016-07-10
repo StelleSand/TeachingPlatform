@@ -181,7 +181,7 @@
                 </div>
             </div>
             <!-- 状态为已保存的作业详情 -->
-            <div id="homework_save" ng-show="homework.submit_homework_state == '1'">
+            <div id="homework_save" ng-show="homework.submit_homework_state=='1'">
                 <div class="form-group">
                     <label>填写作业</label>
                     <textarea class="form-control" rows="8" cols="20" ng-model="homework_content"></textarea>
@@ -213,7 +213,7 @@
                 </div>
             </div>
             <!-- 状态为已提交的作业详情 -->
-            <div id="homework_submit" ng-show="homework.submit_homework_state == '2'">
+            <div id="homework_submit" ng-show="homework.submit_homework_state=='2'">
                 <h3>作业内容</h3>
                 <div class="row">
                     <div class="col-md-9"></div>
@@ -335,12 +335,14 @@
         // 提交作业
         $scope.submitHomework = function () {
             $scope.submit_state = 2;
-            saveOrSubmitHomework();
+            //saveOrSubmitHomework();
+            $scope.homework.submit_homework_state = '2';
         };
         // 保存作业
         $scope.saveHomework = function () {
             $scope.submit_state = 1;
-            saveOrSubmitHomework();
+            //saveOrSubmitHomework();
+            $scope.homework.submit_homework_state = '1';
         };
         function saveOrSubmitHomework () {
             $http.post('jStudentCourseSubmitHomework', {
