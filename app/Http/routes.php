@@ -41,6 +41,7 @@ Route::get('/jStudentCourseHomeworks','StudentController@getJsonCourseHomeworks'
 Route::get('/jStudentCourseHomeworkDetail','StudentController@getJsonCourseHomeworkDetail');
 Route::post('/jStudentCourseSubmitHomework','StudentController@postJsonCourseSubmitHomework');
 Route::post('/jStudentCourseSubmitHomeworkFile','StudentController@postJsonCourseSubmitHomeworkFile');
+Route::post('/jStudentCourseDeleteHomeworkFile','StudentController@postJsonCourseDeleteHomeworkFile');
 Route::get('/jStudentSubmitHomeworkResource','StudentController@getJsonCourseSubmitHomeworkResource');
 Route::get('/jStudentSubmitHomeworkResources','StudentController@getJsonCourseSubmitHomeworkResources');
 Route::get('/jStudentTeams','StudentController@getJsonTeams');
