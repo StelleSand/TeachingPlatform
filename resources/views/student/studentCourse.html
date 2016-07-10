@@ -141,7 +141,7 @@
     <div class="panel panel-info">
         <div class="panel-heading">
             <h3>{{ homework.homework_name }}</h3>
-            <p style="text-align: right"><small>发布时间 {{ homework.homework_publish_date }}</small></p>
+            <p style="text-align: right"><small>发布时间：{{ homework.homework_publish_date }}</small></p>
         </div>
         <div class="panel-body">
             <div class="row">
@@ -151,26 +151,48 @@
             <h3>作业要求</h3>
             <p>{{ homework.homework_description }}</p>
             <br><br>
-            <div class="form-group">
-                <label>填写作业</label>
-                <textarea class="form-control" rows="8" cols="20" ng-model="homework_content"></textarea>
-            </div>
-            <div class="row">
-                <div class="col-md-10">
-                    <div class="form-group">
-                        <label>添加作业附件</label>
-                        <!--<input type="file" ng-model="attachFile">
-                        <p class="help-block">这里是附件信息</p>-->
-                        <button ngf-select="uploadFiles($files)" multiple ngf-max-height="1000" ngf-max-size="1MB">选择文件</button>
-                        <ul>
-                            <li ng-repeat="file in files">{{ file.name }}</li>
-                        </ul>
-                    </div>
-                    <div class="form-group">
-                        <button class="btn btn-primary" ng-click="submitHomework()">提交</button>
-                    </div>
-                    <p ng-repeat="file in files">文件{{ $index+1 }}提交结果：{{ file.result }}</p>
+            <div id="homework_not_finish" ng-show="homework.submit_homework_state==0">
+                <div class="form-group">
+                    <label>填写作业</label>
+                    <textarea class="form-control" rows="8" cols="20" ng-model="homework_content"></textarea>
                 </div>
+                <div class="row">
+                    <div class="col-md-10">
+                        <div class="form-group">
+                            <label>添加作业附件</label>
+                            <!--<input type="file" ng-model="attachFile">
+                            <p class="help-block">这里是附件信息</p>-->
+                            <button ngf-select="uploadFiles($files)" multiple ngf-max-height="1000" ngf-max-size="1MB">选择文件</button>
+                            <ul>
+                                <li ng-repeat="file in files">{{ file.name }}&nbsp;&nbsp;<button class="btn btn-sm btn-link" ng-click="removeFile($index)">删除</button></li>
+                            </ul>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-controller"><button class="btn btn-primary" ng-click="submitHomework()">提交</button></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-controller"><button class="btn btn-primary" ng-click="saveHomework()">保存</button></div>
+                            </div>
+                        </div>
+                        <p ng-repeat="file in files">文件{{ $index+1 }}提交结果：{{ file.result }}</p>
+                    </div>
+                </div>
+            </div>
+            <div id="homework_save" ng-show="homework.submit_homework_state == '1'">
+
+            </div>
+            <div id="homework_submit" ng-show="homework.submit_homework_state == '2'">
+                <h3>作业内容</h3>
+                <div class="row">
+                    <div class="col-md-9"></div>
+                    <div class="col-md-3"><p><small>提交时间：{{ homework.submit_homework_publish_time }}</small></p></div>
+                </div>
+                <p>{{ homework.submit_homework_words }}</p>
+                <h3>附件资源</h3>
+                <ol>
+                    <li><a href="#">我的作业</a></li>
+                </ol>
             </div>
         </div>
     </div>
@@ -247,10 +269,6 @@
         for (var i = 0 ; i < $scope.childHomeworkList.length; i++) {
             if ($scope.childHomeworkList[i].homework_id == $scope.homework_id) {
                 $scope.homework = $scope.childHomeworkList[i];
-                console.log('作业详细信息为：');
-                console.log($scope.homework);
-                console.log($scope.childHomeworkList[i].homework_id);
-                console.log($scope.homework.homework_id);
                 break;
             }
         }
@@ -260,32 +278,27 @@
             angular.forEach(files, function (file) {
                 $scope.files.push(file);
             });
-            // 上传文件列表代码，在提交事件中执行
-            /*angular.forEach(files, function (file) {
-                file.upload = Upload.upload({
-                    url: '',
-                    data: { file: file }
-                });
-                file.upload.then(function (response) {
-                    $timeout(function () {
-                        file.result = response.data;
-                    });
-                }, function (response) {
-                    if (response.status > 0)
-                        $scope.errorMsg = response.status + ': ' + response.data;
-                }, function (evt) {
-                    file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
-                });
-            });*/
+        };
+        $scope.removeFile = function (index) {
+            $scope.files.splice(index, 1);
         };
         $scope.submitHomework = function () {
+            $scope.submit_state = 2;
+            saveOrSubmitHomework();
+        };
+        $scope.saveHomework = function () {
+            $scope.submit_state = 1;
+            saveOrSubmitHomework();
+        };
+        function saveOrSubmitHomework () {
             $http.post('jStudentCourseSubmitHomework', {
                 homework_id: $scope.homework.homework_id,
                 name: $scope.homework.homework_name,
                 words: $scope.homework_content,
-                state: 2
+                state: $scope.submit_state
             }).success(function (data) {
                 console.log('作业提交成功，返回如下数据：');
+                console.log(data);
                 angular.forEach($scope.files, function (file) {
                     file.upload = Upload.upload({
                         url: 'jStudentCourseSubmitHomeworkFile',
@@ -294,6 +307,7 @@
                     file.upload.then(function (response) {
                         $timeout(function () {
                             file.result = response.data;
+                            console.log('文件提交成功！');
                             console.log(response.data);
                         });
                     }, function (response) {
