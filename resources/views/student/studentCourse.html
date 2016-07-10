@@ -169,6 +169,7 @@
                     <div class="form-group">
                         <button class="btn btn-primary" ng-click="submitHomework()">提交</button>
                     </div>
+                    <p ng-repeat="file in files">文件{{ $index+1 }}提交结果：{{ file.result }}</p>
                 </div>
             </div>
         </div>
@@ -285,10 +286,28 @@
                 state: 2
             }).success(function (data) {
                 console.log('作业提交成功，返回如下数据：');
-                console.log(data);
+                angular.forEach($scope.files, function (file) {
+                    file.upload = Upload.upload({
+                        url: 'jStudentCourseSubmitHomeworkFile',
+                        data: { file: file, submit_homework_id: data.id }
+                    });
+                    file.upload.then(function (response) {
+                        $timeout(function () {
+                            file.result = response.data;
+                            console.log(response.data);
+                        });
+                    }, function (response) {
+                        if (response.status > 0)
+                            $scope.errorMsg = response.status + ': ' + response.data;
+                    }, function (evt) {
+                        file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
+                    });
+                });
             })
         }
     }])
 </script>
+
+
 </body>
 </html>
