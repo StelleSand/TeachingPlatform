@@ -151,7 +151,7 @@ class TeacherController extends Controller
         return json_encode($result);
     }
 
-    public function postJsonHomeworkSubmits(Request $request){
+    public function getJsonHomeworkSubmits(Request $request){
         $submits = SubmitHomework::where('homeword_id',$request->homeword_id);
         foreach($submits as &$submit){
             $submit->resources = Resource::whereIn('id', json_decode($submit->resource_str)->get());
