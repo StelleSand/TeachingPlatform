@@ -253,6 +253,30 @@ class StudentController extends Controller
         return json_encode($newResource->toArray());
     }
 
+    public function postJsonCourseDeleteHomeworkFile(Request $request){
+        $submit = SubmitHomework::find($request->submit_homework_id);
+        $resources = json_decode($submit->resource_str);
+        $resourceToDelete = Resource::whereIn('id', $resources)
+            ->where('id', $request->resource_id)
+            ->first();
+        if(empty($resourceToDelete)){
+            return 'Resource not found or unauthorized action,';
+        }
+        $filePath = $resourceToDelete->place;
+        Storage::delete($filePath);
+        if(Storage::exist($filePath)){
+            return 'Resource delete failed.Unknown reason,';
+        }
+        else{
+            $key = array_search($resourceToDelete->id, $resources);
+            array_splice($resources, $key, 1);
+            $submit->resource_str = json_encode($resources);
+            $submit->save();
+            $resourceToDelete->delete();
+            return "Resource delete success.";
+        }
+    }
+
     public function getJsonCourseSubmitHomeworkResource(Request $request){
         $resource = Resource::find($request->resource_id);
         return json_encode($resource->toArray());
