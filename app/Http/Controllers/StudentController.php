@@ -115,10 +115,8 @@ class StudentController extends Controller
         $courseOfferedID = $request->input('course_offered_id');
         $homeworks = CourseOffered::where('course_offered.id',$courseOfferedID)
             ->join('homework','course_offered.id','=','homework.course_offered_id')
-            //->join('submit_homework','submit_homework.homework_id','=','homework.id')
             ->where('homework.start_date','<',$present)
-            //->where('submit_homework.type','1')
-            //->where('submit_homework.submit_username',$this->user->username)
+            ->whereIn('homework.type',['1','3'])
             ->select(
                 'homework.id as homework_id',
                 'homework.name as homework_name',
@@ -126,14 +124,10 @@ class StudentController extends Controller
                 'homework.publish_date as homework_publish_date',
                 'homework.start_date as homework_start_date',
                 'homework.end_date as homework_end_date'
-                //'submit_homework.id as submit_homework_id',
-                //'submit_homework.state as submit_homework_state',
-                //'submit_homework.name as submit_homework_name',
-                //'submit_homework.grade as submit_homework_grade'
             )
             ->get();
         foreach($homeworks as &$homework){
-            $submit = SubmitHomework::where('homework_id', $homework->id)
+            $submit = SubmitHomework::where('homework_id', $homework->homework_id)
                 ->where('submit_username',$this->user->username)
                 ->first();
             if(count($submit) == 0)
@@ -155,6 +149,9 @@ class StudentController extends Controller
 
     public function getJsonCourseHomeworkDetail(Request $request){
         $submitHomework = SubmitHomework::find($request->submit_homework_id);
+        $resourcesArray =  json_decode($submitHomework->resource_str);
+        $resources = Resource::whereIn('id',$resourcesArray)->get();
+        $submitHomework->resources = $resources;
         return json_encode($submitHomework->toArray());
     }
 
@@ -195,16 +192,16 @@ class StudentController extends Controller
         $fileExtension = $file->getClientOriginalExtension();
         $fileSaveName =  basename($file -> getClientOriginalName(), ".{$file->getClientOriginalExtension()}").filectime($file).'.'.$fileExtension;
         $presentSemester = Semester::getPresentSemester();
-        $homework = $submitHomework->homework();
-        $courseOffered = $homework->courseOffered();
-        $course = $courseOffered->course();
-        $savepath = $presentSemester->name.'/'.
-            $courseOffered->id.'_'.$course->name.'/'.
-            'homework'.'/'.
-            $homework->id.'_'.$homework->name.'/'.
-            $submitHomework->id.'_'. $submitHomework->name.'/';
-        $this->fileManager->createDirectory($savepath);
-
+        $homework = $submitHomework->homework;
+        $courseOffered = $homework->courseOffered;
+        $course = $courseOffered->course;
+        $savepath = "UserFiles"."/".
+            'Semester'."_".$presentSemester->id.'_'.$presentSemester->start_date.'_'.$presentSemester->end_date.'/'.
+            'CourseOffered'."_".$courseOffered->id.'/'.
+            'Homework'.'/'.
+            'Homework'."_".$homework->id.'/'.
+            'SubmitHomework'."_".$submitHomework->id.'_'. $submitHomework->submit_username.'/';
+        Storage::makeDirectory(dirname($savepath));
         Storage::put(
             $savepath.$fileSaveName,
             file_get_contents($file->getRealPath())
@@ -217,7 +214,7 @@ class StudentController extends Controller
             'description' => $request->description,
             'publish_time' => Carbon::now()->toDateTimeString(),
             'place' => $savepath.$fileSaveName,
-            'owner_username' => $this->student->name
+            'owner_username' => $this->student->username
         ]);
         $resourceStr = $submitHomework->resource_str;
         $resource = [];
@@ -226,7 +223,18 @@ class StudentController extends Controller
         array_push($resource, $newResource->id);
         $submitHomework->resource_str = json_encode($resource);
         $submitHomework->save();
-        return json_encode($submitHomework->toArray());
+        return json_encode($newResource->toArray());
+    }
+
+    public function getJsonCourseSubmitHomeworkResource(Request $request){
+        $resource = Resource::find($request->resource_id);
+        return json_encode($resource->toArray());
+    }
+
+    public function getJsonCourseSubmitHomeworkResources(Request $request){
+        $resourcesArray =  json_decode($request->resource_str);
+        $resources = Resource::whereIn('id',$resourcesArray)->get();
+        return json_encode($resources);
     }
 
     public function getJsonTeams(){
