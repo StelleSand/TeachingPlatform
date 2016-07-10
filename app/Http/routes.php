@@ -44,6 +44,7 @@ Route::post('/jStudentCourseSubmitHomeworkFile','StudentController@postJsonCours
 Route::get('/jStudentCourseDeleteHomeworkFile','StudentController@postJsonCourseDeleteHomeworkFile');
 Route::get('/jStudentSubmitHomeworkResource','StudentController@getJsonCourseSubmitHomeworkResource');
 Route::get('/jStudentSubmitHomeworkResources','StudentController@getJsonCourseSubmitHomeworkResources');
+Route::get('/jStudentResourceDownload','StudentController@getJsonResourceDownload');
 Route::get('/jStudentTeams','StudentController@getJsonTeams');
 //Student相关模块-->
 
@@ -59,6 +60,11 @@ Route::get('/jTeacherCourseStudents','TeacherController@getJsonCourseStudents');
 Route::get('/jTeacherCourseHomeworks','TeacherController@getJsonCourseHomeworks');
 Route::post('/jTeacherPublishHomework','TeacherController@postJsonPublishHomework');
 Route::get('/jTeacherHomeworkSubmits','TeacherController@getJsonHomeworkSubmits');
+Route::get('/jTeacherHomeworkSubmitGrade','TeacherController@getJsonHomeworkSubmitGrade');
+Route::get('/jTeacherCourseResources ','TeacherController@getJsonCourseResources');
+Route::get('/jTeacherCourseSubmitResource  ','TeacherController@getJsonCourseSubmitResource');
+Route::get('/jTeacherCourseDeleteResource  ','TeacherController@getJsonCourseDeleteResource');
+Route::get('/jTeacherResourceDownload  ','TeacherController@getJsonResourceDownload');
 
 //Teacher相关模块-->
 
