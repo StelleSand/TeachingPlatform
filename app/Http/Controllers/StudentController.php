@@ -264,7 +264,7 @@ class StudentController extends Controller
         }
         $filePath = $resourceToDelete->place;
         Storage::delete($filePath);
-        if(Storage::exist($filePath)){
+        if(Storage::has($filePath)){
             return 'Resource delete failed.Unknown reason,';
         }
         else{

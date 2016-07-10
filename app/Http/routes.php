@@ -58,7 +58,7 @@ Route::get('/jTeacherCourseInfo','TeacherController@getJsonCourseInfo');
 Route::get('/jTeacherCourseStudents','TeacherController@getJsonCourseStudents');
 Route::get('/jTeacherCourseHomeworks','TeacherController@getJsonCourseHomeworks');
 Route::post('/jTeacherPublishHomework','TeacherController@postJsonPublishHomework');
-Route::post('/jTeacherHomeworkSubmits','TeacherController@postJsonHomeworkSubmits');
+Route::get('/jTeacherHomeworkSubmits','TeacherController@getJsonHomeworkSubmits');
 
 //Teacher相关模块-->
 
