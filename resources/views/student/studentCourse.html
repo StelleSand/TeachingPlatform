@@ -195,7 +195,7 @@
                             <button ngf-select="uploadFiles($files)" multiple ngf-max-height="1000" ngf-max-size="10MB">选择文件</button>
                             <ol>
                                 <!-- 已保存的文件列表 -->
-                                <li ng-repeat="resource in homework.submit_homework_resources">{{ resource.name }}&nbsp;&nbsp;<button class="btn btn-sm btn-link" ng-click="removeSavedHomework()">删除</button></li>
+                                <li ng-repeat="resource in homework.submit_homework_resources">{{ resource.name }}&nbsp;&nbsp;<button class="btn btn-sm btn-link" ng-click="removeSavedFile($index)">删除</button></li>
                                 <!-- 新提交的文件列表 -->
                                 <li ng-repeat="file in files">{{ file.name }}&nbsp;&nbsp;<button class="btn btn-sm btn-link" ng-click="removeFile($index)">删除</button></li>
                             </ol>
@@ -326,7 +326,11 @@
         };
         // 删除已保存的某个文件
         $scope.removeSavedFile = function (index) {
-
+            $http.get('/jStudentCourseDeleteHomeworkFile?submit_homework_id=' + $scope.homework.submit_homework_id + '&resource_id=' + $scope.homework.submit_homework_resources[index].id)
+                    .success(function (data) {
+                        console.log('删除文件结果：' + data);
+                        $scope.homework.submit_homework_resources.splice(index, 1);
+                    });
         };
         // 提交作业
         $scope.submitHomework = function () {
