@@ -44,6 +44,7 @@ Route::post('/jStudentCourseSubmitHomeworkFile','StudentController@postJsonCours
 Route::get('/jStudentCourseDeleteHomeworkFile','StudentController@postJsonCourseDeleteHomeworkFile');
 Route::get('/jStudentSubmitHomeworkResource','StudentController@getJsonCourseSubmitHomeworkResource');
 Route::get('/jStudentSubmitHomeworkResources','StudentController@getJsonCourseSubmitHomeworkResources');
+Route::get('/jStudentResourceDownload','StudentController@getJsonResourceDownload');
 Route::get('/jStudentTeams','StudentController@getJsonTeams');
 //Student相关模块-->
 
@@ -59,6 +60,11 @@ Route::get('/jTeacherCourseStudents','TeacherController@getJsonCourseStudents');
 Route::get('/jTeacherCourseHomeworks','TeacherController@getJsonCourseHomeworks');
 Route::post('/jTeacherPublishHomework','TeacherController@postJsonPublishHomework');
 Route::get('/jTeacherHomeworkSubmits','TeacherController@getJsonHomeworkSubmits');
+Route::get('/jTeacherHomeworkSubmitGrade','TeacherController@getJsonHomeworkSubmitGrade');
+Route::get('/jTeacherCourseResources ','TeacherController@getJsonCourseResources');
+Route::get('/jTeacherCourseSubmitResource  ','TeacherController@getJsonCourseSubmitResource');
+Route::get('/jTeacherCourseDeleteResource  ','TeacherController@getJsonCourseDeleteResource');
+Route::get('/jTeacherResourceDownload  ','TeacherController@getJsonResourceDownload');
 
 //Teacher相关模块-->
 
@@ -72,3 +78,10 @@ Route::post('/jStudentApplyTeam', 'TeamController@getApplyJoinTeam');
 Route::post('/jStudentDeleteTeammate', 'TeamController@deleteTeammate');
 Route::post('/jStudentChangeOwner', 'TeamController@changeToOwner');
 //Team相关模块 -->
+
+
+#SA 相关操作
+Route::post('/admin/getEAInfo', 'SAController@getEAInfo'); //获取所有EA信息列表
+// Route::post('/admin/editEAInfo',''); //修改EA信息
+// Route::post('/admin/delEAInfo','');  //删除EA信息
+// Route::post('/admin/addEAInfo', ''); //添加EA信息

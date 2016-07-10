@@ -4,3 +4,8 @@ Homestead.yaml
 Homestead.json
 /.idea
 .idea/workspace.xml
+.project
+.buildpath
+.settings/*
+.env
+/config/*
