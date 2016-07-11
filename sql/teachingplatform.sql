@@ -329,7 +329,7 @@ CREATE TABLE `resource` (
   `name` text DEFAULT NULL COMMENT '资源名称',
   `description` varchar(30) DEFAULT NULL COMMENT '资源描述',
   `publish_time` datetime DEFAULT NULL COMMENT '资源发布时间',
-  `place` varchar(300) DEFAULT NULL COMMENT '资源存储路径',
+  `place` text DEFAULT NULL COMMENT '资源存储路径',
   `owner_username` varchar(8) DEFAULT NULL COMMENT '资源发布者账号',
   `owner_course_team_id` int(11) UNSIGNED DEFAULT NULL COMMENT '资源附属选课团队id',
   `owner_course_team_str` text COMMENT '资源附属选课团队当前成员账号序列'
