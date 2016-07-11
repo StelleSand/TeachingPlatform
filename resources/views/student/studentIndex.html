@@ -180,7 +180,7 @@
                             <h3><a href="/studentCourse?course_id={{ course.course_offered_id }}" target="_blank" >{{ course.course_name }}</a></h3>
                             <p><small>教师：{{ course.teacher_name }}</small></p>
                             <p>{{ course.course_description }}</p>
-                            <p style="text-align: right"><button class="btn btn-sm btn-primary">申请课程</button></p>
+                            <p style="text-align: right"><button class="btn btn-sm btn-primary" ng-click="applyJoinCourse(course.course_offered_id)">申请课程</button></p>
                         </div>
                     </div>
                 </div>
@@ -276,6 +276,7 @@
                 });
     });
     myApp.controller('MyTeamController', function ($scope, $http) {
+        // 申请创建团队
         $scope.applyCreateTeam = function () {
             $http.post('/jStudentCreateTeam', $scope.createTeam)
                     .success(function (data) {
@@ -303,6 +304,20 @@
                         window.location.href = '#studentTeam';
                     });
         };
+        // 申请选课
+        $scope.applyJoinCourse = function (course_offered_id) {
+            console.log('team_id: ' + $scope.team_to_operate.id + ' course_offered_id: ' + course_offered_id);
+            $http.post('jStudentApplyCourse', { team_id: $scope.team_to_operate.id, course_offered_id: course_offered_id })
+                    .success(function (data) {
+                        if (!data.undefinedStudents && !data.repeatedStudents) {
+                            console.log('我判断得对不对？');
+                            console.log(data);
+                        } else {
+                            console.log('难道我判断错了？');
+                            console.log(data);
+                        }
+                    })
+        }
     });
 </script>
 </body>

@@ -2,6 +2,8 @@
 namespace App\Http\Controllers;
 
 use App\CourseOffered;
+use App\CourseStudent;
+use App\CourseTeam;
 use App\Student;
 use App\Team;
 use Carbon\Carbon;
@@ -179,6 +181,53 @@ Class TeamController extends Controller {
      * 团队选课
      * 方式：post
      * Params：team_id(团队id), course_offered_id(可选课程id)
-     * */
+     */
+    public function teamChooseCourse(Request $request) {
+        $team = Team::find($request->team_id);
+        $teammates = json_decode($team->now_teammate_str);
+        $undefinedStudents = array();
+        $repeatedStudents = array();
+        foreach ($teammates as $teammate) {
+            // 查看团队中学生是否选择了这门课
+            $course_student = CourseStudent::where('course_offered_id', $request->course_offered_id)
+                ->where('student_username', $teammate)->get();
+            // 查看是否有已经成功选上本门课程并且成员中包含本团队学生的团队
+            $course_team = CourseTeam::where('course_offered_id', $request->course_offered_id)
+                ->where('course_teammate_str', 'like', '%'.$teammate.'%')
+                ->where('state', '1')->first();
+            if (empty($course_student)) {
+                array_push($undefinedStudents, $teammate);
+            }
+            if (!empty($course_team)) {
+                array_push($repeatedStudents, $teammate);
+            }
+        }
+        if ($undefinedStudents == null && $repeatedStudents == null) {
+            CourseTeam::create([
+                'course_offered_id' => $request->course_offered_id,
+                'team_id' => $team->id,
+                'owner_username' => $team->owner,
+                'course_teammate_str' => $team->now_teammate_str,
+                'name' => $team->name,
+                'description' => $team->description,
+                'state' => '2'
+            ]);
+            return 'succeed to choose course';
+        } else {
+            $unableStudents = array('undefinedStudents'=>$undefinedStudents, 'repeatedStudents'=>$repeatedStudents);
+            return json_encode($unableStudents);
+        }
+    }
+    /*
+     * 获取当前已登录老师所在课程中待审核团队名单
+     * 方式：get
+     */
+    public function getCourseTeamsToVerify() {
+        $teams = CourseTeam::where('state', '2')
+            ->join('course_offered', 'course_team.course_offered_id', '=', 'course_offered.id')
+            ->where('course_offered.teacher_username', $this->user->username)
+            ->get();
+        return json_encode($teams->toArray());
+    }
 }
 ?>
