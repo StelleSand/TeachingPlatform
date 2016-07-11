@@ -217,7 +217,7 @@ class StudentController extends Controller
             abort(403,'File upload error!');
         }
         $fileExtension = $file->getClientOriginalExtension();
-        $fileSaveName =  basename($file -> getClientOriginalName(), ".{$file->getClientOriginalExtension()}").filectime($file).'.'.$fileExtension;
+        $fileSaveName =  basename($file->getClientOriginalName(), ".{$file->getClientOriginalExtension()}").filectime($file).'.'.$fileExtension;
         $presentSemester = Semester::getPresentSemester();
         $homework = $submitHomework->homework;
         $courseOffered = $homework->courseOffered;
@@ -286,6 +286,14 @@ class StudentController extends Controller
         $resourcesArray =  json_decode($request->resource_str);
         $resources = Resource::whereIn('id',$resourcesArray)->get();
         return json_encode($resources);
+    }
+
+    public function getJsonResourceDownload(Request $request){
+        $resource = Resource::find($request->resource_id);
+        if(empty($resource))
+            return "Error: undefined resource.";
+        $downloadPath = storage_path().'/'.'app'.'/'.$resource->place;
+        return response()->download($downloadPath, $resource->name);
     }
 
     public function getJsonTeams(){
