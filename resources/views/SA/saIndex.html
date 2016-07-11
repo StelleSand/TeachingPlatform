@@ -218,7 +218,7 @@ function editLine( i, btn ){
 function delLine( i ){
 	console.log('删除第'+i+"行");
 	var username = $('#editeaInfo table tbody tr').eq(i).find('td').eq(1).html();
-	alert( '要删除账号 -['+username +']?');
+	if(confirm( '要删除账号 -['+username +']?')){
 	$.post('/admin/delEAInfo', {eaUsername : username }, function(msg){
 		msg = eval('('+msg+')');
 		if(msg.success){
@@ -229,6 +229,7 @@ function delLine( i ){
 			alert('修改失败--'+msg.error);
 		}
 	})
+	}
 }
 function addLine(i,btn){
 	if($(btn).text() == '添加') {
