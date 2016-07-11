@@ -70,6 +70,17 @@ Class TeamController extends Controller {
         $teams = Team::where('state', '1')
             ->where('now_teammate_str','not like',"%".$this->user->username."%")
             ->get();
+        foreach($teams as &$team) {
+            $teammates = json_decode($team->now_teammate_str);
+            $team_users = array();
+            foreach($teammates as $teammate) {
+                $team_user = Student::find($teammate);
+                if ($team->owner == $team_user->username)
+                    continue;
+                array_push($team_users, $team_user);
+            }
+            $team['teammates'] = $team_users;
+        }
         return json_encode($teams->toArray());
     }
 
@@ -79,6 +90,18 @@ Class TeamController extends Controller {
             ->where('now_teammate_str','not like',"%".$this->user->username."%")
             ->where('name','like',"%".$key."%")
             ->get();
+        foreach($teams as &$team) {
+            $teammates = json_decode($team->now_teammate_str);
+            $team_users = array();
+            foreach($teammates as $teammate) {
+                $team_user = Student::find($teammate);
+                if ($team->owner == $team_user->username)
+                    continue;
+                array_push($team_users, $team_user);
+            }
+            $team['teammates'] = $team_users;
+        }
+        return json_encode($teams->toArray());
     }
     /*
      * 获取我创建的团队，并附加上团队中除团队负责人之外每个成员信息
