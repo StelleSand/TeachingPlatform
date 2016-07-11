@@ -9,8 +9,11 @@
 namespace App\Http\Controllers;
 
 
+use App\Course;
 use App\CourseOffered;
 use App\Homework;
+use App\Resource;
+use App\SubmitHomework;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -147,5 +150,102 @@ class TeacherController extends Controller
             'homework_course_offered_id' => $courseOffered->id
         ];
         return json_encode($result);
+    }
+
+    public function getJsonHomeworkSubmits(Request $request){
+        $submits = SubmitHomework::where('homeword_id',$request->homeword_id);
+        foreach($submits as &$submit){
+            $submit->resources = Resource::whereIn('id', json_decode($submit->resource_str)->get());
+        }
+        return json_encode($submits->toArray());
+    }
+
+    public function getJsonHomeworkSubmitGrade(Request $request){
+        $submit = SubmitHomework::find($request->submit_homework_id);
+        $submit->grade = $request->grade;
+        $submit->comment = $request->comment;
+        $submit->save();
+        $submit->resources = Resource::whereIn('id', json_decode($submit->resource_str)->get());
+        return json_encode($submit->toArray());
+    }
+
+    public function getJsonCourseResources(Request $request){
+        $courseOffered = CourseOffered::find($request->course_offered_id);
+        $resourceArray = json_decode($courseOffered->resource_str);
+        $resources = [];
+        if(!empty($resourceArray))
+            $resources = Resource::whereIn('id', $resourceArray)->get();
+        return json_encode($resources);
+    }
+
+    public function getJsonCourseSubmitResource(Request $request){
+        $courseOffered = CourseOffered::find($request->course_offered_id);
+        $file = $request->file('file');
+        //判断文件上传过程中是否出错
+        if(!$file->isValid()){
+            abort(403,'File upload error!');
+        }
+        $fileExtension = $file->getClientOriginalExtension();
+        $fileSaveName =  basename($file -> getClientOriginalName(), ".{$file->getClientOriginalExtension()}").filectime($file).'.'.$fileExtension;
+        $presentSemester = Semester::getPresentSemester();
+        $savepath = "UserFiles"."/".
+            'Semester'."_".$presentSemester->id.'_'.$presentSemester->start_date.'_'.$presentSemester->end_date.'/'.
+            'CourseOffered'."_".$courseOffered->id.'/'.
+            'Resources'.'/';
+        Storage::makeDirectory(dirname($savepath));
+        Storage::put(
+            $savepath.$fileSaveName,
+            file_get_contents($file->getRealPath())
+        );
+        if(!Storage::exists($savepath.$fileSaveName)){
+            return 'Error! Save File Failed.';
+        }
+        $newResource = Resource::create([
+            'name' => $file->getClientOriginalName(),
+            'description' => $request->description,
+            'publish_time' => Carbon::now()->toDateTimeString(),
+            'place' => $savepath.$fileSaveName,
+            'owner_username' => $this->teacher->username
+        ]);
+        $resourceStr = $courseOffered->resource_str;
+        $resource = [];
+        if(!empty($resourceStr))
+            $resource = json_decode($resourceStr);
+        array_push($resource, $newResource->id);
+        $courseOffered->resource_str = json_encode($resource);
+        $courseOffered->save();
+        return json_encode($newResource->toArray());
+    }
+
+    public function getJsonCourseDeleteResource(Request $request){
+        $courseOffered = CourseOffered::find($request->course_offered_id);
+        $resources = json_decode($courseOffered->resource_str);
+        $resourceToDelete = Resource::whereIn('id', $resources)
+            ->where('id', $request->resource_id)
+            ->first();
+        if(empty($resourceToDelete)){
+            return 'Resource not found or unauthorized action,';
+        }
+        $filePath = $resourceToDelete->place;
+        Storage::delete($filePath);
+        if(Storage::has($filePath)){
+            return 'Resource delete failed.Unknown reason,';
+        }
+        else{
+            $key = array_search($resourceToDelete->id, $resources);
+            array_splice($resources, $key, 1);
+            $courseOffered->resource_str = json_encode($resources);
+            $courseOffered->save();
+            $resourceToDelete->delete();
+            return "Resource delete success.";
+        }
+    }
+
+    public function getJsonResourceDownload(Request $request){
+        $resource = Resource::find($request->resource_id);
+        if(empty($resource))
+            return "Error: undefined resource.";
+        $downloadPath = storage_path().'/'.'app'.'/'.$resource->place;
+        return response()->download($downloadPath, $resource->name);
     }
 }

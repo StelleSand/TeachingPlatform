@@ -20,6 +20,9 @@ class Semester extends Model
         $presentSemester = Semester::where('start_date','<',$present)
             ->where('end_date','>',$present)
             ->first();
+        if(is_null($presentSemester))
+            $presentSemester = Semester::orderBy('end_date', 'desc')
+                ->first();
         return $presentSemester;
     }
 

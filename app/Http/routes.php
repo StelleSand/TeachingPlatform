@@ -12,42 +12,45 @@
 */
 
 Route::auth();
+Route::get('/home', 'HomeController@index');
+
+Route::get('/teacher', 'HtmlController@getHtmlFile');
+Route::get('/teacherCourse', 'HtmlController@getTeachCourse');
+Route::get('/student', 'HtmlController@getStudent');
+Route::get('/studentCourse', 'HtmlController@getStudentCourse');
+Route::get('/myLogin', function () {
+    return view('login');
+});
 Route::get('/', 'HomeController@index');
 
 Route::get('/test','HomeController@test');
-Route::get('/file',function(){
-    return view('file');
-});
-Route::post('/fileUpLoader','FileController@fileUpLoader');
-
 
 //<！--Student相关模块
 Route::get('/studentHome','StudentController@getViewHome');
 Route::get('/studentInformation','StudentController@getViewInformation');
 Route::get('/studentCourses','StudentController@getViewCourses');
-Route::get('/studentCourse','StudentController@getViewCourse');
-Route::get('/studentHomeworkDetail','StudentController@getViewHomeworkDetail');
 Route::get('/studentTeams','StudentController@getViewTeams');
 
 
 
 
 Route::get('/jStudentInfo','StudentController@getJsonInfo');
-Route::get('/jStudentSubmitInfo','StudentController@getJsonSubmitInfo');
 Route::get('/jStudentCourses','StudentController@getJsonCourses');
 Route::get('/jStudentCourseInfo','StudentController@getJsonCourseInfo');
 Route::get('/jStudentCourseHomeworks','StudentController@getJsonCourseHomeworks');
 Route::get('/jStudentCourseHomeworkDetail','StudentController@getJsonCourseHomeworkDetail');
-Route::get('/jStudentCourseSubmitHomework','StudentController@postJsonCourseSubmitHomework');
+Route::post('/jStudentCourseSubmitHomework','StudentController@postJsonCourseSubmitHomework');
 Route::post('/jStudentCourseSubmitHomeworkFile','StudentController@postJsonCourseSubmitHomeworkFile');
+Route::get('/jStudentCourseDeleteHomeworkFile','StudentController@postJsonCourseDeleteHomeworkFile');
+Route::get('/jStudentSubmitHomeworkResource','StudentController@getJsonCourseSubmitHomeworkResource');
+Route::get('/jStudentSubmitHomeworkResources','StudentController@getJsonCourseSubmitHomeworkResources');
+Route::get('/jStudentResourceDownload','StudentController@getJsonResourceDownload');
 Route::get('/jStudentTeams','StudentController@getJsonTeams');
-Route::post('/jStudentCreateTeam','StudentController@postJsonCreateTeam');
 //Student相关模块-->
 
 
 //<!-- Teacher相关模块
 Route::get('/teacherHome','TeacherController@getViewHome');
-Route::get('/teacherCourse','TeacherController@getViewCourse');
 
 
 Route::get('/jTeacherInfo','TeacherController@getJsonInfo');
@@ -56,12 +59,33 @@ Route::get('/jTeacherCourseInfo','TeacherController@getJsonCourseInfo');
 Route::get('/jTeacherCourseStudents','TeacherController@getJsonCourseStudents');
 Route::get('/jTeacherCourseHomeworks','TeacherController@getJsonCourseHomeworks');
 Route::post('/jTeacherPublishHomework','TeacherController@postJsonPublishHomework');
+Route::get('/jTeacherHomeworkSubmits','TeacherController@getJsonHomeworkSubmits');
+Route::get('/jTeacherHomeworkSubmitGrade','TeacherController@getJsonHomeworkSubmitGrade');
+Route::get('/jTeacherCourseResources ','TeacherController@getJsonCourseResources');
+Route::get('/jTeacherCourseSubmitResource  ','TeacherController@getJsonCourseSubmitResource');
+Route::get('/jTeacherCourseDeleteResource  ','TeacherController@getJsonCourseDeleteResource');
+Route::get('/jTeacherResourceDownload  ','TeacherController@getJsonResourceDownload');
 
 //Teacher相关模块-->
 
-/*
- * EA相关模块
- * */
-Route::get('/EAHome','EAController@getViewHome');
+//<!-- Team相关模块
+Route::get('/teamIndex', 'TeamController@teamIndex');
+Route::get('/jGetAllTeams', 'TeamController@getAllTeams');
+Route::get('/jGetOwnerTeams', 'TeamController@getMyTeams');
+Route::get('/jGetTeamsContainMe', 'TeamController@getTeamsContainMe');
+Route::get('/jGetTeamChooseCourses', 'TeamController@getTeamChooseCourses');
+Route::get('/jGetCourseTeamsToVerify', 'TeamController@getCourseTeamsToVerify');
+Route::post('/jStudentCreateTeam', 'TeamController@postJsonCreateTeam');
+Route::post('/jStudentApplyTeam', 'TeamController@getApplyJoinTeam');
+Route::post('/jStudentDeleteTeammate', 'TeamController@deleteTeammate');
+Route::post('/jStudentChangeOwner', 'TeamController@changeToOwner');
+Route::post('/jStudentDeleteTeam', 'TeamController@deleteTeam');
+Route::post('/jStudentApplyCourse', 'TeamController@teamChooseCourse');
+//Team相关模块 -->
 
 
+#SA 相关操作
+Route::post('/admin/getEAInfo', 'SAController@getEAInfo'); //获取所有EA信息列表
+Route::post('/admin/editEAInfo','SAController@editEAInfo'); //修改EA信息
+Route::post('/admin/delEAInfo','SAController@delEAInfo');  //删除EA信息
+Route::post('/admin/addEAInfo', 'SAController@addEAInfo'); //添加EA信息

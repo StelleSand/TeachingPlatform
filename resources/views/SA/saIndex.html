@@ -1,0 +1,255 @@
+<!DOCTYPE>
+<html>
+<head>
+	<meta charset='utf-8' />
+	<title>系统管理员主页</title>
+	<link rel="stylesheet" href="./css/mystyles.css" type="text/css">
+	<link rel="stylesheet" href="./css/font-awesome.min.css" type="text/css">
+	<link rel="stylesheet" href="./css/bootstrap.css" type="text/css">
+	<link rel="stylesheet" href="./assets/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css" type="text/css">
+	<script src="./assets/bootstrap-datetimepicker/jquery-1.8.3.min.js"></script>
+	<script src='./assets/bootstrap-datetimepicker/bootstrap-3.0.0.min.js'></script>
+	<script src="./assets/bootstrap-datetimepicker/bootstrap-datetimepicker.js"></script>
+	<script src="./assets/bootstrap-datetimepicker/bootstrap-datetimepicker.zh-CN.js"></script>
+	<style>
+		table,tr,th,td{ text-align:center }
+	</style>
+</head>
+<body>
+	<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">buttom</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+      </div>
+      <div id ="navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+          <li><a href="/" style='color:white;'><span class="glyphicon glyphicon-home" aria-hidden="true"></span>系统管理员主页</a></li>
+        </ul>
+        <ul class="navbar-form navbar-right">
+           <ul class="nav nav-pills" role="tablist">
+           <li>
+   				<button type ="button" class="btn btn-primary" style ="background:#0088cc">
+     			<a href ="#" style="color:#fff;text-decoration:none">admin</a>
+   				</button>
+			</li>
+         	<li>
+         		<button type ="button" class="btn btn-primary" style ="background:#0088cc">
+     			<a href ="/logout" style="color:#fff;text-decoration:none">登出</a>
+   				</button>
+         	</li>
+           </ul>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+
+	<div class="container" style='border:0px solid black;'>
+    <div class="row">
+        <div class="col-xs-2" style='border:0px solid black;'>
+            <ul class ="nav nav-tabs nav-stacked" id="sideNav">
+                <li class="active" id='eaInfoHandle'><a><span class="glyphicon glyphicon-home"
+                         aria-hidden="true" onclick='checkEAInfo()'></span>&nbsp;查看教务人员</a></li>
+                <li id='editeaInfoHandle'><a><span class="glyphicon glyphicon-folder-open"
+                         aria-hidden ="true"></span>&nbsp;修改教务人员</a></li>
+        </div>
+        <div class='col-xs-10' style='border:0px solid black;'>
+        	<div id='eaInfo' style=''>
+        	 	<div class="contain-header page-header">
+                	<h2>教务人员列表</h2>
+            	</div>
+        		<table class="table table-striped  table-bordered">
+        		<thead>
+        			<tr>
+        				<th>序号</th><th>账号</th><th>姓名</th><th>出生日期</th><th>性别</th><th>在职状态</th>
+        			</tr>
+        		</thead>
+        		<tbody id='eaInfoTable'>
+        		
+        		</tbody>	
+				</table>
+        	</div>
+        	
+        	<div id='editeaInfo' style='display:none;'>
+        	 	<div class="contain-header page-header">
+                	<h2>更新教务人员列表</h2>
+            	</div>
+        		<table class="table table-striped  table-bordered">
+        		<thead>
+        			<tr>
+        				<th>序号</th><th>账号</th><th>姓名</th><th>出生日期</th><th>性别</th><th>在职状态</th><th>修改</th><th>删除</th>
+        			</tr>
+        		</thead>
+        		<tbody id='eaInfoTable'>
+        		
+        		</tbody>	
+				</table>
+        	</div>
+        </div>
+    </div>
+    </div>
+    <footer class="row-footer" id = "contact">
+        <div class="container">
+            <div class="row">             
+                <div class="col-xs-12">
+                    <p style="padding:10px;"></p>
+                    <p align =center>© Copyright 2016 四叶草组</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+<SCRIPT type="text/javascript">
+
+renderPage();
+function renderPage(){
+	$.post('/admin/getEAInfo', function(msg){
+		$('#editeaInfo table tbody').html('');
+		$('#editeaInfo table tbody').html('');
+		msg = eval('('+msg+')');
+		if(msg.success){
+			var number = 1;
+			for(var i in msg.success ){
+				var line = line1 = line2 = '';
+				line = "<tr><td>"+(number++)+"</td><td>"+msg.success[i].username+"</td><td>"+msg.success[i].name+"</td><td>"+msg.success[i].birth+"</td><td>";
+				if(msg.success[i].gender == 1 ){
+					line += '男';
+				}else{
+					line += '女';
+				}
+				line += "</td><td>";
+				if(msg.success[i].state == 1 ){
+					line += '在职';
+				}else{
+					line += '离职';
+				}
+				line1 = line + "</td></tr>";
+				$('#eaInfo table tbody').append(line1);
+				line2 = line + '</td><td><button class=\'btn btn-primary\' onclick=\'editLine('+i+',this)\'>修改</button></td><td><button class=\'btn btn-danger\' onclick=\'delLine('+i+')\'>删除</button></td></tr>';
+				$('#editeaInfo table tbody').append(line2);
+			}
+			var line3 = line = "<tr><td></td><td></td><td><input class='form-control'></td><td><input class='form-control' id='date_"+msg.success.length+"'></td><td><select class='form-control'><option value='1' selected>男</option><option value='0'>女</option></select><td><select class='form-control'><option value='1' selected>在职</option><option value='0'>离职</option></select></td><td><button class='btn btn-warning' onclick='addLine("+msg.success.length+",this)'>添加</button></td><td></td><td></td></tr>";
+			$('#editeaInfo table tbody').append(line3);
+			$('#date_'+msg.success.length).datetimepicker({
+				 language: 'zh-CN', //汉化 
+                 format:'yyyy-mm-dd' , 
+                 autoclose:true,
+                 minView:2,
+			});
+		}else{
+			alert('错误--' + msg.error );
+		}
+	})
+}
+function showContent(name, notname){
+	$('#'+name+'Handle').addClass('active');
+	$('#'+notname+'Handle').removeClass('active');
+	$('#'+name).css('display', '');
+	$('#'+notname).css('display', 'none');
+}
+$("#eaInfoHandle").click(function(){
+	showContent('eaInfo','editeaInfo');
+})
+$("#editeaInfoHandle").click(function(){
+	showContent('editeaInfo','eaInfo');
+})
+
+$('td button').click(function(){
+	alert(this.cellIndex); 
+});
+
+function editLine( i, btn ){
+	if($(btn).text() == '提交') {
+		var username = $('#editeaInfo table tbody tr').eq(i).find('td').eq(1).html();
+		var name  = $('#editeaInfo table tbody tr').eq(i).find('td').eq(2).find('input').val();
+		var birth = $('#editeaInfo table tbody tr').eq(i).find('td').eq(3).find('input').val();
+		var gender = $('#editeaInfo table tbody tr').eq(i).find('td').eq(4).find('select').val();
+		var state = $('#editeaInfo table tbody tr').eq(i).find('td').eq(5).find('select').val();
+		$.post('/admin/editEAInfo', {username:username, name:name,birth:birth,gender:gender,state:state}, function(msg){
+			msg = eval('('+msg+')');
+			if(msg.success){
+				alert('修改成功');
+				renderPage();
+				showContent('editeaInfo','eaInfo');
+			}else{
+				alert('修改失败--'+msg.error);
+			}
+		})
+		$(btn).text('修改');
+		return ;
+	}else{
+		$(btn).text('提交');
+		var username = $('#editeaInfo table tbody tr').eq(i).find('td').eq(1).html();
+		var name  = $('#editeaInfo table tbody tr').eq(i).find('td').eq(2).html();
+		$('#editeaInfo table tbody tr').eq(i).find('td').eq(2).html("<input class='form-control' value='"+name+"' />");
+		var birth = $('#editeaInfo table tbody tr').eq(i).find('td').eq(3).html();
+		$('#editeaInfo table tbody tr').eq(i).find('td').eq(3).html("<input class='form-control' id='date_"+i+"' value='"+birth+"' />");
+		$('#date_'+i).datetimepicker({
+			 language: 'zh-CN', //汉化 
+             format:'yyyy-mm-dd' , 
+             autoclose:true,
+             minView:2,
+		});
+		var gender = $('#editeaInfo table tbody tr').eq(i).find('td').eq(4).html();
+		var gender_select = '';
+		if(gender == '男'){
+			gender_select = "<select class='form-control'><option value='1' selected>男</option><option value='0'>女</option></select>";
+		}else{
+			gender_select = "<select class='form-control'><option value='1' >男</option><option value='0' selected>女</option></select>";
+		}
+		$('#editeaInfo table tbody tr').eq(i).find('td').eq(4).html(gender_select);
+		var state = $('#editeaInfo table tbody tr').eq(i).find('td').eq(5).html();
+		var state_select = '';
+		if(state == '在职'){
+			state_select = "<select class='form-control'><option value='1' selected>在职</option><option value='0'>离职</option></select>";
+		}else{
+			state_select = "<select class='form-control'><option value='1' >在职</option><option value='0' selected>离职</option></select>";
+		}
+		$('#editeaInfo table tbody tr').eq(i).find('td').eq(5).html(state_select);
+		
+	}
+	console.log('修改第'+i+'行');
+}
+function delLine( i ){
+	console.log('删除第'+i+"行");
+	var username = $('#editeaInfo table tbody tr').eq(i).find('td').eq(1).html();
+	alert( '要删除账号 -['+username +']?');
+	$.post('/admin/delEAInfo', {eaUsername : username }, function(msg){
+		msg = eval('('+msg+')');
+		if(msg.success){
+			alert('修改成功');
+			renderPage();
+			showContent('editeaInfo','eaInfo');
+		}else{
+			alert('修改失败--'+msg.error);
+		}
+	})
+}
+function addLine(i,btn){
+	if($(btn).text() == '添加') {
+		var name  = $('#editeaInfo table tbody tr').eq(i).find('td').eq(2).find('input').val();
+		var birth = $('#editeaInfo table tbody tr').eq(i).find('td').eq(3).find('input').val();
+		var gender = $('#editeaInfo table tbody tr').eq(i).find('td').eq(4).find('select').val();
+		var state = $('#editeaInfo table tbody tr').eq(i).find('td').eq(5).find('select').val();
+		console.log(name+'-'+birth+'-'+ gender+'-'+state);
+		$.post('/admin/addEAInfo', {name:name,birth:birth,gender:gender,state:state}, function(msg){
+			msg = eval('('+msg+')');
+			if(msg.success){
+				alert('添加成功');
+				renderPage();
+				showContent('editeaInfo','eaInfo');
+			}else{
+				alert('添加失败--'+msg.error);
+			}
+		})
+		return ;
+	}
+	console.log('添加行');
+}
+</SCRIPT>
+</html>

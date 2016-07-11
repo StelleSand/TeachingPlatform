@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests;
+use App\Semester;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -35,10 +36,17 @@ class HomeController extends Controller
         }
         if($user->isTeacher()) {
             return view('teacher.teacherIndex');}
+        if($user->isSystemAdmin()){
+        	return view('SA.saIndex');
+        }
+        if ($user->isEducationalAdmin()){
+        	return view('EA.eaIndex');
+        }
     }
 
     public function test()
     {
-        return view('home');
+        $semester = Semester::getPresentSemester();
+        return json_encode($semester->toArray());
     }
 }

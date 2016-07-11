@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class CourseTeam extends Model
 {
     //
-    protected $table = 'courses_team';
+    protected $table = 'course_team';
     public $timestamps = false;
 
     protected $fillable = [

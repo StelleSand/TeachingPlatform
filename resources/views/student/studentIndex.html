@@ -7,19 +7,20 @@
     <link rel="stylesheet" href="./css/mystyles.css" type="text/css">
     <link rel="stylesheet" href="./css/font-awesome.min.css" type="text/css">
     <link rel="stylesheet" href="./css/bootstrap-social.css" type="text/css">
-    <script src="./js/angular.js"></script>
+    <script src="./js/angular.min.js"></script>
     <script src="./js/angular-route.min.js"></script>
     <script>
         var myApp = angular.module('myApp', ['ngRoute']);
     </script>
 </head>
-<body>
+<body ng-controller="MainController">
 <div class="container">
     <div class="row">
         <div class="col-xs-2" id="myScrollspy">
             <ul class="nav nav-tabs nav-stacked" id="sideNav">
-                <li><a href="#studentInfo"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> 学生基本信息</a></li>
-                <li><a href="#studentCourse"><span class="glyphicon glyphicon-education" aria-hidden="true"></span> 课程信息</a></li>
+                <li><a href="#studentInfo"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp;学生基本信息</a></li>
+                <li><a href="#studentCourse"><span class="glyphicon glyphicon-education" aria-hidden="true"></span>&nbsp;课程信息</a></li>
+                <li><a href="#studentTeam"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span>&nbsp;我的团队</a></li>
             </ul>
         </div>
         <!-- angularJs路由控制视图 -->
@@ -48,7 +49,7 @@
                     </div>
                     <div class="form-group">
                         <label class="col-sm-2 control-label">手机号：</label>
-                        <div class="col-sm-10"><input type="text" class="form-control" name="telephone" ng-model="person.telphone"></div>
+                        <div class="col-sm-10"><input type="text" class="form-control" name="telephone" ng-model="person.telephone"></div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-2 control-label">邮箱：</label>
@@ -68,7 +69,7 @@
     </script>
     <!-- 学生所选课程页面 -->
     <script type="text/ng-template" id="studentCourse.html">
-        <div class="container courses" style = "width : 100%">
+        <div class="container courses" style="width : 100%">
             <div class="Courses-header page-header">
                 <h2>课程信息</h2>
                 <p>以下为个人相关课程信息</p>
@@ -86,6 +87,108 @@
             </div>
         </div>
     </script>
+    <script type="text/ng-template" id="studentTeam.html">
+        <div class="container" style="width: 100%">
+            <div class="page-header">
+                <h2>我的团队</h2>
+                <p>以下为我的团队信息</p>
+            </div>
+            <!-- 我的团队列表模块 -->
+            <div class="row">
+                <h3>我创建的团队</h3>
+                <table class="table table-striped">
+                    <thead>
+                        <tr><th>团队名称</th><th>团队描述</th><th>团队组员序列</th><th>团队状态</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="myTeam in myTeams">
+                            <td><a style="cursor: pointer" ng-click="getMyTeammateDetail($index)">{{ myTeam.name }}</a></td>
+                            <td>{{ myTeam.description }}</td>
+                            <td>{{ myTeam.now_teammate_str }}</td>
+                            <td>{{ myTeam.state }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br>
+                <h3>我所在的团队</h3>
+                <table class="table table-striped">
+                    <thead>
+                        <tr><th>团队名称</th><th>团队负责人</th><th>团队描述</th><th>团队组员序列</th><th>团队状态</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="myLocatedTeam in myLocatedTeams">
+                            <td><a style="cursor: pointer" ng-click="getTeammateDetail($index)">{{ myLocatedTeam.name }}</a></td>
+                            <td>{{ myLocatedTeam.owner }}</td>
+                            <td>{{ myLocatedTeam.description }}</td>
+                            <td>{{ myLocatedTeam.now_teammate_str }}</td>
+                            <td>{{ myLocatedTeam.state }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br>
+                <h3>创建团队</h3>
+                <div class="row">
+                    <div class="col-md-10">
+                        <div class="form-group">
+                            <label>团队名称</label>
+                            <input class="form-control" ng-model="createTeam.name" type="text">
+                        </div>
+                        <div class="form-group">
+                            <label>团队描述</label>
+                            <textarea rows="8" class="form-control" ng-model="createTeam.description"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <button class="btn btn-primary" ng-click="applyCreateTeam()">创建团队</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+    <script type="text/ng-template" id="studentTeamDetail.html">
+        <div class="container" style="width: 100%">
+            <!-- 查看团队成员信息模块 -->
+            <div class="page-header">
+                <h3>{{ team_to_operate.name }}</h3>
+                <p style="text-align: right"><strong>团队负责人：</strong>{{ team_to_operate.owner }}</p>
+            </div>
+            <div class="row">
+                <table class="table table-striped">
+                    <thead>
+                    <tr><th>序号</th><th>成员姓名</th><th>成员学号</th><th>成员所在班级</th><th>成员联系方式</th><th ng-show="isMyTeam">删除该成员</th><th ng-show="isMyTeam">变更为负责人</th></tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="teammate in teammates">
+                        <td>{{ $index + 1 }}</td>
+                        <td>{{ teammate.name }}</td>
+                        <td>{{ teammate.username }}</td>
+                        <td>{{ teammate.class_number }}</td>
+                        <td>{{ teammate.telephone }}</td>
+                        <td ng-show="isMyTeam"><button class="btn btn-danger btn-sm" ng-click="removeTeammate($index, teammate.username)">删除</button></td>
+                        <td ng-show="isMyTeam"><button class="btn btn-warning btn-sm" ng-click="changeToOwner($index, teammate.username)">变更</button></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="page-header">
+                <h3>选课列表</h3>
+            </div>
+            <div class="row">
+                <div class="col-sm-6 col-md-4 col-lg-3" ng-repeat="course in coursesToChoose">
+                    <div class="thumbnail" style="height: 170px;">
+                        <div class="caption">
+                            <h3><a href="/studentCourse?course_id={{ course.course_offered_id }}" target="_blank" >{{ course.course_name }}</a></h3>
+                            <p><small>教师：{{ course.teacher_name }}</small></p>
+                            <p>{{ course.course_description }}</p>
+                            <p style="text-align: right"><button class="btn btn-sm btn-primary" ng-click="applyJoinCourse(course.course_offered_id)">申请课程</button></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row"></div>
+        </div>
+    </script>
+
 </div>
 <footer class="row-footer">
     <div class="container">
@@ -104,11 +207,55 @@
                     templateUrl: 'studentCourse.html',
                     controller: 'CourseController'
                 })
+                .when('/studentTeam', {
+                    templateUrl: 'studentTeam.html',
+                    controller: 'MyTeamController'
+                })
+                .when('/studentTeamDetail', {
+                    templateUrl: 'studentTeamDetail.html',
+                    controller: 'TeamDetailController'
+                })
                 .otherwise({
                     templateUrl: 'studentInfo.html',
                     controller: 'InfoController'
                 });
     }]);
+    myApp.controller('MainController', function ($scope, $http) {
+        // 获取团队可选课程信息
+        $http.get('/jGetTeamChooseCourses')
+                .success(function (data) {
+                    $scope.coursesToChoose = data;
+                });
+        // 获取我创建的团队信息
+        $http.get('/jGetOwnerTeams')
+                .success(function (data) {
+                    console.log(data);
+                    $scope.myTeams = data;
+                });
+        // 获取我所在的团队信息
+        $http.get('/jGetTeamsContainMe')
+                .success(function (data) {
+                    $scope.myLocatedTeams = data;
+                });
+        // 进入我创建的团队详情页面
+        $scope.getMyTeammateDetail = function (index) {
+            $scope.isMyTeam = true;
+            $scope.team_to_operate = $scope.myTeams[index];
+            $scope.teammates = $scope.myTeams[index].teammates;
+            window.location.href = '#studentTeamDetail';
+        };
+        // 进入我所在的团队详情页面
+        $scope.getTeammateDetail = function (index) {
+            $scope.isMyTeam = false;
+            $scope.team_to_operate = $scope.myLocatedTeams[index];
+            $scope.teammates = $scope.myLocatedTeams[index].teammates;
+            window.location.href = '#studentTeamDetail';
+        };
+        // 从子controller中获取新创建的团队信息
+        $scope.$on('$succeedCreateTeam', function (event, data) {
+            $scope.myTeams.unshift(data);
+        })
+    });
     myApp.controller('InfoController', function ($scope, $http) {
         $http.get('/jStudentInfo')
                 .success(function (data) {
@@ -118,44 +265,60 @@
                 .error(function (data ,status) {
                     console.log('发生错误！ 状态：' + status);
                 });
-        //$scope.person = { name: '张三', username: '13211111', class_number: '132114', password: '123456', email: '12345@qq.com', telephone: '13240309256', description: '我就是学神啊！' };
     });
     myApp.controller('CourseController', function ($scope, $http) {
         $http.get('/jStudentCourses')
                 .success(function (data) {
-                    console.log(data);
                     $scope.courses = data;
                 })
                 .error(function (data ,status) {
                     console.log('发生错误！ 状态：' + status);
                 });
-        /*$scope.lessons = [
-            {
-                id: 120,
-                title: '工科高等数学',
-                teacher: '王乐',
-                description: '这是一门重要的课程的方法为发哦我放假哦'
-            },
-            {
-                id: 110,
-                title: 'C++',
-                teacher: '杨帆',
-                description: '这是宋友老师的课啊！'
-            },
-            {
-                id: 120,
-                title: '工科高等数学',
-                teacher: '王乐',
-                description: '这是一门重要的课程的方法为发哦我放假哦'
-            },
-            {
-                id: 120,
-                title: '工科高等数学',
-                teacher: '王乐',
-                description: '这是一门重要的课程的方法为发哦我放假哦'
-            }
-        ];*/
-    })
+    });
+    myApp.controller('MyTeamController', function ($scope, $http) {
+        // 申请创建团队
+        $scope.applyCreateTeam = function () {
+            $http.post('/jStudentCreateTeam', $scope.createTeam)
+                    .success(function (data) {
+                        console.log('团队创建成功，团队信息如下：');
+                        console.log(data);
+                        $scope.$emit('$succeedCreateTeam', data);
+                    });
+        };
+    });
+    myApp.controller('TeamDetailController', function ($scope, $http) {
+        // 删除某成员
+        $scope.removeTeammate = function (index, username) {
+            $http.post('/jStudentDeleteTeammate', { username: username, team_id: $scope.team_to_operate.id })
+                    .success(function (data) {
+                        console.log('删除成员成功');
+                        console.log(data);
+                        $scope.teammates.splice(index, 1);
+                    });
+        };
+        // 将某成员变更为负责人
+        $scope.changeToOwner = function (index, username) {
+            $http.post('/jStudentChangeOwner', { username: username, team_id: $scope.team_to_operate.id })
+                    .success(function (data) {
+                        console.log('变更负责人成功');
+                        window.location.href = '#studentTeam';
+                    });
+        };
+        // 申请选课
+        $scope.applyJoinCourse = function (course_offered_id) {
+            console.log('team_id: ' + $scope.team_to_operate.id + ' course_offered_id: ' + course_offered_id);
+            $http.post('jStudentApplyCourse', { team_id: $scope.team_to_operate.id, course_offered_id: course_offered_id })
+                    .success(function (data) {
+                        if (!data.undefinedStudents && !data.repeatedStudents) {
+                            console.log('我判断得对不对？');
+                            console.log(data);
+                        } else {
+                            console.log('难道我判断错了？');
+                            console.log(data);
+                        }
+                    })
+        }
+    });
 </script>
 </body>
 </html>

@@ -9,7 +9,23 @@
 namespace App\Http\Controllers;
 
 
-use Symfony\Component\HttpKernel\Tests\Controller;
+use App\CourseOffered;
+use App\CourseStudent;
+use App\Homework;
+use App\Http\Requests;
+use App\Resource;
+use App\Semester;
+use App\Student;
+use App\SubmitHomework;
+use App\Team;
+use App\User;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use App\Services\UploadsManager;
+use Illuminate\Support\Facades\View;
 
 class EAController extends Controller
 {
@@ -28,7 +44,5 @@ class EAController extends Controller
         View::addExtension('html', 'php');
     }
 
-    public function getViewHome(){
-        return view('EA.home');
-    }
+    
 }

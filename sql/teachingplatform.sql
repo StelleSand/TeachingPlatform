@@ -326,7 +326,7 @@ CREATE TABLE `log` (
 
 CREATE TABLE `resource` (
   `id` int(11) UNSIGNED NOT NULL COMMENT '资源自增id',
-  `name` varchar(20) DEFAULT NULL COMMENT '资源名称',
+  `name` text DEFAULT NULL COMMENT '资源名称',
   `description` varchar(30) DEFAULT NULL COMMENT '资源描述',
   `publish_time` datetime DEFAULT NULL COMMENT '资源发布时间',
   `place` varchar(300) DEFAULT NULL COMMENT '资源存储路径',
