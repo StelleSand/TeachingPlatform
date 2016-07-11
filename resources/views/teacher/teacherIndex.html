@@ -17,7 +17,7 @@
 <script src="./js/angular.js"></script>
 <script src="./js/angular-route.min.js"></script>
 </head>
-<body>
+<body ng-controller="MainController">
 <div class="container">
     <div class="row">
         <div class="col-xs-2" id="myScrollspy">
@@ -115,6 +115,14 @@
                     controller: 'InfoController'
                 });
     }]);
+    myApp.controller('MainController', function ($scope, $http) {
+        $http.get('/jGetCourseTeamsToVerify')
+                .success(function (data) {
+                    console.log('获得待审核团队名单');
+                    console.log(data);
+                    $scope.teamsToVerify = data;
+                })
+    });
     myApp.controller('InfoController', function ($scope, $http) {
         $http.get('/jTeacherInfo')
                 .success(function (data) {
