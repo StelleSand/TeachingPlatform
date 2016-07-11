@@ -1,6 +1,8 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\CourseOffered;
+use App\CourseTeam;
 use App\Student;
 use App\Team;
 use Carbon\Carbon;
@@ -145,6 +147,31 @@ Class TeamController extends Controller {
         $team->owner = $request->username;
         $team->save();
         return view('student.studentIndex');
+    }
+
+    public function postJsonCourses(Request $request){
+        $courses = CourseTeam::where('team_id',$request->team_id)
+            ->join('course_offered','course_team.course_offered_id','=','course_offered.id')
+            ->join('course','course_offered.course_id','=','course.id')
+            ->join('semester','course_offered.semester_id','=','semester.id')
+            ->groupBy('semester.name')
+            ->select(
+                'course_team.id as course_team_id',
+                'course.name as course_name',
+                'course.description as course_description',
+                'semester.name as semester_name',
+                'teacher.name as teacher_name',
+                'course_offered.id as course_offered_id'
+            )
+            ->get();
+        return json_encode($courses);
+    }
+
+    public function postJsonCourseHomeworks(Request $request){
+        $present = Carbon::now()->toDateTimeString();
+        $courseTeam = CourseTeam::find($request->course_team_id);
+        $homeworks = CourseOffered::homeworksDetail($courseTeam->course_offered_id, $courseTeam, 'team');
+        return json_encode($homeworks);
     }
 }
 ?>

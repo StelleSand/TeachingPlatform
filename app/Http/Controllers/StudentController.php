@@ -113,7 +113,8 @@ class StudentController extends Controller
     public function getJsonCourseHomeworks(Request $request){
         $present = Carbon::now()->toDateTimeString();
         $courseOfferedID = $request->input('course_offered_id');
-        $homeworks = CourseOffered::where('course_offered.id',$courseOfferedID)
+        $homeworks = CourseOffered::homeworksDetail($courseOfferedID, $this->user,'user');
+        /*$homeworks = CourseOffered::where('course_offered.id',$courseOfferedID)
             ->join('homework','course_offered.id','=','homework.course_offered_id')
             ->where('homework.start_date','<',$present)
             ->whereIn('homework.type',['1','3'])
@@ -166,7 +167,7 @@ class StudentController extends Controller
                 $homework->submit_homework_resources =
                     Resource::whereIn('id',json_decode($submit->resource_str))->get();
             }
-        }
+        }*/
         return json_encode($homeworks);
     }
 
