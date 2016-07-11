@@ -134,6 +134,7 @@ class StudentController extends Controller
             {
                 $homework->submit_homework_id = 0;
                 $homework->submit_homework_name = 0;
+                $homework->submit_homework_grade = 0;
                 $homework->submit_homework_submit_time = 0;
                 $homework->submit_homework_comment = 0;
                 $homework->submit_homework_result_time = 0;
