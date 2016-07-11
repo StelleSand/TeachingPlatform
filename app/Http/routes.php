@@ -86,6 +86,6 @@ Route::post('/jStudentApplyCourse', 'TeamController@teamChooseCourse');
 
 #SA 相关操作
 Route::post('/admin/getEAInfo', 'SAController@getEAInfo'); //获取所有EA信息列表
-// Route::post('/admin/editEAInfo',''); //修改EA信息
-// Route::post('/admin/delEAInfo','');  //删除EA信息
-// Route::post('/admin/addEAInfo', ''); //添加EA信息
+Route::post('/admin/editEAInfo','SAController@editEAInfo'); //修改EA信息
+Route::post('/admin/delEAInfo','SAController@delEAInfo');  //删除EA信息
+Route::post('/admin/addEAInfo', 'SAController@addEAInfo'); //添加EA信息
