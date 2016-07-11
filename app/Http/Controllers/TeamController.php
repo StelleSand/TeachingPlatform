@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\CourseOffered;
 use App\Student;
 use App\Team;
 use Carbon\Carbon;
@@ -64,7 +65,7 @@ Class TeamController extends Controller {
      * 方式：get
      */
     public function getAllTeams() {
-        $teams = Team::all();
+        $teams = Team::where('state', '1')->get();
         return json_encode($teams->toArray());
     }
     /*
@@ -72,7 +73,7 @@ Class TeamController extends Controller {
      * 方式：get
      */
     public function getMyTeams() {
-        $teams = Team::where('owner', $this->user->username)->orderBy('create_time', 'desc')->get();
+        $teams = Team::where('owner', $this->user->username)->where('state', '1')->orderBy('create_time', 'desc')->get();
         foreach($teams as $team) {
             $teammates = json_decode($team->now_teammate_str);
             $team_users = array();
@@ -91,7 +92,7 @@ Class TeamController extends Controller {
      * 方式：get
      */
     public function getTeamsContainMe() {
-        $teams = Team::where('now_teammate_str', 'like', '%'.$this->user->username.'%')->get();
+        $teams = Team::where('now_teammate_str', 'like', '%'.$this->user->username.'%')->where('state', '1')->get();
         $teams = iterator_to_array($teams);
         //$teams_count = count($teams);
         for ($i = 0; $i < count($teams); $i++) {
@@ -144,7 +145,40 @@ Class TeamController extends Controller {
         $team = Team::find($request->team_id);
         $team->owner = $request->username;
         $team->save();
-        return view('student.studentIndex');
     }
+    /*
+     * 解散团队
+     * 方式：post
+     * Params：team_id(团队id)
+     */
+    public function deleteTeam(Request $request) {
+        $team = Team::find($request->team_id);
+        $team->state = '0';
+        $team->save();
+    }
+    /*
+     * 获取团队可选课程
+     * 方式：get
+     */
+    public function getTeamChooseCourses() {
+        $courses = CourseOffered::where('semester_id', 2)  // 假设当前学期为第二学期
+            ->join('teacher', 'course_offered.teacher_username', '=', 'teacher.username')
+            ->join('course', 'course_offered.course_id', '=', 'course.id')
+            ->join('school', 'course_offered.school_number', '=', 'school.number')
+            ->select(
+                'course.name as course_name',
+                'course.description as course_description',
+                'teacher.name as teacher_name',
+                'school.name as school_name',
+                'course_offered.id as course_offered_id'
+            )
+            ->get();
+        return json_encode($courses);
+    }
+    /*
+     * 团队选课
+     * 方式：post
+     * Params：team_id(团队id), course_offered_id(可选课程id)
+     * */
 }
 ?>

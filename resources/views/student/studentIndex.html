@@ -170,6 +170,22 @@
                     </tbody>
                 </table>
             </div>
+            <div class="page-header">
+                <h3>选课列表</h3>
+            </div>
+            <div class="row">
+                <div class="col-sm-6 col-md-4 col-lg-3" ng-repeat="course in coursesToChoose">
+                    <div class="thumbnail" style="height: 170px;">
+                        <div class="caption">
+                            <h3><a href="/studentCourse?course_id={{ course.course_offered_id }}" target="_blank" >{{ course.course_name }}</a></h3>
+                            <p><small>教师：{{ course.teacher_name }}</small></p>
+                            <p>{{ course.course_description }}</p>
+                            <p style="text-align: right"><button class="btn btn-sm btn-primary">申请课程</button></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row"></div>
         </div>
     </script>
 
@@ -205,6 +221,11 @@
                 });
     }]);
     myApp.controller('MainController', function ($scope, $http) {
+        // 获取团队可选课程信息
+        $http.get('/jGetTeamChooseCourses')
+                .success(function (data) {
+                    $scope.coursesToChoose = data;
+                });
         // 获取我创建的团队信息
         $http.get('/jGetOwnerTeams')
                 .success(function (data) {
