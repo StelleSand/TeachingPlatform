@@ -113,7 +113,8 @@ class StudentController extends Controller
     public function getJsonCourseHomeworks(Request $request){
         $present = Carbon::now()->toDateTimeString();
         $courseOfferedID = $request->input('course_offered_id');
-        $homeworks = CourseOffered::where('course_offered.id',$courseOfferedID)
+        $homeworks = CourseOffered::homeworksDetail($courseOfferedID, $this->user,'user');
+        /*$homeworks = CourseOffered::where('course_offered.id',$courseOfferedID)
             ->join('homework','course_offered.id','=','homework.course_offered_id')
             ->where('homework.start_date','<',$present)
             ->whereIn('homework.type',['1','3'])
@@ -166,7 +167,7 @@ class StudentController extends Controller
                 $homework->submit_homework_resources =
                     Resource::whereIn('id',json_decode($submit->resource_str))->get();
             }
-        }
+        }*/
         return json_encode($homeworks);
     }
 
@@ -227,7 +228,7 @@ class StudentController extends Controller
             'CourseOffered'."_".$courseOffered->id.'/'.
             'Homework'.'/'.
             'Homework'."_".$homework->id.'/'.
-            'SubmitHomework'."_".$submitHomework->id.'_'. $submitHomework->submit_username.'/';
+            'SubmitHomework'."_".$submitHomework->id.'/';
         Storage::makeDirectory(dirname($savepath));
         Storage::put(
             $savepath.$fileSaveName,
@@ -241,7 +242,7 @@ class StudentController extends Controller
             'description' => $request->description,
             'publish_time' => Carbon::now()->toDateTimeString(),
             'place' => $savepath.$fileSaveName,
-            'owner_username' => $this->student->username
+            'owner_username' => $this->user->username
         ]);
         $resourceStr = $submitHomework->resource_str;
         $resource = [];
@@ -294,6 +295,15 @@ class StudentController extends Controller
             return "Error: undefined resource.";
         $downloadPath = storage_path().'/'.'app'.'/'.$resource->place;
         return response()->download($downloadPath, $resource->name);
+    }
+
+    public function getJsonCourseResources(Request $request){
+        $courseOffered = CourseOffered::find($request->course_offered_id);
+        $resourceArray = json_decode($courseOffered->resource_str);
+        $resources = [];
+        if(!empty($resourceArray))
+            $resources = Resource::whereIn('id', $resourceArray)->get();
+        return json_encode($resources);
     }
 
     public function getJsonTeams(){

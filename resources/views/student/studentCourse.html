@@ -21,9 +21,9 @@
     <div id="courseIndex" class="row">
         <div class="col-xs-2">
             <ul class="nav nav-tabs nav-stacked" id="sideNav">
-                <li><a href="/studentCourse?id={{ course_id }}#courseIndex"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> 课程主页</a></li>
-                <li><a href="/studentCourse?id={{ course_id }}#courseHomework"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> 课程作业</a></li>
-                <li><a href="/studentCourse?id={{ course_id }}#courseResource"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span> 课程资源</a></li>
+                <li><a href="/studentCourse?id={{ course_id }}#courseIndex"><span class="glyphicon glyphicon-home" aria-hidden="true"></span>&nbsp;课程主页</a></li>
+                <li><a href="/studentCourse?id={{ course_id }}#courseHomework"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>&nbsp;课程作业</a></li>
+                <li><a href="/studentCourse?id={{ course_id }}#courseResource"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>&nbsp;课程资源</a></li>
             </ul>
         </div>
         <!--angularJs路由控制视图部分-->
@@ -89,48 +89,18 @@
             <table class="table table-striped" style = "text-align : left;">
                 <thead>
                 <tr>
-                    <th>标题</th>
-                    <th>访问范围</th>
+                    <th>序号</th>
+                    <th>文件</th>
                     <th>创建者</th>
-                    <th>修改时间</th>
-                    <th>大小</th>
+                    <th>上传时间</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <td><span class ="glyphicon glyphicon-folder-open" aria-hidden = "true"></span><a href = "/css" title = "folder"> 大学语文资源</a></td>
-                    <td>公开</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td><span class ="glyphicon glyphicon-file" aria-hidden = "true"></span><a href = "/css/bootstrap-social.css" target = "_blank" title = "css"> 大学语文的css规范</a></td>
-                    <td>公开</td>
-                    <td>张三</td>
-                    <td>2016/6/4</td>
-                    <td>1.1MB</td>
-                </tr>
-                <tr>
-                    <td><span class ="glyphicon glyphicon-picture" aria-hidden = "true"></span><a href = "/css/bootstrap-social.css" target = "_blank" title = "pic"> 大学语文的图片规范</a></td>
-                    <td>公开</td>
-                    <td>张三</td>
-                    <td>2016/6/4</td>
-                    <td>1.1MB</td>
-                </tr>
-                <tr>
-                    <td><span class ="glyphicon glyphicon-list-alt" aria-hidden = "true"></span><a href = "/css/bootstrap-social.css" target = "_blank" title = "PDF"> 大学语文的PDF规范</a></td>
-                    <td>公开</td>
-                    <td>张三</td>
-                    <td>2016/6/4</td>
-                    <td>1.1MB</td>
-                </tr>
-                <tr>
-                    <td><span class ="glyphicon glyphicon-blackboard" aria-hidden = "true"></span><a href = "/css/bootstrap-social.css" target = "_blank" title = "PPT"> 大学语文的PPT规范</a></td>
-                    <td>公开</td>
-                    <td>张三</td>
-                    <td>2016/6/4</td>
-                    <td>1.1MB</td>
+                <tr ng-repeat="resource in resources">
+                    <td>{{ $index + 1 }}</td>
+                    <td><span class ="glyphicon glyphicon-file" aria-hidden = "true"></span><a href = "/jStudentResourceDownload?resource_id={{ resource.id }}">&nbsp;{{ resource.name }}</a></td>
+                    <td>{{ resource.owner_username }}</td>
+                    <td>{{ resource.publish_time }}</td>
                 </tr>
                 </tbody>
             </table>
@@ -212,8 +182,8 @@
                     </div>
                 </div>
             </div>
-            <!-- 状态为已提交的作业详情 -->
-            <div id="homework_submit" ng-show="homework.submit_homework_state=='2'">
+            <!-- 状态为已提交和已保存的作业详情 -->
+            <div id="homework_submit" ng-show="homework.submit_homework_state=='2' || homework.submit_homework_state=='3'">
                 <h3>作业内容</h3>
                 <div class="row">
                     <div class="col-md-9"></div>
@@ -224,6 +194,12 @@
                 <ol>
                     <li ng-repeat="resource in homework.submit_homework_resources"><a href="/jStudentResourceDownload?resource_id={{ resource.id }}">{{ resource.name }}</a></li>
                 </ol>
+                <br>
+                <div ng-show="homework.submit_homework_state=='3'">
+                    <h3>教师评分</h3>
+                    <p><strong>分数：</strong>&nbsp;{{ homework.submit_homework_grade }}</p>
+                    <p><strong>点评：</strong>&nbsp;{{ homework.submit_homework_comment }}</p>
+                </div>
             </div>
         </div>
     </div>
@@ -369,7 +345,6 @@
                             $scope.homework.submit_homework_resources = [];
                             $scope.homework.submit_homework_resources.push(response.data);
                             console.log('文件提交成功！');
-                            console.log(response.data);
                         });
                     }, function (response) {
                         if (response.status > 0)
@@ -381,6 +356,13 @@
             })
         };
     }])
+    myApp.controller('ResourceController', function ($scope, $http) {
+        $http.get('/jStudentCourseResources?course_offered_id=' + $scope.course_id)
+                .success(function (data) {
+                    console.log('获取资源信息成功');
+                    $scope.resources = data;
+                });
+    });
 </script>
 </body>
 </html>

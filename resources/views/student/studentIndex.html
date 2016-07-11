@@ -142,6 +142,23 @@
                         </div>
                     </div>
                 </div>
+                <br>
+                <h3>寻找团队</h3>
+                <div class="row">
+                    <div class="col-md-3"><input type="text" ng-model="courseToSearch" class="form-control"></div>
+                    <div class="col-md-3"><button class="btn btn-primary" ng-click="searchTeams()">搜索</button></div>
+                    <div class="col-md-6"><button class="btn btn-primary" ng-click="getAllTeams()">获取所有团队</button></div>
+                </div>
+                <br>
+                <table class="table table-striped">
+                    <tr ng-repeat="team in allTeams">
+                        <td>{{ $index + 1 }}</td>
+                        <td><a style="cursor: pointer" ng-click="goToCertainTeammateDetail($index)">{{ team.name }}</a></td>
+                        <td>{{ team.owner }}</td>
+                        <td>{{ team.description }}</td>
+                        <td><button class="btn btn-primary btn-sm" ng-click="joinTeam(team.id, $index)">申请加入团队</button></td>
+                    </tr>
+                </table>
             </div>
         </div>
     </script>
@@ -169,6 +186,20 @@
                     </tr>
                     </tbody>
                 </table>
+            </div>
+            <div class="page-header">
+                <h3>已选课程</h3>
+            </div>
+            <div class="row">
+                <div class="col-sm-6 col-md-4 col-lg-3" ng-repeat="course in teamCourses">
+                    <div class="thumbnail" style="height: 170px;">
+                        <div class="caption">
+                            <h3><a href="/teamCourse?course_id={{ course.course_offered_id }}" target="_blank" >{{ course.course_name }}</a></h3>
+                            <p><small>教师：{{ course.teacher_name }}</small></p>
+                            <p>{{ course.course_description }}</p>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="page-header" ng-show="isMyTeam">
                 <h3>选课列表</h3>
@@ -221,6 +252,7 @@
                 });
     }]);
     myApp.controller('MainController', function ($scope, $http) {
+        $scope.allTeams = [];  // 存储所有团队或搜索所得团队
         // 获取团队可选课程信息
         $http.get('/jGetTeamChooseCourses')
                 .success(function (data) {
@@ -237,6 +269,22 @@
                 .success(function (data) {
                     $scope.myLocatedTeams = data;
                 });
+        // 搜索团队
+        $scope.searchTeams = function () {
+            $http.get('/?team_name=' + $scope.coursesToChoose)
+                    .success(function (data) {
+                        console.log('搜索团队成功');
+                        $scope.allTeams = data;
+                    });
+        };
+        // 获取所有团队
+        $scope.getAllTeams = function () {
+            $http.get('/jGetAllTeams')
+                    .success(function (data) {
+                        console.log('所有团队获取成功');
+                        $scope.allTeams = data;
+                    });
+        };
         // 进入我创建的团队详情页面
         $scope.getMyTeammateDetail = function (index) {
             $scope.isMyTeam = true;
@@ -251,10 +299,26 @@
             $scope.teammates = $scope.myLocatedTeams[index].teammates;
             window.location.href = '#studentTeamDetail';
         };
+        // 查看进入某个团队详情
+        $scope.goToCertainTeammateDetail = function (index) {
+            $scope.isMyTeam = false;
+            $scope.team_to_operate = $scope.allTeams[index];
+            $scope.teammates = $scope.allTeams[index].teammates;
+            window.location.href = '#studentTeamDetail';
+        };
         // 从子controller中获取新创建的团队信息
         $scope.$on('$succeedCreateTeam', function (event, data) {
             $scope.myTeams.unshift(data);
-        })
+        });
+        // 申请加入团队
+        $scope.joinTeam = function (team_id, index) {
+            $http.post('/jStudentApplyTeam', { team_id: team_id })
+                    .success(function (data) {
+                        console.log('申请加入团队成功，团队新信息如下：');
+                        $scope.allTeams.splice(index, 1);
+                        $scope.myLocatedTeams.push(data);
+                    })
+        };
     });
     myApp.controller('InfoController', function ($scope, $http) {
         $http.get('/jStudentInfo')
@@ -304,6 +368,11 @@
                         window.location.href = '#studentTeam';
                     });
         };
+        // 获取团队已选课程
+        $http.post('/jTeamCourses', { team_id: $scope.team_to_operate.id })
+                .success(function (data) {
+                    $scope.teamCourses = data;
+                });
         // 申请选课
         $scope.applyJoinCourse = function (course_offered_id) {
             console.log('team_id: ' + $scope.team_to_operate.id + ' course_offered_id: ' + course_offered_id);
@@ -316,8 +385,8 @@
                             console.log('难道我判断错了？');
                             console.log(data);
                         }
-                    })
-        }
+                    });
+        };
     });
 </script>
 </body>

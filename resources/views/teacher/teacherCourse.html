@@ -9,8 +9,10 @@
     <link rel="stylesheet" href="./css/bootstrap-social.css" type="text/css">
     <script src="./js/angular.min.js"></script>
     <script src="./js/angular-route.min.js"></script>
+    <script src="./js/ng-file-upload-shim.min.js"></script>
+    <script src="./js/ng-file-upload.min.js"></script>
     <script>
-        var myApp = angular.module('myApp', ['ngRoute']);
+        var myApp = angular.module('myApp', ['ngRoute', 'ngFileUpload']);
     </script>
 </head>
 <body ng-controller="MainController">
@@ -126,63 +128,29 @@
                 <table class="table table-striped" style = "text-align : left;">
                     <thead>
                     <tr>
-                        <th>标题</th>
-                        <th>访问范围</th>
+                        <th>序号</th>
+                        <th>文件</th>
                         <th>创建者</th>
-                        <th>修改时间</th>
-                        <th>大小</th>
+                        <th>上传时间</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td><span class ="glyphicon glyphicon-folder-open" aria-hidden = "true"></span><a href = "/css" title = "folder"> 大学语文资源</a></td>
-                        <td>公开</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td><span class ="glyphicon glyphicon-file" aria-hidden = "true"></span><a href = "/css/bootstrap-social.css" target = "_blank" title = "css"> 大学语文的css规范</a></td>
-                        <td>公开</td>
-                        <td>张三</td>
-                        <td>2016/6/4</td>
-                        <td>1.1MB</td>
-                    </tr>
-                    <tr>
-                        <td><span class ="glyphicon glyphicon-picture" aria-hidden = "true"></span><a href = "/css/bootstrap-social.css" target = "_blank" title = "pic"> 大学语文的图片规范</a></td>
-                        <td>公开</td>
-                        <td>张三</td>
-                        <td>2016/6/4</td>
-                        <td>1.1MB</td>
-                    </tr>
-                    <tr>
-                        <td><span class ="glyphicon glyphicon-list-alt" aria-hidden = "true"></span><a href = "/css/bootstrap-social.css" target = "_blank" title = "PDF"> 大学语文的PDF规范</a></td>
-                        <td>公开</td>
-                        <td>张三</td>
-                        <td>2016/6/4</td>
-                        <td>1.1MB</td>
-                    </tr>
-                    <tr>
-                        <td><span class ="glyphicon glyphicon-blackboard" aria-hidden = "true"></span><a href = "/css/bootstrap-social.css" target = "_blank" title = "PPT"> 大学语文的PPT规范</a></td>
-                        <td>公开</td>
-                        <td>张三</td>
-                        <td>2016/6/4</td>
-                        <td>1.1MB</td>
+                    <tr ng-repeat="resource in resources">
+                        <td>{{ $index + 1 }}</td>
+                        <td><span class ="glyphicon glyphicon-file" aria-hidden = "true"></span><a href="jTeacherResourceDownload?resource_id={{ resource.id }}">&nbsp;{{ resource.name }}</a></td>
+                        <td>{{ resource.owner_username }}</td>
+                        <td>{{ resource.publish_time }}</td>
                     </tr>
                     </tbody>
                 </table>
             </div>
         </div>
         <div class = "row-content">
-            <h3>上传资源</h3>
-            <label class="control-label">选择文件</label>
-            <input id="input-id" type="file" class="file" data-preview-file-type="text" >
-            <div class="form-group">
-                <div>
-                    <br>
-                    <button type="submit" class="btn btn-primary">上传</button>
-                </div>
-            </div>
+            <button ngf-select="uploadFiles($files)" multiple ngf-max-height="1000" ngf-max-size="8MB">选择文件</button>
+            <ul>
+                <li ng-repeat="file in files">{{ file.name }}&nbsp;&nbsp;<button class="btn btn-sm btn-link" ng-click="removeFile($index)">删除</button></li>
+            </ul>
+            <div class="form-controller"><button class="btn btn-primary" ng-click="submitFile()">提交</button></div>
         </div>
     </script>
     <script type="text/ng-template" id="stuHomeworkDetail.html">
@@ -411,16 +379,53 @@
                 comment: $scope.input_comment
             }).success(function (data) {
                 console.log('打分成功！');
-                console.log(data);
+                window.location.href = '#courseHomework';
             });
         }
     });
-    myApp.controller('ResourceController', function ($scope) {
-        $scope.resource = [
-            { id: 101, type: 'directory', name: '我的电脑' },
-            { id: 110, type: 'file', name: '第一次实践', creator: '王乐', time: '2016-7-2', size: '18K' }
-        ];
-    });
+    myApp.controller('ResourceController', ['$scope', '$http', 'Upload', '$timeout', function ($scope, $http, Upload, $timeout) {
+        $scope.resources = [];
+        $http.get('/jTeacherCourseResources?course_offered_id=' + $scope.course_id)
+                .success(function (data) {
+                    console.log('获取资源信息成功');
+                    console.log(data);
+                    $scope.resources = data;
+                });
+        $scope.files = [];
+        // 前端获取要上传的文件
+        $scope.uploadFiles = function (files) {
+            console.log('取得文件！');
+            console.log(files);
+            angular.forEach(files, function (file) {
+                $scope.files.push(file);
+            });
+        };
+        // 在前端移除要上传的文件
+        $scope.removeFile = function (index) {
+            $scope.files.splice(index, 1);
+        };
+        $scope.submitFile = function () {
+            angular.forEach($scope.files, function (file) {
+                file.upload = Upload.upload({
+                    url: '/jTeacherCourseSubmitResource',
+                    data: { file: file, course_offered_id: $scope.course_id }
+                });
+                file.upload.then(function (response) {
+                    $timeout(function () {
+                        //file.result = response.data;
+                        $scope.files = [];
+                        console.log('文件提交成功！');
+                        $scope.resources.push(response.data);
+                    });
+                }, function (response) {
+                    if (response.status > 0)
+                        $scope.errorMsg = response.status + ': ' + response.data;
+                }, function (evt) {
+                    file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
+                });
+            });
+        }
+    }]);
 </script>
 </body>
 </html>
