@@ -72,6 +72,7 @@ Route::get('/jTeacherResourceDownload  ','TeacherController@getJsonResourceDownl
 //<!-- Team相关模块
 Route::get('/teamIndex', 'TeamController@teamIndex');
 Route::get('/jGetAllTeams', 'TeamController@getAllTeams');
+Route::get('/jSearchTeams', 'TeamController@getSearchTeams');
 Route::get('/jGetOwnerTeams', 'TeamController@getMyTeams');
 Route::get('/jGetTeamsContainMe', 'TeamController@getTeamsContainMe');
 Route::get('/jGetTeamChooseCourses', 'TeamController@getTeamChooseCourses');

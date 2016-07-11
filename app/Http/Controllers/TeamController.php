@@ -67,8 +67,18 @@ Class TeamController extends Controller {
      * 方式：get
      */
     public function getAllTeams() {
-        $teams = Team::where('state', '1')->get();
+        $teams = Team::where('state', '1')
+            ->where('now_teammate_str','not like',"%".$this->user->username."%")
+            ->get();
         return json_encode($teams->toArray());
+    }
+
+    public function getSearchTeams(Request $request){
+        $key = $request->key;
+        $teams = Team::where('state', '1')
+            ->where('now_teammate_str','not like',"%".$this->user->username."%")
+            ->where('name','like',"%".$key."%")
+            ->get();
     }
     /*
      * 获取我创建的团队，并附加上团队中除团队负责人之外每个成员信息
