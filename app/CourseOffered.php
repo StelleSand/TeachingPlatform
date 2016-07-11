@@ -44,10 +44,14 @@ class CourseOffered extends Model
 
     public static function homeworksDetail($courseOfferedID, $model, $type){
         $present = Carbon::now()->toDateTimeString();
+        if($type == 'user')
+            $typeArray = ['1','3'];
+        else
+            $typeArray = ['2','3'];
         $homeworks = CourseOffered::where('course_offered.id',$courseOfferedID)
             ->join('homework','course_offered.id','=','homework.course_offered_id')
             ->where('homework.start_date','<',$present)
-            ->whereIn('homework.type',['1','3'])
+            ->whereIn('homework.type', $typeArray)
             ->select(
                 'homework.id as homework_id',
                 'homework.name as homework_name',
@@ -61,13 +65,13 @@ class CourseOffered extends Model
             if($type == 'user') {
                 $submit = SubmitHomework::where('homework_id', $homework->homework_id)
                     ->where('submit_username', $model->username)
-                    ->where('type','1')
+                    ->whereIn('type',$typeArray)
                     ->first();
             }
             else if($type == 'team'){
                 $submit = SubmitHomework::where('homework_id', $homework->homework_id)
                     ->where('submit_course_team_id', $model->id)
-                    ->where('type','1')
+                    ->whereIn('type',$typeArray)
                     ->first();
             }
             if(count($submit) == 0)

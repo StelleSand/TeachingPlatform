@@ -228,7 +228,7 @@ class StudentController extends Controller
             'CourseOffered'."_".$courseOffered->id.'/'.
             'Homework'.'/'.
             'Homework'."_".$homework->id.'/'.
-            'SubmitHomework'."_".$submitHomework->id.'_'. $submitHomework->submit_username.'/';
+            'SubmitHomework'."_".$submitHomework->id.'/';
         Storage::makeDirectory(dirname($savepath));
         Storage::put(
             $savepath.$fileSaveName,
@@ -242,7 +242,7 @@ class StudentController extends Controller
             'description' => $request->description,
             'publish_time' => Carbon::now()->toDateTimeString(),
             'place' => $savepath.$fileSaveName,
-            'owner_username' => $this->student->username
+            'owner_username' => $this->user->username
         ]);
         $resourceStr = $submitHomework->resource_str;
         $resource = [];

@@ -78,8 +78,11 @@ Route::post('/jStudentCreateTeam', 'TeamController@postJsonCreateTeam');
 Route::post('/jStudentApplyTeam', 'TeamController@getApplyJoinTeam');
 Route::post('/jStudentDeleteTeammate', 'TeamController@deleteTeammate');
 Route::post('/jStudentChangeOwner', 'TeamController@changeToOwner');
-Route::post('/jTeamCourses ', 'TeamController@postJsonCourses');
-Route::post('/jTeamCourseHomeworks  ', 'TeamController@postJsonCourseHomeworks');
+Route::post('/jTeamCourses', 'TeamController@postJsonCourses');
+Route::post('/jTeamCourseHomeworks', 'TeamController@postJsonCourseHomeworks');
+Route::post('/jTeamCourseSubmitHomework', 'TeamController@postJsonCourseSubmitHomework');
+Route::post('/jTeamCourseSubmitHomeworkFile','TeamController@postJsonCourseSubmitHomeworkFile');
+Route::post('/jTeamCourseDeleteHomeworkFile','TeamController@postJsonCourseDeleteHomeworkFile');
 //Team相关模块 -->
 
 

@@ -173,5 +173,111 @@ Class TeamController extends Controller {
         $homeworks = CourseOffered::homeworksDetail($courseTeam->course_offered_id, $courseTeam, 'team');
         return json_encode($homeworks);
     }
+
+    public function postJsonCourseSubmitHomework(Request $request){
+        $present = Carbon::now()->toDateTimeString();
+        $courseTeam = CourseTeam::find($request->course_team_id);
+        $submit = SubmitHomework::where('homework_id', $request->homework_id)
+            ->where('submit_course_team_id', $courseTeam->id)
+            ->first();
+        if($request->state != '1' and $request->state != '2')
+            return "Error: illegal state input.";
+        if(empty($submit)) {
+            $submit = SubmitHomework::create([
+                'homework_id' => $request->homework_id,
+                'submit_time' => $present,
+                'type' => Homework::find($request->homework_id)->type,
+                'submit_username' => $this->user->username,
+                'name' => $request->name,
+                'words' => $request->words,
+                'state' => $request->state,
+                'submit_course_team_id' => $courseTeam->id,
+                'submit_course_team_owner_username' => $courseTeam->user->username,
+                'submit_course_team_str' => $courseTeam->course_teammate_str,
+            ]);
+            return json_encode($submit->toArray());
+        }
+        else {
+            if ($submit->state != '1')
+                return "Error: submit state unchangable now.";
+            $submit->submit_time = $present;
+            $submit->name = $request->name;
+            $submit->words = $request->words;
+            $submit->state = $request->state;
+            $submit->save();
+        }
+        return json_encode($submit->toArray());
+    }
+
+    public function postJsonCourseSubmitHomeworkFile(Request $request){
+        $submitHomework = SubmitHomework::find($request->submit_homework_id);
+        $file = $request->file('file');
+        //判断文件上传过程中是否出错
+        if(!$file->isValid()){
+            abort(403,'File upload error!');
+        }
+        $fileExtension = $file->getClientOriginalExtension();
+        $fileSaveName =  basename($file->getClientOriginalName(), ".{$file->getClientOriginalExtension()}").filectime($file).'.'.$fileExtension;
+        $presentSemester = Semester::getPresentSemester();
+        $homework = $submitHomework->homework;
+        $courseOffered = $homework->courseOffered;
+        $course = $courseOffered->course;
+        $savepath = "UserFiles"."/".
+            'Semester'."_".$presentSemester->id.'_'.$presentSemester->start_date.'_'.$presentSemester->end_date.'/'.
+            'CourseOffered'."_".$courseOffered->id.'/'.
+            'Homework'.'/'.
+            'Homework'."_".$homework->id.'/'.
+            'SubmitHomework'."_".$submitHomework->id.'/';
+        Storage::makeDirectory(dirname($savepath));
+        Storage::put(
+            $savepath.$fileSaveName,
+            file_get_contents($file->getRealPath())
+        );
+        if(!Storage::exists($savepath.$fileSaveName)){
+            return 'Error! Save File Failed.';
+        }
+        $newResource = Resource::create([
+            'name' => $file->getClientOriginalName(),
+            'description' => $request->description,
+            'publish_time' => Carbon::now()->toDateTimeString(),
+            'place' => $savepath.$fileSaveName,
+            'owner_username' => $this->user->username,
+            'owner_course_team_id' => $submitHomework->submit_course_team_id,
+            'owner_course_team_str' => $submitHomework->submit_course_team_str,
+        ]);
+        $resourceStr = $submitHomework->resource_str;
+        $resource = [];
+        if(!empty($resourceStr))
+            $resource = json_decode($resourceStr);
+        array_push($resource, $newResource->id);
+        $submitHomework->resource_str = json_encode($resource);
+        $submitHomework->save();
+        return json_encode($newResource->toArray());
+    }
+
+    public function postJsonCourseDeleteHomeworkFile(Request $request){
+        $submit = SubmitHomework::find($request->submit_homework_id);
+        $resources = json_decode($submit->resource_str);
+        $resourceToDelete = Resource::whereIn('id', $resources)
+            ->where('id', $request->resource_id)
+            ->first();
+        if(empty($resourceToDelete)){
+            return 'Resource not found or unauthorized action,';
+        }
+        $filePath = $resourceToDelete->place;
+        Storage::delete($filePath);
+        if(Storage::has($filePath)){
+            return 'Resource delete failed.Unknown reason,';
+        }
+        else{
+            $key = array_search($resourceToDelete->id, $resources);
+            array_splice($resources, $key, 1);
+            $submit->resource_str = json_encode($resources);
+            $submit->save();
+            $resourceToDelete->delete();
+            return "Resource delete success.";
+        }
+    }
+
 }
 ?>
