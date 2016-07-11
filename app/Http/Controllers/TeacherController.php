@@ -13,12 +13,11 @@ use App\Course;
 use App\CourseOffered;
 use App\Homework;
 use App\Resource;
-use App\Semester;
+use App\Student;
 use App\SubmitHomework;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 
@@ -159,6 +158,7 @@ class TeacherController extends Controller
             ->whereIn('state', array(2, 3))->get();
         foreach($submits as &$submit){
             $submit->resources = Resource::whereIn('id', json_decode($submit->resource_str))->get();
+            $submit->user_name = Student::find($submit->submit_username);
         }
         return json_encode($submits->toArray());
     }
