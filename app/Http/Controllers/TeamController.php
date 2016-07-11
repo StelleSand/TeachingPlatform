@@ -32,6 +32,9 @@ Class TeamController extends Controller {
     public function teamIndex() {
         return view('student.studentTeam');
     }
+    public function getTeamCourse() {
+        return view('team.teamCourse');
+    }
     /*
      * 创建团队
      * 方式：post
@@ -60,6 +63,15 @@ Class TeamController extends Controller {
         array_push($teammates, $this->user->username);
         $teamToChange->now_teammate_str = json_encode($teammates);
         $teamToChange->save();
+        $teammates = json_decode($teamToChange->now_teammate_str);
+        $team_users = array();
+        foreach($teammates as $teammate) {
+            $team_user = Student::find($teammate);
+            if ($teamToChange->owner == $team_user->username)
+                continue;
+            array_push($team_users, $team_user);
+        }
+        $teamToChange['teammates'] = $team_users;
         return json_encode($teamToChange);
     }
     /*
@@ -68,12 +80,12 @@ Class TeamController extends Controller {
      */
     public function getAllTeams() {
         $teams = Team::where('state', '1')
-            ->where('now_teammate_str','not like',"%".$this->user->username."%")
+            ->where('now_teammate_str', 'not like', "%" . $this->user->username . "%")
             ->get();
-        foreach($teams as &$team) {
+        foreach ($teams as &$team) {
             $teammates = json_decode($team->now_teammate_str);
             $team_users = array();
-            foreach($teammates as $teammate) {
+            foreach ($teammates as $teammate) {
                 $team_user = Student::find($teammate);
                 if ($team->owner == $team_user->username)
                     continue;
@@ -108,7 +120,7 @@ Class TeamController extends Controller {
      * 方式：get
      */
     public function getMyTeams() {
-        $teams = Team::where('owner', $this->user->username)->where('state', '1')->orderBy('create_time', 'desc')->get();
+        $teams = Team::where('owner', $this->user->username)->orderBy('create_time', 'desc')->get();
         foreach($teams as $team) {
             $teammates = json_decode($team->now_teammate_str);
             $team_users = array();
@@ -127,7 +139,7 @@ Class TeamController extends Controller {
      * 方式：get
      */
     public function getTeamsContainMe() {
-        $teams = Team::where('now_teammate_str', 'like', '%'.$this->user->username.'%')->where('state', '1')->get();
+        $teams = Team::where('now_teammate_str', 'like', '%'.$this->user->username.'%')->get();
         $teams = iterator_to_array($teams);
         //$teams_count = count($teams);
         for ($i = 0; $i < count($teams); $i++) {
@@ -180,16 +192,7 @@ Class TeamController extends Controller {
         $team = Team::find($request->team_id);
         $team->owner = $request->username;
         $team->save();
-    }
-    /*
-     * 解散团队
-     * 方式：post
-     * Params：team_id(团队id)
-     */
-    public function deleteTeam(Request $request) {
-        $team = Team::find($request->team_id);
-        $team->state = '0';
-        $team->save();
+        return view('student.studentIndex');
     }
     /*
      * 获取团队可选课程
@@ -197,7 +200,7 @@ Class TeamController extends Controller {
      */
     public function getTeamChooseCourses() {
         $courses = CourseOffered::where('semester_id', 2)  // 假设当前学期为第二学期
-            ->join('teacher', 'course_offered.teacher_username', '=', 'teacher.username')
+        ->join('teacher', 'course_offered.teacher_username', '=', 'teacher.username')
             ->join('course', 'course_offered.course_id', '=', 'course.id')
             ->join('school', 'course_offered.school_number', '=', 'school.number')
             ->select(
@@ -210,62 +213,11 @@ Class TeamController extends Controller {
             ->get();
         return json_encode($courses);
     }
-    /*
-     * 团队选课
-     * 方式：post
-     * Params：team_id(团队id), course_offered_id(可选课程id)
-     */
-    public function teamChooseCourse(Request $request) {
-        $team = Team::find($request->team_id);
-        $teammates = json_decode($team->now_teammate_str);
-        $undefinedStudents = array();
-        $repeatedStudents = array();
-        foreach ($teammates as $teammate) {
-            // 查看团队中学生是否选择了这门课
-            $course_student = CourseStudent::where('course_offered_id', $request->course_offered_id)
-                ->where('student_username', $teammate)->get();
-            // 查看是否有已经成功选上本门课程并且成员中包含本团队学生的团队
-            $course_team = CourseTeam::where('course_offered_id', $request->course_offered_id)
-                ->where('course_teammate_str', 'like', '%'.$teammate.'%')
-                ->where('state', '1')->first();
-            if (empty($course_student)) {
-                array_push($undefinedStudents, $teammate);
-            }
-            if (!empty($course_team)) {
-                array_push($repeatedStudents, $teammate);
-            }
-        }
-        if ($undefinedStudents == null && $repeatedStudents == null) {
-            CourseTeam::create([
-                'course_offered_id' => $request->course_offered_id,
-                'team_id' => $team->id,
-                'owner_username' => $team->owner,
-                'course_teammate_str' => $team->now_teammate_str,
-                'name' => $team->name,
-                'description' => $team->description,
-                'state' => '2'
-            ]);
-            return 'succeed to choose course';
-        } else {
-            $unableStudents = array('undefinedStudents'=>$undefinedStudents, 'repeatedStudents'=>$repeatedStudents);
-            return json_encode($unableStudents);
-        }
-    }
-    /*
-     * 获取当前已登录老师所在课程中待审核团队名单
-     * 方式：get
-     */
-    public function getCourseTeamsToVerify() {
-        $teams = CourseTeam::where('state', '2')
-            ->join('course_offered', 'course_team.course_offered_id', '=', 'course_offered.id')
-            ->where('course_offered.teacher_username', $this->user->username)
-            ->get();
-        return json_encode($teams->toArray());
-    }
 
     public function postJsonCourses(Request $request){
         $courses = CourseTeam::where('team_id',$request->team_id)
             ->join('course_offered','course_team.course_offered_id','=','course_offered.id')
+            ->join('teacher', 'course_offered.teacher_username', '=', 'teacher.username')
             ->join('course','course_offered.course_id','=','course.id')
             ->join('semester','course_offered.semester_id','=','semester.id')
             ->groupBy('semester.name')

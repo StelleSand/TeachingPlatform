@@ -45,8 +45,8 @@ Route::get('/jStudentCourseDeleteHomeworkFile','StudentController@postJsonCourse
 Route::get('/jStudentSubmitHomeworkResource','StudentController@getJsonCourseSubmitHomeworkResource');
 Route::get('/jStudentSubmitHomeworkResources','StudentController@getJsonCourseSubmitHomeworkResources');
 Route::get('/jStudentResourceDownload','StudentController@getJsonResourceDownload');
-Route::get('/jStudentCourseResources','StudentController@getJsonCourseResources');
 Route::get('/jStudentTeams','StudentController@getJsonTeams');
+Route::get('/jStudentCourseResources', 'StudentController@getJsonCourseResources');
 //Student相关模块-->
 
 
@@ -63,13 +63,14 @@ Route::post('/jTeacherPublishHomework','TeacherController@postJsonPublishHomewor
 Route::get('/jTeacherHomeworkSubmits','TeacherController@getJsonHomeworkSubmits');
 Route::post('/jTeacherHomeworkSubmitGrade','TeacherController@getJsonHomeworkSubmitGrade');
 Route::get('/jTeacherCourseResources ','TeacherController@getJsonCourseResources');
-Route::get('/jTeacherCourseSubmitResource  ','TeacherController@getJsonCourseSubmitResource');
-Route::get('/jTeacherCourseDeleteResource  ','TeacherController@getJsonCourseDeleteResource');
-Route::get('/jTeacherResourceDownload  ','TeacherController@getJsonResourceDownload');
+Route::post('/jTeacherCourseSubmitResource', 'TeacherController@getJsonCourseSubmitResource');
+Route::get('/jTeacherCourseDeleteResource','TeacherController@getJsonCourseDeleteResource');
+Route::get('/jTeacherResourceDownload', 'TeacherController@getJsonResourceDownload');
 
 //Teacher相关模块-->
 
 //<!-- Team相关模块
+Route::get('/teamCourse', 'TeamController@getTeamCourse');
 Route::get('/teamIndex', 'TeamController@teamIndex');
 Route::get('/jGetAllTeams', 'TeamController@getAllTeams');
 Route::get('/jSearchTeams', 'TeamController@getSearchTeams');
@@ -77,6 +78,7 @@ Route::get('/jGetOwnerTeams', 'TeamController@getMyTeams');
 Route::get('/jGetTeamsContainMe', 'TeamController@getTeamsContainMe');
 Route::get('/jGetTeamChooseCourses', 'TeamController@getTeamChooseCourses');
 Route::get('/jGetCourseTeamsToVerify', 'TeamController@getCourseTeamsToVerify');
+Route::post('/jTeamCourses', 'TeamController@postJsonCourses');
 Route::post('/jStudentCreateTeam', 'TeamController@postJsonCreateTeam');
 Route::post('/jStudentApplyTeam', 'TeamController@getApplyJoinTeam');
 Route::post('/jStudentDeleteTeammate', 'TeamController@deleteTeammate');
