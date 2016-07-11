@@ -45,6 +45,7 @@ Route::get('/jStudentCourseDeleteHomeworkFile','StudentController@postJsonCourse
 Route::get('/jStudentSubmitHomeworkResource','StudentController@getJsonCourseSubmitHomeworkResource');
 Route::get('/jStudentSubmitHomeworkResources','StudentController@getJsonCourseSubmitHomeworkResources');
 Route::get('/jStudentResourceDownload','StudentController@getJsonResourceDownload');
+Route::get('/jStudentCourseResources','StudentController@getJsonCourseResources');
 Route::get('/jStudentTeams','StudentController@getJsonTeams');
 //Student相关模块-->
 

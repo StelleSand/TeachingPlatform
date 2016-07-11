@@ -297,6 +297,15 @@ class StudentController extends Controller
         return response()->download($downloadPath, $resource->name);
     }
 
+    public function getJsonCourseResources(Request $request){
+        $courseOffered = CourseOffered::find($request->course_offered_id);
+        $resourceArray = json_decode($courseOffered->resource_str);
+        $resources = [];
+        if(!empty($resourceArray))
+            $resources = Resource::whereIn('id', $resourceArray)->get();
+        return json_encode($resources);
+    }
+
     public function getJsonTeams(){
         $teams = Team::where('now_teammate_str','like','%'.$this->user->username.'%')->get();
         return json_encode($teams->toArray());
