@@ -72,8 +72,11 @@ Route::get('/jTeacherResourceDownload  ','TeacherController@getJsonResourceDownl
 Route::get('/teamIndex', 'TeamController@teamIndex');
 Route::get('/jGetAllTeams', 'TeamController@getAllTeams');
 Route::get('/jGetOwnerTeams', 'TeamController@getMyTeams');
+Route::get('/jGetTeamsContainMe', 'TeamController@getTeamsContainMe');
 Route::post('/jStudentCreateTeam', 'TeamController@postJsonCreateTeam');
 Route::post('/jStudentApplyTeam', 'TeamController@getApplyJoinTeam');
+Route::post('/jStudentDeleteTeammate', 'TeamController@deleteTeammate');
+Route::post('/jStudentChangeOwner', 'TeamController@changeToOwner');
 //Team相关模块 -->
 
 
