@@ -50,11 +50,15 @@ class SAController extends Controller
 	public function delEAInfo(Request $request){
 		try{
 			$eaUsername = $request->eaUsername;
-			$affected = DB::update('update educational_admin set state = 2 where username = ?', [$eaUsername]);
-			if($affected == 1 )
+			//$affected = DB::update('update educational_admin set state = 2 where username = ?', [$eaUsername]);
+			$EA = EducationalAdmin::find($eaUsername);
+			$EA->state = 2;
+			$EA->save();
+			/*if($affected == 1 )
 				echo json_encode(array('success'=>true));
 			else
-				echo json_encode(array('error'=>'影响0行'));
+				echo json_encode(array('error'=>'影响0行'));*/
+			echo json_encode(array('success'=>true));
 		}Catch(Exception $e){
 			echo json_encode(array('error'=>$e->getMessage()));
 		}
