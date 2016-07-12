@@ -8,7 +8,7 @@ use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
-
+use Illuminate\Support\Facades\DB;
 class HomeController extends Controller
 {
     /**
@@ -40,7 +40,8 @@ class HomeController extends Controller
         	return view('SA.saIndex');
         }
         if ($user->isEducationalAdmin()){
-        	return view('EA.eaIndex');
+        	$re = DB::select('select * from educational_admin where username = :id', [':id'=>$user->username]);
+        	return view('EA.eaIndex' ,array('user'=>$re[0]));
         }
     }
 

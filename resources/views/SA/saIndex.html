@@ -28,7 +28,7 @@
       </div>
       <div id ="navbar" class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
-          <li><a href="/" style='color:white;'><span class="glyphicon glyphicon-home" aria-hidden="true"></span>系统管理员主页</a></li>
+          <li><a href="/" style='color:white;'><span class="glyphicon glyphicon-home" aria-hidden="true"></span>&nbsp;系统管理员主页</a></li>
         </ul>
         <ul class="navbar-form navbar-right">
            <ul class="nav nav-pills" role="tablist">
@@ -178,6 +178,8 @@ function editLine( i, btn ){
 				showContent('editeaInfo','eaInfo');
 			}else{
 				alert('修改失败--'+msg.error);
+				renderPage();
+				showContent('editeaInfo','eaInfo');
 			}
 		})
 		$(btn).text('修改');
@@ -218,7 +220,7 @@ function editLine( i, btn ){
 function delLine( i ){
 	console.log('删除第'+i+"行");
 	var username = $('#editeaInfo table tbody tr').eq(i).find('td').eq(1).html();
-	alert( '要删除账号 -['+username +']?');
+	if(confirm( '要删除账号 -['+username +']?')){
 	$.post('/admin/delEAInfo', {eaUsername : username }, function(msg){
 		msg = eval('('+msg+')');
 		if(msg.success){
@@ -229,6 +231,7 @@ function delLine( i ){
 			alert('修改失败--'+msg.error);
 		}
 	})
+	}
 }
 function addLine(i,btn){
 	if($(btn).text() == '添加') {

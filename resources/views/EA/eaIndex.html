@@ -1,9 +1,153 @@
 <!DOCTYPE>
 <html>
 <head>
-	<title>欢迎登录</title>
+	<meta charset='utf-8' />
+	<title>教务人员主页</title>
+	<link rel="stylesheet" href="./css/mystyles.css" type="text/css">
+	<link rel="stylesheet" href="./css/font-awesome.min.css" type="text/css">
+	<link rel="stylesheet" href="./css/bootstrap.css" type="text/css">
+	<link rel="stylesheet" href="./assets/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css" type="text/css">
+	<script src="./assets/bootstrap-datetimepicker/jquery-1.8.3.min.js"></script>
+	<script src='./assets/bootstrap-datetimepicker/bootstrap-3.0.0.min.js'></script>
+	<script src="./assets/bootstrap-datetimepicker/bootstrap-datetimepicker.js"></script>
+	<script src="./assets/bootstrap-datetimepicker/bootstrap-datetimepicker.zh-CN.js"></script>
+	<style>
+		table,tr,th,td{ text-align:center }
+		.content_panel {
+		}
+		.li_list{
+		}
+	</style>
 </head>
 <body>
-	<h2>教务管理员界面</h2>
+	<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">buttom</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+      </div>
+      <div id ="navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+          <li><a href="/" style='color:white;'><span class="glyphicon glyphicon-home" aria-hidden="true"></span>&nbsp;教务人员主页</a></li>
+        </ul>
+        <ul class="navbar-form navbar-right">
+           <ul class="nav nav-pills" role="tablist">
+           <li>
+   				<button type ="button" class="btn btn-primary" style ="background:#0088cc">
+     			<a href ="#" style="color:#fff;text-decoration:none"><?php echo $user->name;?></a>
+   				</button>
+			</li>
+         	<li>
+         		<button type ="button" class="btn btn-primary" style ="background:#0088cc">
+     			<a href ="/logout" style="color:#fff;text-decoration:none">登出</a>
+   				</button>
+         	</li>
+           </ul>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  	<div class="container" style='border:0px solid black;'>
+    <div class="row">
+        <div class="col-xs-2" style='border:0px solid black;'>
+            <ul class ="nav nav-tabs nav-stacked" id="sideNav">
+                <li id='schoolLi' class='active li_list' onclick="showContentPanel('school')"><a><span class="glyphicon glyphicon-th-list"
+                         aria-hidden ="true"></span>&nbsp;学院设置</a></li>
+                <li id='semesterLi' class='li_list' onclick="showContentPanel('semester')"><a><span class="glyphicon glyphicon-cog"
+                         aria-hidden ="true"></span>&nbsp;学期设置</a></li>
+                <li class='li_list'><a><span class="glyphicon glyphicon-inbox"
+                         aria-hidden ="true"></span>&nbsp;班级设置</a></li> 
+                <li class='li_list'><a><span class="glyphicon glyphicon-list-alt"
+                         aria-hidden ="true"></span>&nbsp;教师设置</a></li> 
+                <li class='li_list'><a><span class="glyphicon glyphicon-tag"
+                         aria-hidden ="true"></span>&nbsp;学生设置</a></li>      
+                <li class='li_list'><a><span class="glyphicon glyphicon-folder-close"
+                         aria-hidden ="true"></span>&nbsp;课程设置</a></li>             
+                <li class='li_list'><a><span class="glyphicon glyphicon-folder-open"
+                         aria-hidden ="true"></span>&nbsp;选课设置</a></li>    
+        </div>
+        <div class='col-xs-10' style='border:0px solid black;'>
+        	<div style='display:none' class='content_panel' id='schoolList'>
+        	 	<div class="contain-header page-header">
+                	<h2>学院设置列表</h2>
+            	</div>
+        		<table class="table table-striped  table-bordered">
+        		<thead>
+        			<tr>
+        				<th style='width:100px;'>院系编号</th><th style='width:200px;'>名称</th><th>描述</th>
+        			</tr>
+        		</thead>
+        		<tbody>
+        		
+        		</tbody>	
+				</table>
+        	</div>
+        	<div style='display:none' class='content_panel' id='semesterList'>
+        	 	<div class="contain-header page-header">
+                	<h2>学期设置列表</h2>
+            	</div>
+        		<table class="table table-striped  table-bordered">
+        		<thead>
+        			<tr>
+        				<th style='width:100px;'>序号</th><th style='width:200px;'>学期名称</th><th>开始时间</th><th>结束时间</th>
+        			</tr>
+        		</thead>
+        		<tbody>
+        		
+        		</tbody>	
+				</table>
+        	</div>
+        </div>
+    </div>
+    </div>
+  <footer class="row-footer" id = "contact">
+        <div class="container">
+            <div class="row">             
+                <div class="col-xs-12">
+                    <p style="padding:10px;"></p>
+                    <p align =center>© Copyright 2016 四叶草组</p>
+                </div>
+            </div>
+        </div>
+    </footer>
 </body>
+<SCRIPT type="text/javascript">
+
+function renderPage(){
+	//获取学院信息列表
+	$.post('/ea/getSchoolList', function(msg){
+		msg = eval('('+msg+')');
+		if(msg.success){
+			for(var i in msg.success ){
+				var line =  '';
+				line = "<tr><td>"+msg.success[i].number+"</td><td>"+msg.success[i].name+"</td><td style='text-align:left;text-indent:2em;'>"+msg.success[i].description+"</td></tr>";
+				$('#schoolList table tbody').append(line);
+			}
+		}
+	})
+	//获取学期信息列表
+	$.post('/ea/getSemesterList', function(msg){
+		msg = eval('('+msg+')');
+		if(msg.success){
+			for(var i in msg.success ){
+				var line =  '';
+				line = "<tr><td>"+(parseInt(i)+1)+"</td><td>"+msg.success[i].name+"</td><td>"+msg.success[i].start_date+"</td><td>"+msg.success[i].end_date+"</td></tr>";
+				$('#semesterList table tbody').append(line);
+			}
+		}
+	})
+}
+function showContentPanel( showid ){
+	$('.content_panel').css('display', 'none');
+	$('#'+showid+'List').css('display','');
+	$('.li_list').removeClass('active');
+	$('#'+showid+'Li').addClass('active');
+}
+renderPage();
+showContentPanel('school');
+</SCRIPT>
 </html>
