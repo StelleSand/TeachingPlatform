@@ -354,8 +354,8 @@
                     });
                 });
             })
-        };
-    }])
+        }
+    }]);
     myApp.controller('ResourceController', function ($scope, $http) {
         $http.get('/jStudentCourseResources?course_offered_id=' + $scope.course_id)
                 .success(function (data) {

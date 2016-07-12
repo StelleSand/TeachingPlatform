@@ -21,9 +21,9 @@
     <div id="courseIndex" class="row">
         <div class="col-xs-2">
             <ul class="nav nav-tabs nav-stacked" id="sideNav">
-                <li><a href="#courseIndex"><span class="glyphicon glyphicon-home" aria-hidden="true"></span>&nbsp;课程主页</a></li>
-                <li><a href="#courseHomework"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>&nbsp;课程作业</a></li>
-                <li><a href="#courseResource"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>&nbsp;课程资源</a></li>
+                <li><a href="teamCourse?course_team_id={{ course_team_id }}#courseIndex"><span class="glyphicon glyphicon-home" aria-hidden="true"></span>&nbsp;课程主页</a></li>
+                <li><a href="teamCourse?course_team_id={{ course_team_id }}#courseHomework"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>&nbsp;课程作业</a></li>
+                <li><a href="teamCourse?course_team_id={{ course_team_id }}#courseResource"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>&nbsp;课程资源</a></li>
             </ul>
         </div>
         <!--angularJs路由控制视图部分-->
@@ -41,7 +41,308 @@
     </div>
 </footer>
 </body>
-<script type="text/ng-template" id="courseIndex.html"></script>
-<script type="text/ng-template" id="courseHomework.html"></script>
-<script type="text/ng-template" id="courseResource.html"></script>
+<script type="text/ng-template" id="courseIndex.html">
+    <div class="container-header page-header">
+        <h2>课程概况</h2>
+    </div>
+    <div class="panel">
+        <div class="panel-body">
+            <table class="table table-striped">
+                <tbody>
+                <tr><td>课程名称</td><td>{{ courseInfo.course_name }}</td></tr>
+                <tr><td>课程教师</td><td>{{ courseInfo.teacher_name }}</td></tr>
+                <tr><td>课程所在学期</td><td>{{ courseInfo.semester_name }}</td></tr>
+                <tr><td>课程描述</td><td>{{ courseInfo.course_description }}</td></tr>
+                </tbody>
+            </table>
+        </div>
+</script>
+<script type="text/ng-template" id="courseHomework.html">
+    <div class="container-header page-header">
+        <h2>课程作业</h2>
+    </div>
+    <div class="panel">
+        <div class="panel-body">
+            <table class="table table-striped">
+                <thead>
+                <tr><td>序号</td><td>作业标题</td><td>状态</td><td>开始时间</td><td>截止时间</td></tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="homework in homeworkList">
+                    <td>{{ $index + 1 }}</td>
+                    <td><a style="cursor: pointer" ng-click="goToStuHomeworkDetail(homework.homework_id)">{{ homework.homework_name }}</a></td>
+                    <td>{{ homework.submit_homework_state }}</td>
+                    <td>{{ homework.homework_start_date }}</td>
+                    <td>{{ homework.homework_end_date }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</script>
+<script type="text/ng-template" id="courseResource.html">
+    <div class="container-header page-header">
+        <h2>课程资源</h2>
+    </div>
+    <div class="panel">
+        <div class="panel-body">
+            <table class="table table-striped" style = "text-align : left;">
+                <thead>
+                <tr>
+                    <th>序号</th>
+                    <th>文件</th>
+                    <th>创建者</th>
+                    <th>上传时间</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="resource in resources">
+                    <td>{{ $index + 1 }}</td>
+                    <td><span class ="glyphicon glyphicon-file" aria-hidden = "true"></span><a href = "/jStudentResourceDownload?resource_id={{ resource.id }}">&nbsp;{{ resource.name }}</a></td>
+                    <td>{{ resource.owner_username }}</td>
+                    <td>{{ resource.publish_time }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</script>
+<script type="text/ng-template" id="teamHomeworkDetail.html">
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h3>{{ homework.homework_name }}</h3>
+            <p style="text-align: right"><small>发布时间：{{ homework.homework_publish_date }}</small></p>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-6"><small>开始时间：{{ homework.homework_start_date }}</small></div>
+                <div class="col-md-6"><small>截止时间：{{ homework.homework_end_date }}</small></div>
+            </div>
+            <h3>作业要求</h3>
+            <p>{{ homework.homework_description }}</p>
+            <br><br>
+            <!-- 状态为未提交的作业详情 -->
+            <div id="homework_not_submit" ng-show="homework.submit_homework_state==0">
+                <div class="form-group">
+                    <label>填写作业</label>
+                    <textarea class="form-control" rows="8" cols="20" ng-model="homework_content"></textarea>
+                </div>
+                <div class="row">
+                    <div class="col-md-10">
+                        <div class="form-group">
+                            <label>添加作业附件</label>
+                            <!--<input type="file" ng-model="attachFile">
+                            <p class="help-block">这里是附件信息</p>-->
+                            <button ngf-select="uploadFiles($files)" multiple ngf-max-height="1000" ngf-max-size="8MB">选择文件</button>
+                            <ul>
+                                <li ng-repeat="file in files">{{ file.name }}&nbsp;&nbsp;<button class="btn btn-sm btn-link" ng-click="removeFile($index)">删除</button></li>
+                            </ul>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-controller"><button class="btn btn-primary" ng-click="submitHomework()">提交</button></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-controller"><button class="btn btn-primary" ng-click="saveHomework()">保存</button></div>
+                            </div>
+                        </div>
+                        <p ng-repeat="file in files">文件{{ $index+1 }}提交结果：{{ file.result }}</p>
+                    </div>
+                </div>
+            </div>
+            <!-- 状态为已保存的作业详情 -->
+            <div id="homework_save" ng-show="homework.submit_homework_state=='1'">
+                <div class="form-group">
+                    <label>填写作业</label>
+                    <textarea class="form-control" rows="8" cols="20" ng-model="homework_content"></textarea>
+                </div>
+                <div class="row">
+                    <div class="col-md-10">
+                        <div class="form-group">
+                            <label>添加作业附件</label>
+                            <button ngf-select="uploadFiles($files)" multiple ngf-max-height="1000" ngf-max-size="8MB">选择文件</button>
+                            <ol>
+                                <!-- 已保存的文件列表 -->
+                                <li ng-repeat="resource in homework.submit_homework_resources"><a href="/jStudentResourceDownload?resource_id={{ resource.id }}">{{ resource.name }}</a>&nbsp;&nbsp;<button class="btn btn-sm btn-link" ng-click="removeSavedFile($index)">删除</button></li>
+                                <!-- 新提交的文件列表 -->
+                                <li ng-repeat="file in files">{{ file.name }}&nbsp;&nbsp;<button class="btn btn-sm btn-link" ng-click="removeFile($index)">删除</button></li>
+                            </ol>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-controller"><button class="btn btn-primary" ng-click="submitHomework()">提交</button></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-controller"><button class="btn btn-primary" ng-click="saveHomework()">保存</button></div>
+                            </div>
+                        </div>
+                        <p ng-repeat="file in files">文件{{ $index+1 }}提交结果：{{ file.result }}</p>
+                    </div>
+                </div>
+            </div>
+            <!-- 状态为已提交和已打分的作业详情 -->
+            <div id="homework_submit" ng-show="homework.submit_homework_state=='2' || homework.submit_homework_state=='3'">
+                <h3>作业内容</h3>
+                <div class="row">
+                    <div class="col-md-9"></div>
+                    <div class="col-md-3"><p><small>提交时间：{{ homework.submit_homework_submit_time }}</small></p></div>
+                </div>
+                <p>{{ homework.submit_homework_words }}</p>
+                <h3>附件资源</h3>
+                <ol>
+                    <li ng-repeat="resource in homework.submit_homework_resources"><a href="/jStudentResourceDownload?resource_id={{ resource.id }}">{{ resource.name }}</a></li>
+                </ol>
+                <br>
+                <div ng-show="homework.submit_homework_state=='3'">
+                    <h3>教师评分</h3>
+                    <p><strong>分数：</strong>&nbsp;{{ homework.submit_homework_grade }}</p>
+                    <p><strong>点评：</strong>&nbsp;{{ homework.submit_homework_comment }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<script>
+    myApp.config(['$routeProvider', function ($routeProvider) {
+        $routeProvider
+                .when('/courseResource', {
+                    templateUrl: 'courseResource.html',
+                    controller: 'ResourceController'
+                })
+                .when('/courseHomework', {
+                    templateUrl: 'courseHomework.html',
+                    controller: 'HomeworkController'
+                })
+                .when('/teamHomeworkDetail', {
+                    templateUrl: 'teamHomeworkDetail.html',
+                    controller: 'DetailController'
+                })
+                .otherwise({
+                    templateUrl: 'courseIndex.html',
+                    controller: 'IndexController'
+                });
+    }]);
+    myApp.controller('MainController', function ($scope, $http) {
+        var url = location.search;
+        var str = url.substr(1);
+        $scope.course_team_id = str.split('=')[1];  // 获取课程id
+        // 获取当前团队课程信息
+        $http.post('/jTeamCourseInfo', { course_team_id: $scope.course_team_id })
+                .success(function (data) {
+                    $scope.courseInfo = data;
+                    console.log(data);
+                });
+        // 获取当前团队课程作业列表
+        $http.post('/jTeamCourseHomeworks', { course_team_id: $scope.course_team_id })
+                .success(function (data) {
+                    $scope.homeworkList = data; // 当前课程作业列表
+                    console.log('原始的作业列表数据为：');
+                    console.log($scope.homeworkList);
+                })
+                .error(function (data, status) {
+                    console.log('发生错误！ 状态：' + status);
+                });
+        // 进入作业详情页面
+        $scope.goToStuHomeworkDetail = function (id) {
+            $scope.homework_id = id;
+            window.location.href = 'teamCourse?course_team_id=' + $scope.course_team_id + '#teamHomeworkDetail';
+        }
+    });
+    myApp.controller('IndexController', function ($scope, $http) {
+
+    });
+    myApp.controller('HomeworkController', function ($scope, $http) {
+
+    });
+    myApp.controller('ResourceController', function ($scope, $http) {
+        $http.get('/jStudentCourseResources?course_offered_id=' + $scope.courseInfo.course_offered_id)
+                .success(function (data) {
+                    console.log('获取资源信息成功');
+                    $scope.resources = data;
+                });
+    });
+    myApp.controller('DetailController', ['$scope', '$http', 'Upload', '$timeout', function ($scope, $http, Upload, $timeout) {
+        $scope.files = [];  // 提交文件资源数组
+        $scope.homework = undefined;  // 当前作业的详细信息
+        // 获取当前作业详细信息
+        for (var i = 0 ; i < $scope.homeworkList.length; i++) {
+            if ($scope.homeworkList[i].homework_id == $scope.homework_id) {
+                $scope.homework = $scope.homeworkList[i];
+                break;
+            }
+        }
+        // 若当前作业为已保存作业，绑定作业内容数据
+        if ($scope.homework.submit_homework_state == '1') {
+            $scope.homework_content = $scope.homework.submit_homework_words;
+        }
+        // 前端获取要上传的文件
+        $scope.uploadFiles = function (files) {
+            console.log('取得文件！');
+            console.log(files);
+            angular.forEach(files, function (file) {
+                $scope.files.push(file);
+            });
+        };
+        // 在前端移除要上传的文件
+        $scope.removeFile = function (index) {
+            $scope.files.splice(index, 1);
+        };
+        // 删除已保存的某个文件
+        $scope.removeSavedFile = function (index) {
+            $http.post('/jTeamCourseDeleteHomeworkFile', { submit_homework_id:  $scope.homework.submit_homework_id, resource_id: $scope.homework.submit_homework_resources[index].id })
+                    .success(function (data) {
+                        console.log('删除文件结果：' + data);
+                        $scope.homework.submit_homework_resources.splice(index, 1);
+                    });
+        };
+        // 提交作业
+        $scope.submitHomework = function () {
+            $scope.submit_state = 2;
+            saveOrSubmitHomework();
+            $scope.homework.submit_homework_state = '2';
+        };
+        // 保存作业
+        $scope.saveHomework = function () {
+            $scope.submit_state = 1;
+            saveOrSubmitHomework();
+            $scope.homework.submit_homework_state = '1';
+
+        };
+        function saveOrSubmitHomework () {
+            $http.post('jTeamCourseSubmitHomework', {
+                course_team_id: $scope.course_team_id,
+                homework_id: $scope.homework.homework_id,
+                name: $scope.homework.homework_name,
+                words: $scope.homework_content,
+                state: $scope.submit_state
+            }).success(function (data) {
+                console.log('作业提交成功，返回如下数据：');
+                console.log(data);
+                // 作业提交成功后，更改显示所需要的数据
+                $scope.homework.submit_homework_words = data.words;
+                $scope.homework.submit_homework_submit_time = data.submit_time;
+                angular.forEach($scope.files, function (file) {
+                    file.upload = Upload.upload({
+                        url: 'jStudentCourseSubmitHomeworkFile',
+                        data: { file: file, submit_homework_id: data.id }
+                    });
+                    file.upload.then(function (response) {
+                        $timeout(function () {
+                            //file.result = response.data;
+                            $scope.files = [];
+                            $scope.homework.submit_homework_resources = [];
+                            $scope.homework.submit_homework_resources.push(response.data);
+                            console.log('文件提交成功！');
+                        });
+                    }, function (response) {
+                        if (response.status > 0)
+                            $scope.errorMsg = response.status + ': ' + response.data;
+                    }, function (evt) {
+                        file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
+                    });
+                });
+            })
+        }
+    }]);
+</script>
 </html>

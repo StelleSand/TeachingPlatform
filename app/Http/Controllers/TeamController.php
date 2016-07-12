@@ -4,10 +4,14 @@ namespace App\Http\Controllers;
 use App\CourseOffered;
 use App\CourseStudent;
 use App\CourseTeam;
+use App\Homework;
 use App\Student;
+use App\SubmitHomework;
 use App\Team;
+use App\Resource;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 
@@ -216,6 +220,7 @@ Class TeamController extends Controller {
 
     public function postJsonCourses(Request $request){
         $courses = CourseTeam::where('team_id',$request->team_id)
+            ->where('course_team.state', '1')
             ->join('course_offered','course_team.course_offered_id','=','course_offered.id')
             ->join('teacher', 'course_offered.teacher_username', '=', 'teacher.username')
             ->join('course','course_offered.course_id','=','course.id')
@@ -231,6 +236,29 @@ Class TeamController extends Controller {
             )
             ->get();
         return json_encode($courses);
+    }
+    /*
+     * 获取当前团队课程信息
+     * 方式：post
+     * Params: course_team_id(选课团队id)
+     */
+    public function postJsonCourseInfo(Request $request) {
+        $course = CourseTeam::where('course_team.id', $request->course_team_id)
+            ->join('course_offered','course_team.course_offered_id','=','course_offered.id')
+            ->join('teacher', 'course_offered.teacher_username', '=', 'teacher.username')
+            ->join('course','course_offered.course_id','=','course.id')
+            ->join('semester','course_offered.semester_id','=','semester.id')
+            ->groupBy('semester.name')
+            ->select(
+                'course_team.id as course_team_id',
+                'course.name as course_name',
+                'course.description as course_description',
+                'semester.name as semester_name',
+                'teacher.name as teacher_name',
+                'course_offered.id as course_offered_id'
+            )
+            ->first();
+        return json_encode($course);
     }
 
     public function postJsonCourseHomeworks(Request $request){
@@ -258,7 +286,7 @@ Class TeamController extends Controller {
                 'words' => $request->words,
                 'state' => $request->state,
                 'submit_course_team_id' => $courseTeam->id,
-                'submit_course_team_owner_username' => $courseTeam->user->username,
+                'submit_course_team_owner_username' => $courseTeam->owner_username,
                 'submit_course_team_str' => $courseTeam->course_teammate_str,
             ]);
             return json_encode($submit->toArray());
@@ -343,6 +371,43 @@ Class TeamController extends Controller {
             $resourceToDelete->delete();
             return "Resource delete success.";
         }
+    }
+    /*
+     * 教师获取选课团队信息
+     * 方法：get
+     * Params: course_offered_id
+     */
+    public function jTeacherGetTeamsInfo(Request $request) {
+        $teams = CourseTeam::where('course_offered_id', $request->course_offered_id)->get();
+        /*foreach ($teams as &$team) {
+            $teammates = Student::whereIn('username', json_decode($team->course_teammate_str));
+            $team->teammates = $teammates;
+        }*/
+        foreach($teams as &$team) {
+            $teammates = json_decode($team->course_teammate_str);
+            $team_users = array();
+            foreach($teammates as $teammate) {
+                $team_user = Student::find($teammate);
+                array_push($team_users, $team_user);
+            }
+            $team['teammates'] = $team_users;
+        }
+        return json_encode($teams->toArray());
+    }
+    /*
+     * 教师通过团队选课请求
+     * 方法：post
+     * Params: course_team_id
+     */
+    public function jTeacherWhetherPassTeamCourse(Request $request) {
+        $team = CourseTeam::find($request->course_team_id);
+        if ($request->whether) {
+            $team->state = '1';
+        } else {
+            $team->state = '3';
+        }
+        $team->save();
+        return json_encode($team);
     }
 
 }
