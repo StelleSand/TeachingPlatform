@@ -2,7 +2,7 @@
 <html ng-app="myApp">
 <head lang="en">
     <meta charset="UTF-8">
-    <title>课程主页</title>
+    <title>团队课程主页</title>
     <base href="/">
     <link href="./css/bootstrap.min.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="./css/mystyles.css" type="text/css">
@@ -16,14 +16,14 @@
         var myApp = angular.module('myApp', ['ngRoute', 'ngFileUpload']);
     </script>
 </head>
-<body>
+<body ng-controller="MainController">
 <div class="container" ng-controller="MainController">
     <div id="courseIndex" class="row">
         <div class="col-xs-2">
             <ul class="nav nav-tabs nav-stacked" id="sideNav">
-                <li><a href="/studentCourse?id={{ course_id }}#courseIndex"><span class="glyphicon glyphicon-home" aria-hidden="true"></span>&nbsp;课程主页</a></li>
-                <li><a href="/studentCourse?id={{ course_id }}#courseHomework"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>&nbsp;课程作业</a></li>
-                <li><a href="/studentCourse?id={{ course_id }}#courseResource"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>&nbsp;课程资源</a></li>
+                <li><a href="teamCourse?course_team_id={{ course_team_id }}#courseIndex"><span class="glyphicon glyphicon-home" aria-hidden="true"></span>&nbsp;课程主页</a></li>
+                <li><a href="teamCourse?course_team_id={{ course_team_id }}#courseHomework"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>&nbsp;课程作业</a></li>
+                <li><a href="teamCourse?course_team_id={{ course_team_id }}#courseResource"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>&nbsp;课程资源</a></li>
             </ul>
         </div>
         <!--angularJs路由控制视图部分-->
@@ -40,6 +40,7 @@
         </div>
     </div>
 </footer>
+</body>
 <script type="text/ng-template" id="courseIndex.html">
     <div class="container-header page-header">
         <h2>课程概况</h2>
@@ -48,14 +49,13 @@
         <div class="panel-body">
             <table class="table table-striped">
                 <tbody>
-                <tr><td>课程名称</td><td>{{ course.course_name }}</td></tr>
-                <tr><td>课程教师</td><td>{{ course.teacher_name }}</td></tr>
-                <tr><td>课程所在学期</td><td>{{ course.semester_name }}</td></tr>
-                <tr><td>课程描述</td><td>{{ course.course_description }}</td></tr>
+                <tr><td>课程名称</td><td>{{ courseInfo.course_name }}</td></tr>
+                <tr><td>课程教师</td><td>{{ courseInfo.teacher_name }}</td></tr>
+                <tr><td>课程所在学期</td><td>{{ courseInfo.semester_name }}</td></tr>
+                <tr><td>课程描述</td><td>{{ courseInfo.course_description }}</td></tr>
                 </tbody>
             </table>
         </div>
-    </div>
 </script>
 <script type="text/ng-template" id="courseHomework.html">
     <div class="container-header page-header">
@@ -107,7 +107,7 @@
         </div>
     </div>
 </script>
-<script type="text/ng-template" id="stuHomeworkDetail.html">
+<script type="text/ng-template" id="teamHomeworkDetail.html">
     <div class="panel panel-info">
         <div class="panel-heading">
             <h3>{{ homework.homework_name }}</h3>
@@ -160,8 +160,6 @@
                     <div class="col-md-10">
                         <div class="form-group">
                             <label>添加作业附件</label>
-                            <!--<input type="file" ng-model="attachFile">
-                            <p class="help-block">这里是附件信息</p>-->
                             <button ngf-select="uploadFiles($files)" multiple ngf-max-height="1000" ngf-max-size="8MB">选择文件</button>
                             <ol>
                                 <!-- 已保存的文件列表 -->
@@ -182,7 +180,7 @@
                     </div>
                 </div>
             </div>
-            <!-- 状态为已提交和已保存的作业详情 -->
+            <!-- 状态为已提交和已打分的作业详情 -->
             <div id="homework_submit" ng-show="homework.submit_homework_state=='2' || homework.submit_homework_state=='3'">
                 <h3>作业内容</h3>
                 <div class="row">
@@ -215,8 +213,8 @@
                     templateUrl: 'courseHomework.html',
                     controller: 'HomeworkController'
                 })
-                .when('/stuHomeworkDetail', {
-                    templateUrl: 'stuHomeworkDetail.html',
+                .when('/teamHomeworkDetail', {
+                    templateUrl: 'teamHomeworkDetail.html',
                     controller: 'DetailController'
                 })
                 .otherwise({
@@ -224,68 +222,57 @@
                     controller: 'IndexController'
                 });
     }]);
-    /*myApp.config(['$locationProvider', function ($locationProvider) {
-         $locationProvider.html5Mode({
-         // 参数仅为true的话，head标签中需要有base标签，设置requireBase: false会忽略base标签
-             enabled: true,
-             requireBase: false
-         });
-     }]);*/
-    // 主控制器
-    myApp.controller('MainController',function ($scope) {
+    myApp.controller('MainController', function ($scope, $http) {
         var url = location.search;
         var str = url.substr(1);
-        $scope.course_id = str.split('=')[1];
-        $scope.childHomeworkList = [];
-        $scope.homework_id = undefined;
-        console.log('获取的课程id=' + $scope.course_id);
-        $scope.$on('$transHomeworkList', function (event, data) {
-            $scope.childHomeworkList = data;
-        });
-        $scope.goToStuHomeworkDetail = function (id) {
-            $scope.homework_id = id;
-            window.location.href = 'studentCourse?id=' + $scope.course_id + '#stuHomeworkDetail';
-        }
-    });
-    // 课程主页控制器
-    myApp.controller('IndexController', function ($scope, $http) {
-        $http.get('/jStudentCourseInfo?course_offered_id=' + $scope.course_id)
+        $scope.course_team_id = str.split('=')[1];  // 获取课程id
+        // 获取当前团队课程信息
+        $http.post('/jTeamCourseInfo', { course_team_id: $scope.course_team_id })
                 .success(function (data) {
-                    console.log(data[0]);
-                    $scope.course = data[0];
-                })
-                .error(function (data, status) {
-                    console.log('发生错误！ 状态：' + status);
+                    $scope.courseInfo = data;
+                    console.log(data);
                 });
-        //$scope.course = { name: '工科高等数学', teacher_name: '王乐', semester_name: '2016-2017第一学期', description: '高数屌屌哒啊！' };
-    });
-    // 课程作业控制器
-    myApp.controller('HomeworkController', function ($scope, $http) {
-        $http.get('/jStudentCourseHomeworks?course_offered_id=' + $scope.course_id)
+        // 获取当前团队课程作业列表
+        $http.post('/jTeamCourseHomeworks', { course_team_id: $scope.course_team_id })
                 .success(function (data) {
-                    $scope.homeworkList = data;
+                    $scope.homeworkList = data; // 当前课程作业列表
                     console.log('原始的作业列表数据为：');
                     console.log($scope.homeworkList);
-                    $scope.$emit('$transHomeworkList', data);
                 })
                 .error(function (data, status) {
                     console.log('发生错误！ 状态：' + status);
                 });
+        // 进入作业详情页面
+        $scope.goToStuHomeworkDetail = function (id) {
+            $scope.homework_id = id;
+            window.location.href = 'teamCourse?course_team_id=' + $scope.course_team_id + '#teamHomeworkDetail';
+        }
     });
-    // 作业详情控制器
+    myApp.controller('IndexController', function ($scope, $http) {
+
+    });
+    myApp.controller('HomeworkController', function ($scope, $http) {
+
+    });
+    myApp.controller('ResourceController', function ($scope, $http) {
+        $http.get('/jStudentCourseResources?course_offered_id=' + $scope.courseInfo.course_offered_id)
+                .success(function (data) {
+                    console.log('获取资源信息成功');
+                    $scope.resources = data;
+                });
+    });
     myApp.controller('DetailController', ['$scope', '$http', 'Upload', '$timeout', function ($scope, $http, Upload, $timeout) {
         $scope.files = [];  // 提交文件资源数组
         $scope.homework = undefined;  // 当前作业的详细信息
-        console.log($scope.childHomeworkList);
         // 获取当前作业详细信息
-        for (var i = 0 ; i < $scope.childHomeworkList.length; i++) {
-            if ($scope.childHomeworkList[i].homework_id == $scope.homework_id) {
-                $scope.homework = $scope.childHomeworkList[i];
+        for (var i = 0 ; i < $scope.homeworkList.length; i++) {
+            if ($scope.homeworkList[i].homework_id == $scope.homework_id) {
+                $scope.homework = $scope.homeworkList[i];
                 break;
             }
         }
         // 若当前作业为已保存作业，绑定作业内容数据
-        if ($scope.homework.submit_homework_type == '1') {
+        if ($scope.homework.submit_homework_state == '1') {
             $scope.homework_content = $scope.homework.submit_homework_words;
         }
         // 前端获取要上传的文件
@@ -302,7 +289,7 @@
         };
         // 删除已保存的某个文件
         $scope.removeSavedFile = function (index) {
-            $http.get('/jStudentCourseDeleteHomeworkFile?submit_homework_id=' + $scope.homework.submit_homework_id + '&resource_id=' + $scope.homework.submit_homework_resources[index].id)
+            $http.post('/jTeamCourseDeleteHomeworkFile', { submit_homework_id:  $scope.homework.submit_homework_id, resource_id: $scope.homework.submit_homework_resources[index].id })
                     .success(function (data) {
                         console.log('删除文件结果：' + data);
                         $scope.homework.submit_homework_resources.splice(index, 1);
@@ -322,7 +309,8 @@
 
         };
         function saveOrSubmitHomework () {
-            $http.post('jStudentCourseSubmitHomework', {
+            $http.post('jTeamCourseSubmitHomework', {
+                course_team_id: $scope.course_team_id,
                 homework_id: $scope.homework.homework_id,
                 name: $scope.homework.homework_name,
                 words: $scope.homework_content,
@@ -356,13 +344,5 @@
             })
         }
     }]);
-    myApp.controller('ResourceController', function ($scope, $http) {
-        $http.get('/jStudentCourseResources?course_offered_id=' + $scope.course_id)
-                .success(function (data) {
-                    console.log('获取资源信息成功');
-                    $scope.resources = data;
-                });
-    });
 </script>
-</body>
 </html>

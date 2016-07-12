@@ -9,8 +9,10 @@
     <link rel="stylesheet" href="./css/bootstrap-social.css" type="text/css">
     <script src="./js/angular.min.js"></script>
     <script src="./js/angular-route.min.js"></script>
+    <script src="./js/ng-file-upload-shim.min.js"></script>
+    <script src="./js/ng-file-upload.min.js"></script>
     <script>
-        var myApp = angular.module('myApp', ['ngRoute']);
+        var myApp = angular.module('myApp', ['ngRoute', 'ngFileUpload']);
     </script>
 </head>
 <body ng-controller="MainController">
@@ -51,14 +53,29 @@
         <br>
         <p><h3>选课学生信息</h3></p>
         <table class="table table-striped">
-            <thead><tr><td>姓名</td><td>学号</td><td>班级</td><td>性别</td><td>邮箱</td></tr></thead>
+            <thead><tr><th>序号</th><th>姓名</th><th>学号</th><th>班级</th><th>性别</th><th>邮箱</th></tr></thead>
             <tbody>
                 <tr ng-repeat="student in students">
+                    <td>{{ $index + 1 }}</td>
                     <td>{{ student.student_name }}</td>
                     <td>{{ student.student_username }}</td>
                     <td>{{ student.student_class_number }}</td>
                     <td>{{ student.student_gender }}</td>
                     <td>{{ student.student_email }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <br>
+        <h3>选课团队信息</h3>
+        <table class="table table-striped">
+            <thead><tr><th>序号</th><th>团队名称</th><th>负责人</th><th>团队状态</th><th>是否通过审核</th></tr></thead>
+            <tbody>
+                <tr ng-repeat="team in teams">
+                    <td>{{ $index + 1 }}</td>
+                    <td><a style="cursor: pointer" ng-click="goToTeammatesDetail($index)">{{ team.name }}</a></td>
+                    <td>{{ team.owner_username }}</td>
+                    <td>{{ team.state }}</td>
+                    <td><button class="btn btn-warning btn-sm" ng-show="team.state=='2'" ng-click="whetherToPass($index, team.id, true)">通过</button>&nbsp;<button class="btn btn-danger btn-sm" ng-show="team.state=='2'" ng-click="whetherToPass($index, team.id, false)">不通过</button></td>
                 </tr>
             </tbody>
         </table>
@@ -71,13 +88,13 @@
             <div class="panel-body">
                 <table class="table table-striped">
                     <thead>
-                    <tr><td>序号</td><td>作业标题</td><td>状态</td><td>开始时间</td><td>截止时间</td></tr>
+                    <tr><td>序号</td><td>作业标题</td><td>作业类型</td><td>开始时间</td><td>截止时间</td></tr>
                     </thead>
                     <tbody>
                     <tr ng-repeat="homework in homeworkList">
                         <td>{{ $index + 1 }}</td>
                         <td><a ng-click="goToHomeworkDetail(homework.homework_id)" style="cursor: pointer">{{ homework.homework_name }}</a></td>
-                        <td>{{ homework.submit_homework_state }}</td>
+                        <td>{{ homework.homework_type }}</td>
                         <td>{{ homework.homework_start_date }}</td>
                         <td>{{ homework.homework_end_date }}</td>
                     </tr>
@@ -90,22 +107,28 @@
         <form class="form-horizontal" role="form">
             <div class="form-group">
                 <label class="col-sm-2 control-label">作业名称：</label>
-                <div class="col-sm-10"><input type="text" class="form-control" name="name" ng-model="homework_pub.name"></div>
+                <div class="col-sm-9"><input type="text" class="form-control" name="name" ng-model="homework_pub.name"></div>
             </div>
             <div class="form-group">
                 <label class="col-sm-2 control-label">作业描述：</label>
-                <div class="col-sm-10"><textarea rows="4" class="form-control" name="description" ng-model="homework_pub.description"></textarea></div>
+                <div class="col-sm-9"><textarea rows="4" class="form-control" name="description" ng-model="homework_pub.description"></textarea></div>
             </div>
             <div class="form-group">
                 <label class="col-sm-2 control-label">开始时间：</label>
-                <div class="col-sm-10"><input type="datetime" class="form-control" name="start_time" ng-model="homework_pub.start_date"></div>
+                <div class="col-sm-9"><input type="datetime" class="form-control" name="start_time" ng-model="homework_pub.start_date"></div>
             </div>
             <div class="form-group">
                 <label class="col-sm-2 control-label">截止时间：</label>
-                <div class="col-sm-10"><input type="datetime" class="form-control" name="end_time" ng-model="homework_pub.end_date"></div>
+                <div class="col-sm-9"><input type="datetime" class="form-control" name="end_time" ng-model="homework_pub.end_date"></div>
             </div>
             <div class="form-group">
-                <div class="col-sm-10"><input type="hidden" class="form-control" name="type" ng-model="homework_pub.type" ></div>
+                <div class="col-sm-offset-2 col-sm-9">
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" ng-model="type">团队作业
+                        </label>
+                    </div>
+                </div>
             </div>
             <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-4">
@@ -126,70 +149,36 @@
                 <table class="table table-striped" style = "text-align : left;">
                     <thead>
                     <tr>
-                        <th>标题</th>
-                        <th>访问范围</th>
+                        <th>序号</th>
+                        <th>文件</th>
                         <th>创建者</th>
-                        <th>修改时间</th>
-                        <th>大小</th>
+                        <th>上传时间</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td><span class ="glyphicon glyphicon-folder-open" aria-hidden = "true"></span><a href = "/css" title = "folder"> 大学语文资源</a></td>
-                        <td>公开</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td><span class ="glyphicon glyphicon-file" aria-hidden = "true"></span><a href = "/css/bootstrap-social.css" target = "_blank" title = "css"> 大学语文的css规范</a></td>
-                        <td>公开</td>
-                        <td>张三</td>
-                        <td>2016/6/4</td>
-                        <td>1.1MB</td>
-                    </tr>
-                    <tr>
-                        <td><span class ="glyphicon glyphicon-picture" aria-hidden = "true"></span><a href = "/css/bootstrap-social.css" target = "_blank" title = "pic"> 大学语文的图片规范</a></td>
-                        <td>公开</td>
-                        <td>张三</td>
-                        <td>2016/6/4</td>
-                        <td>1.1MB</td>
-                    </tr>
-                    <tr>
-                        <td><span class ="glyphicon glyphicon-list-alt" aria-hidden = "true"></span><a href = "/css/bootstrap-social.css" target = "_blank" title = "PDF"> 大学语文的PDF规范</a></td>
-                        <td>公开</td>
-                        <td>张三</td>
-                        <td>2016/6/4</td>
-                        <td>1.1MB</td>
-                    </tr>
-                    <tr>
-                        <td><span class ="glyphicon glyphicon-blackboard" aria-hidden = "true"></span><a href = "/css/bootstrap-social.css" target = "_blank" title = "PPT"> 大学语文的PPT规范</a></td>
-                        <td>公开</td>
-                        <td>张三</td>
-                        <td>2016/6/4</td>
-                        <td>1.1MB</td>
+                    <tr ng-repeat="resource in resources">
+                        <td>{{ $index + 1 }}</td>
+                        <td><span class ="glyphicon glyphicon-file" aria-hidden = "true"></span><a href="jTeacherResourceDownload?resource_id={{ resource.id }}">&nbsp;{{ resource.name }}</a></td>
+                        <td>{{ resource.owner_username }}</td>
+                        <td>{{ resource.publish_time }}</td>
                     </tr>
                     </tbody>
                 </table>
             </div>
         </div>
         <div class = "row-content">
-            <h3>上传资源</h3>
-            <label class="control-label">选择文件</label>
-            <input id="input-id" type="file" class="file" data-preview-file-type="text" >
-            <div class="form-group">
-                <div>
-                    <br>
-                    <button type="submit" class="btn btn-primary">上传</button>
-                </div>
-            </div>
+            <button ngf-select="uploadFiles($files)" multiple ngf-max-height="1000" ngf-max-size="8MB">选择文件</button>
+            <ul>
+                <li ng-repeat="file in files">{{ file.name }}&nbsp;&nbsp;<button class="btn btn-sm btn-link" ng-click="removeFile($index)">删除</button></li>
+            </ul>
+            <div class="form-controller"><button class="btn btn-primary" ng-click="submitFile()">提交</button></div>
         </div>
     </script>
     <script type="text/ng-template" id="stuHomeworkDetail.html">
         <div class="panel panel-info">
             <div class="panel-heading">
                 <h3>{{ homework.homework_name }}</h3>
-                <p style="text-align: right"><small>发布时间 {{ homework.homework_publish_date }}</small></p>
+                <p style="text-align: right"><strong>{{ homework.homework_type }}</strong><small>&nbsp;&nbsp;&nbsp;&nbsp;发布时间 {{ homework.homework_publish_date }}</small></p>
             </div>
             <div class="panel-body">
                 <div class="row">
@@ -250,6 +239,32 @@
             </div>
         </div>
     </script>
+    <script type="text/ng-template" id="studentTeamDetail.html">
+        <div class="container" style="width: 100%">
+            <div class="page-header">
+                <h3>{{ team_to_operate.name }}</h3>
+                <p style="text-align: right"><strong>团队负责人：</strong>{{ team_to_operate.owner_username }}</p>
+            </div>
+            <div class="row">
+                <table class="table table-striped">
+                    <thead>
+                    <tr><th>序号</th><th>成员姓名</th><th>成员学号</th><th>成员所在班级</th><th>成员联系方式</th><th ng-show="isMyTeam">删除该成员</th><th ng-show="isMyTeam">变更为负责人</th></tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="teammate in teammates">
+                        <td>{{ $index + 1 }}</td>
+                        <td>{{ teammate.name }}</td>
+                        <td>{{ teammate.username }}</td>
+                        <td>{{ teammate.class_number }}</td>
+                        <td>{{ teammate.telephone }}</td>
+                        <td ng-show="isMyTeam"><button class="btn btn-danger btn-sm" ng-click="removeTeammate($index, teammate.username)">删除</button></td>
+                        <td ng-show="isMyTeam"><button class="btn btn-warning btn-sm" ng-click="changeToOwner($index, teammate.username)">变更</button></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </script>
 </div>
 <footer class="row-footer">
     <div class="container">
@@ -280,12 +295,16 @@
                     templateUrl: 'stuSubmitHomeworkDetail.html',
                     controller: 'SubmitDetailController'
                 })
+                .when('/studentTeamDetail', {
+                    templateUrl: 'studentTeamDetail.html',
+                    controller: 'TeamDetailController'
+                })
                 .otherwise({
                     templateUrl: 'courseInfo.html',
                     controller: 'InfoController'
                 });
     }]);
-    myApp.controller('MainController',function ($scope) {
+    myApp.controller('MainController',function ($scope, $http) {
         // 提示信息模块，暂时不使用
         $scope.isAlert = false;
         $scope.closeAlert = function () {
@@ -318,6 +337,19 @@
             $scope.sub_homework_id = id;
             window.location.href = '#submitHomeworkDetail';
         };
+        // 获取选课团队名单
+        $http.get('/jTeacherGetTeams?course_offered_id=' + $scope.course_id)
+                .success(function (data) {
+                    $scope.teams = data;
+                    console.log('选课团队');
+                    console.log($scope.teams);
+                });
+        // 进入团队详情页面
+        $scope.goToTeammatesDetail = function (index) {
+            $scope.team_to_operate = $scope.teams[index];
+            $scope.teammates = $scope.team_to_operate.teammates;
+            window.location.href = '#studentTeamDetail';
+        };
     });
     myApp.controller('InfoController', function ($scope, $http) {
         // 获取课程信息
@@ -337,11 +369,25 @@
                 .error(function (data, status) {
                     console.log('发生错误！ 状态：' + status);
                 });
+        // 是否通过团队审核
+        $scope.whetherToPass = function (index, id, whether) {
+            $http.post('/jTeacherWhetherPassTeamCourse', { course_team_id: id, whether: whether })
+                .success(function (data) {
+                        $scope.teams[index].state = data.state;
+                    });
+        }
     });
     myApp.controller('HomeworkController', function ($scope, $http) {
         // 获取当前课程下的所有作业信息
         $http.get('jTeacherCourseHomeworks?course_offered_id=' + $scope.course_id)
                 .success(function (data) {
+                    for (var i in data) {
+                        if (data[i].homework_type == '1') {
+                            data[i].homework_type = '个人作业';
+                        } else {
+                            data[i].homework_type = '团队作业';
+                        }
+                    }
                     $scope.homeworkList = data;
                     console.log('获得作业列表！内容如下：');
                     console.log(data);
@@ -354,12 +400,18 @@
         // 发布作业
         $scope.public_homework = function () {
             $scope.homework_pub.course_offered_id = $scope.course_id;
-            $scope.homework_pub.type = 1;
-            console.log( $scope.homework_pub);
+            if ($scope.type) {
+                $scope.homework_pub.type = '2';
+            } else {
+                $scope.homework_pub.type = '1';
+            }
             $http.post('jTeacherPublishHomework', $scope.homework_pub)
                     .success(function (data) {
-                        console.log('提交完成后返回的数据：');
-                        console.log(data);
+                        if (data.homework_type == '1') {
+                            data.homework_type = '个人作业';
+                        } else {
+                            data.homework_type = '团队作业';
+                        }
                         $scope.homeworkList.push(data);
                         $scope.reset_homework();
                     });
@@ -367,8 +419,9 @@
         // 重置表单中的作业信息
         $scope.reset_homework = function () {
             for (var i in $scope.homework_pub) {
-                $scope.homework_pub[i] = '';
+                $scope.homework_pub[i] = undefined;
             }
+            $scope.type = false;
         };
     });
     myApp.controller('DetailController', function ($scope, $http) {
@@ -411,16 +464,56 @@
                 comment: $scope.input_comment
             }).success(function (data) {
                 console.log('打分成功！');
-                console.log(data);
+                window.location.href = '#courseHomework';
             });
         }
     });
-    myApp.controller('ResourceController', function ($scope) {
-        $scope.resource = [
-            { id: 101, type: 'directory', name: '我的电脑' },
-            { id: 110, type: 'file', name: '第一次实践', creator: '王乐', time: '2016-7-2', size: '18K' }
-        ];
-    });
+    myApp.controller('ResourceController', ['$scope', '$http', 'Upload', '$timeout', function ($scope, $http, Upload, $timeout) {
+        $scope.resources = [];
+        $http.get('/jTeacherCourseResources?course_offered_id=' + $scope.course_id)
+                .success(function (data) {
+                    console.log('获取资源信息成功');
+                    console.log(data);
+                    $scope.resources = data;
+                });
+        $scope.files = [];
+        // 前端获取要上传的文件
+        $scope.uploadFiles = function (files) {
+            console.log('取得文件！');
+            console.log(files);
+            angular.forEach(files, function (file) {
+                $scope.files.push(file);
+            });
+        };
+        // 在前端移除要上传的文件
+        $scope.removeFile = function (index) {
+            $scope.files.splice(index, 1);
+        };
+        $scope.submitFile = function () {
+            angular.forEach($scope.files, function (file) {
+                file.upload = Upload.upload({
+                    url: '/jTeacherCourseSubmitResource',
+                    data: { file: file, course_offered_id: $scope.course_id }
+                });
+                file.upload.then(function (response) {
+                    $timeout(function () {
+                        //file.result = response.data;
+                        $scope.files = [];
+                        console.log('文件提交成功！');
+                        $scope.resources.push(response.data);
+                    });
+                }, function (response) {
+                    if (response.status > 0)
+                        $scope.errorMsg = response.status + ': ' + response.data;
+                }, function (evt) {
+                    file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
+                });
+            });
+        }
+    }]);
+    myApp.controller('TeamDetailController', function ($scope) {
+
+    })
 </script>
 </body>
 </html>
