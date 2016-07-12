@@ -217,7 +217,7 @@ function editLine( i, btn ){
 	}
 	console.log('修改第'+i+'行');
 }
-function delLine( i ){
+function delLine( i ) {
 	console.log('删除第'+i+"行");
 	var username = $('#editeaInfo table tbody tr').eq(i).find('td').eq(1).html();
 	if(confirm( '要删除账号 -['+username +']?')){
