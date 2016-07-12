@@ -13,6 +13,7 @@ use App\Course;
 use App\CourseOffered;
 use App\Homework;
 use App\Resource;
+use App\Student;
 use App\SubmitHomework;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -153,9 +154,11 @@ class TeacherController extends Controller
     }
 
     public function getJsonHomeworkSubmits(Request $request){
-        $submits = SubmitHomework::where('homeword_id',$request->homeword_id);
+        $submits = SubmitHomework::where('homework_id',$request->homework_id)
+            ->whereIn('state', array(2, 3))->get();
         foreach($submits as &$submit){
-            $submit->resources = Resource::whereIn('id', json_decode($submit->resource_str)->get());
+            $submit->resources = Resource::whereIn('id', json_decode($submit->resource_str))->get();
+            $submit->user_name = Student::find($submit->submit_username);
         }
         return json_encode($submits->toArray());
     }
@@ -164,8 +167,9 @@ class TeacherController extends Controller
         $submit = SubmitHomework::find($request->submit_homework_id);
         $submit->grade = $request->grade;
         $submit->comment = $request->comment;
+        $submit->state = '3';
         $submit->save();
-        $submit->resources = Resource::whereIn('id', json_decode($submit->resource_str)->get());
+        $submit->resources = Resource::whereIn('id', json_decode($submit->resource_str))->get();
         return json_encode($submit->toArray());
     }
 

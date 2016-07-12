@@ -11,15 +11,6 @@
     <script src="./js/angular-route.min.js"></script>
     <script>
         var myApp = angular.module('myApp', ['ngRoute']);
-        myApp.controller('MainController', function ($scope) {
-            $scope.isAlert = false;
-            $scope.closeAlert = function () {
-                $scope.isAlert = false;
-            };
-            $scope.openAlert = function () {
-                $scope.isAlert = true;
-            }
-        });
     </script>
 </head>
 <body ng-controller="MainController">
@@ -207,6 +198,55 @@
                 </div>
                 <h3>作业要求</h3>
                 <p>{{ homework.homework_description }}</p>
+                <br>
+                <h3>学生提交作业列表</h3>
+                <table class="table table-striped">
+                    <thead>
+                        <tr><th>序号</th><th>学生学号</th><th>作业名称</th><th>作业状态</th><th>评分</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="subHomework in submitHomeworkList">
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ subHomework.submit_username }}</td>
+                            <td><a style="cursor: pointer" ng-click="goToSubmitHomeworkDetail(subHomework.id)">{{ subHomework.name }}</a></td>
+                            <td>{{ subHomework.state }}</td>
+                            <td>{{ subHomework.grade }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </script>
+    <script type="text/ng-template" id="stuSubmitHomeworkDetail.html">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3>{{ nowSubmitHomeworkDetail.name }}</h3>
+                <p style="text-align: right"><small>提交时间：{{ nowSubmitHomeworkDetail.submit_time }}</small></p>
+            </div>
+            <div class="panel-body">
+                <h3>作业内容</h3>
+                <p>{{ nowSubmitHomeworkDetail.words }}</p>
+                <h3>附件资源</h3>
+                <ol>
+                    <li ng-repeat="resource in nowSubmitHomeworkDetail.resources"><a href="/jTeacherResourceDownload?resource_id={{ resource.id }}">{{ resource.name }}</a></li>
+                </ol>
+                <br>
+                <div class="row" ng-show="nowSubmitHomeworkDetail.state == '已提交'">
+                    <div class="col-md-8">
+                        <h3>评论打分</h3>
+                        <div class="form-group">
+                            <label>打分</label>
+                            <input type="text" ng-model="input_grade" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>评论</label>
+                            <textarea rows="5" ng-model="input_comment" class="form-control"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <button class="btn btn-primary" ng-click="submitGrade()">提交</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </script>
@@ -236,28 +276,51 @@
                     templateUrl: 'stuHomeworkDetail.html',
                     controller: 'DetailController'
                 })
+                .when('/submitHomeworkDetail', {
+                    templateUrl: 'stuSubmitHomeworkDetail.html',
+                    controller: 'SubmitDetailController'
+                })
                 .otherwise({
                     templateUrl: 'courseInfo.html',
                     controller: 'InfoController'
                 });
     }]);
     myApp.controller('MainController',function ($scope) {
+        // 提示信息模块，暂时不使用
+        $scope.isAlert = false;
+        $scope.closeAlert = function () {
+            $scope.isAlert = false;
+        };
+        $scope.openAlert = function () {
+            $scope.isAlert = true;
+        };
         var url = location.search;
         var str = url.substr(1);
         $scope.course_id = str.split('=')[1];
         $scope.homework_id = undefined;  // 用于给子controller继承使用
         $scope.childHomeworkList = [];  // 用于给子controller继承使用
+        // 从子controller中获取作业列表
         $scope.$on('$getHomeworkList', function (event, data) {
             $scope.childHomeworkList = data;
-            console.log('向父级Controller传递数据成功！数据如下：');
-            console.log($scope.childHomeworkList);
+            console.log('传递数据成功');
         });
+        // 从子controller中获取当前提交作业列表
+        $scope.$on('$getSubmitHomeworkList', function (event, data) {
+            $scope.nowSubmitHomeworkList = data;
+        });
+        // 进入作业详情页面
         $scope.goToHomeworkDetail = function (id) {
             $scope.homework_id = id;
             window.location.href = '#homeworkDetail';
-        }
+        };
+        // 进入学生提交作业详情页面
+        $scope.goToSubmitHomeworkDetail = function (id) {
+            $scope.sub_homework_id = id;
+            window.location.href = '#submitHomeworkDetail';
+        };
     });
     myApp.controller('InfoController', function ($scope, $http) {
+        // 获取课程信息
         $http.get('jTeacherCourseInfo?course_offered_id=' + $scope.course_id)
                 .success(function (data) {
                     $scope.course = data[0];
@@ -265,6 +328,7 @@
                 .error(function (data, status) {
                     console.log('发生错误！ 状态：' + status);
                 });
+        // 获取选课学生名单
         $http.get('jTeacherCourseStudents?course_offered_id=' + $scope.course_id)
                 .success(function (data) {
                     console.log(data);
@@ -273,9 +337,9 @@
                 .error(function (data, status) {
                     console.log('发生错误！ 状态：' + status);
                 });
-        //$scope.lesson = { name: '工科高等数学', teacher: '王乐', description: '这是一门非常重要的课程' };
     });
     myApp.controller('HomeworkController', function ($scope, $http) {
+        // 获取当前课程下的所有作业信息
         $http.get('jTeacherCourseHomeworks?course_offered_id=' + $scope.course_id)
                 .success(function (data) {
                     $scope.homeworkList = data;
@@ -287,6 +351,7 @@
                     console.log('发生错误！ 状态：' + status);
                 });
         $scope.homework_pub = {};
+        // 发布作业
         $scope.public_homework = function () {
             $scope.homework_pub.course_offered_id = $scope.course_id;
             $scope.homework_pub.type = 1;
@@ -299,25 +364,55 @@
                         $scope.reset_homework();
                     });
         };
+        // 重置表单中的作业信息
         $scope.reset_homework = function () {
             for (var i in $scope.homework_pub) {
                 $scope.homework_pub[i] = '';
             }
         };
-        /*$scope.homeworkList = [
-            { id: 225, title: '第五章作业', status: '未完成', start: '2016-7-4 12:00', end: '2016-7-12 18:00' },
-            { id: 122, title: '第四章作业', status: '已提交', start: '2016-6-20 12:00', end: '2016-6-28 18:00' }
-        ];*/
     });
-    myApp.controller('DetailController', function ($scope) {
+    myApp.controller('DetailController', function ($scope, $http) {
         console.log('获取到的作业id=' + $scope.homework_id);
+        // 获取当前作业的详细信息
         for (var i = 0 ; i < $scope.childHomeworkList.length; i++) {
             if ($scope.childHomeworkList[i].homework_id == $scope.homework_id) {
                 $scope.homework = $scope.childHomeworkList[i];
-                console.log('作业详细信息为：');
-                console.log($scope.homework);
                 break;
             }
+        }
+        // 获取当前作业中学生所提交的作业内容
+        $http.get('/jTeacherHomeworkSubmits?homework_id=' + $scope.homework_id)
+                .success(function (data) {
+                    console.log('获取学生提交作业详情成功！');
+                    for (var i in data) {
+                        if (data[i].state == '2') {
+                            data[i].state = '已提交';
+                        } else if (data[i].state == '3') {
+                            data[i].state = '已评分';
+                        }
+                    }
+                    $scope.submitHomeworkList = data;
+                    console.log($scope.submitHomeworkList);
+                    $scope.$emit('$getSubmitHomeworkList', data);
+                });
+    });
+    myApp.controller('SubmitDetailController', function ($scope, $http) {
+        for (var i in $scope.nowSubmitHomeworkList) {
+            if ($scope.nowSubmitHomeworkList[i].id == $scope.sub_homework_id) {
+                $scope.nowSubmitHomeworkDetail = $scope.nowSubmitHomeworkList[i];
+                break;
+            }
+        }
+        // 作业打分
+        $scope.submitGrade = function () {
+            $http.post('/jTeacherHomeworkSubmitGrade', {
+                submit_homework_id: $scope.sub_homework_id,
+                grade: $scope.input_grade,
+                comment: $scope.input_comment
+            }).success(function (data) {
+                console.log('打分成功！');
+                console.log(data);
+            });
         }
     });
     myApp.controller('ResourceController', function ($scope) {
