@@ -85,3 +85,13 @@ Route::post('/admin/getEAInfo', 'SAController@getEAInfo'); //获取所有EA信�
 Route::post('/admin/editEAInfo','SAController@editEAInfo'); //修改EA信息
 Route::post('/admin/delEAInfo','SAController@delEAInfo');  //删除EA信息
 Route::post('/admin/addEAInfo', 'SAController@addEAInfo'); //添加EA信息
+#End SA
+
+#EA 相关操作
+Route::post('/ea/getSchoolList', 'EAController@getSchoolList'); //获取学院信息列表
+Route::post('/ea/getSemesterList', 'EAController@getSemesterList');//获取学期信息列表
+// Route::post('/ea/getClassList', 'EAController@getClassList'); //获取班级信息列表
+// Route::post('/ea/getTeacherList', 'EAController@getTeacherList');//获取教师信息列表
+// Route::post('/ea/getStudentList', 'EAController@getStudentList');//获取学生信息列表
+// Route::post('/ea/getCourseOfferedList', 'EAController@getCourseOfferedList');//获取开设课程列表
+// Route::post('/ea/getCourseStudentList', 'EAController@getCourseStudentList');//获取学生选课信息

@@ -26,6 +26,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Services\UploadsManager;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\DB;
 
 class EAController extends Controller
 {
@@ -43,6 +44,21 @@ class EAController extends Controller
         }
         View::addExtension('html', 'php');
     }
-
+	public function getSchoolList(){
+		try{
+		$re = DB::table('school')->get();
+		echo json_encode(array('success'=>$re));
+		}catch(Exception $e){
+			echo json_encode(array('error'=>$e->getMessage()));
+		}
+	}
+	public function getSemesterList(){
+		try{
+			$re = DB::table('semester')->get();
+			echo json_encode(array('success'=>$re));
+		}catch(Exception $e){
+			echo json_encode(array('error'=>$e->getMessage()));
+		}
+	}
     
 }
