@@ -14,6 +14,7 @@ use App\CourseOffered;
 use App\Homework;
 use App\Resource;
 use App\Semester;
+use App\Student;
 use App\SubmitHomework;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
