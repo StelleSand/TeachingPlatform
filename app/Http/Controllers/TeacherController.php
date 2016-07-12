@@ -13,11 +13,12 @@ use App\Course;
 use App\CourseOffered;
 use App\Homework;
 use App\Resource;
-use App\Student;
+use App\Semester;
 use App\SubmitHomework;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 
